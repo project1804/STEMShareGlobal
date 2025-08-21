@@ -594,6 +594,11 @@
             }
         }
     </style>
+    <!-- Add Google AI SDK -->
+    <script type="module">
+        import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
+        window.GoogleGenerativeAI = GoogleGenerativeAI;
+    </script>
     <!-- Add Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -665,38 +670,54 @@
                 </div>
 
                 <!-- Games Content -->
-                <div id="gamesContent" class="tab-content" style="display:none;">
-                    <div class="cards-grid">
-                        <div class="feature-card" onclick="window.location.href='game.html'" style="background:linear-gradient(135deg,#74b9ff 0%,#0984e3 100%);">
-                            <div class="feature-icon">
-                                <img src="https://img.icons8.com/fluency/64/physics.png" alt="Science">
-                            </div>
-                            <div class="feature-title">Science</div>
-                            <div class="feature-description">Explore fascinating science games and interactive quizzes!</div>
-                        </div>
-                        <div class="feature-card" onclick="window.location.href='math.html'" style="background:linear-gradient(135deg,#fdcb6e 0%,#e17055 100%);">
-                            <div class="feature-icon">
-                                <img src="https://img.icons8.com/fluency/64/calculator.png" alt="Math">
-                            </div>
-                            <div class="feature-title">Mathematics</div>
-                            <div class="feature-description">Sharpen your math skills with fun interactive games!</div>
-                        </div>
-                        <div class="feature-card" style="background:linear-gradient(135deg,#a29bfe 0%,#6c5ce7 100%);">
-                            <div class="feature-icon">
-                                <img src="https://img.icons8.com/fluency/64/computer.png" alt="Technology">
-                            </div>
-                            <div class="feature-title">Technology</div>
-                            <div class="feature-description">Learn about computers, coding, and digital innovation!</div>
-                        </div>
-                        <div class="feature-card" style="background:linear-gradient(135deg,#00b894 0%,#00cec9 100%);">
-                            <div class="feature-icon">
-                                <img src="https://img.icons8.com/fluency/64/engineering.png" alt="Engineering">
-                            </div>
-                            <div class="feature-title">Engineering</div>
-                            <div class="feature-description">Solve engineering puzzles and design challenges!</div>
-                        </div>
-                    </div>
-                </div>
+<div id="gamesContent" class="tab-content" style="display:none;">
+    <div class="cards-grid">
+        <div class="feature-card" onclick="window.location.href='game.html'" style="background:linear-gradient(135deg,#74b9ff 0%,#0984e3 100%);">
+            <div class="feature-icon">
+                <img src="https://img.icons8.com/fluency/64/physics.png" alt="Science">
+            </div>
+            <div class="feature-title">Science</div>
+            <div class="feature-description">Explore fascinating science games and interactive quizzes!</div>
+        </div>
+        <div class="feature-card" onclick="window.location.href='math.html'" style="background:linear-gradient(135deg,#fdcb6e 0%,#e17055 100%);">
+            <div class="feature-icon">
+                <img src="https://img.icons8.com/fluency/64/calculator.png" alt="Math">
+            </div>
+            <div class="feature-title">Mathematics</div>
+            <div class="feature-description">Sharpen your math skills with fun interactive games!</div>
+        </div>
+        <div class="feature-card" style="background:linear-gradient(135deg,#a29bfe 0%,#6c5ce7 100%);">
+            <div class="feature-icon">
+                <img src="https://img.icons8.com/fluency/64/computer.png" alt="Technology">
+            </div>
+            <div class="feature-title">Technology</div>
+            <div class="feature-description">Learn about computers, coding, and digital innovation!</div>
+        </div>
+        <div class="feature-card" style="background:linear-gradient(135deg,#00b894 0%,#00cec9 100%);">
+            <div class="feature-icon">
+                <img src="https://img.icons8.com/fluency/64/engineering.png" alt="Engineering">
+            </div>
+            <div class="feature-title">Engineering</div>
+            <div class="feature-description">Solve engineering puzzles and design challenges!</div>
+        </div>
+    </div>
+
+    <!-- Upload Game Form -->
+    <div style="margin-top:32px; margin-bottom:32px; background:linear-gradient(135deg,#f8f9fa 0%,#e9ecef 100%); border-radius:16px; padding:24px;">
+        <h3 style="margin-top:0;">🎮 Upload Your Game (Developer)</h3>
+        <form id="uploadGameForm" style="display:flex; gap:12px; flex-wrap:wrap; align-items:center;">
+            <input type="text" id="uploaderName" placeholder="Your Name" required style="padding:8px 12px; border-radius:8px; border:1px solid #ccc;">
+            <input type="text" id="gameTitle" placeholder="Game Title" required style="padding:8px 12px; border-radius:8px; border:1px solid #ccc;">
+            <input type="url" id="gameUrl" placeholder="Game URL (e.g. https://...)" required style="padding:8px 12px; border-radius:8px; border:1px solid #ccc; flex:1;">
+            <button type="submit" style="background:linear-gradient(135deg,#00b894 0%,#00cec9 100%); color:white; border:none; border-radius:8px; padding:8px 20px; font-weight:bold; cursor:pointer;">Upload</button>
+        </form>
+    </div>
+    <div>
+        <h3 style="margin-top:0;">🕹️ Community Games</h3>
+        <div id="gameList" class="cards-grid"></div>
+    </div>
+</div>
+
 
                 <!-- AI Chatbot Content -->
                 <div id="chatbotContent" class="tab-content" style="display:none;">
@@ -806,6 +827,101 @@
     </div>
 
     <script>
+
+    // Dummy in-memory game list
+    let games = [
+        {
+            title: "Sample Science Game",
+            url: "https://example.com/game1",
+            likes: 3,
+            shares: 1,
+            uploader: "Admin"
+        },
+        {
+            title: "Math Puzzle",
+            url: "https://example.com/game2",
+            likes: 5,
+            shares: 2,
+            uploader: "Admin"
+        }
+    ];
+
+    // Render games
+function renderGames() {
+    const gameList = document.getElementById('gameList');
+    gameList.innerHTML = '';
+    if (!games.length) {
+        gameList.innerHTML = '<div style="color:#888; padding:24px;">No games uploaded yet.</div>';
+        return;
+    }
+    games.forEach((game, idx) => {
+        const card = document.createElement('div');
+        card.className = 'feature-card';
+        card.style.background = 'linear-gradient(135deg,#a29bfe 0%,#6c5ce7 100%)';
+        card.innerHTML = `
+            <div class="feature-title" style="margin-bottom:8px;">${game.title}</div>
+            <div style="font-size:0.97em; color:#ffeaa7; margin-bottom:4px;">
+                Uploaded by: <b>${game.uploader || "Unknown"}</b>
+            </div>
+            <a href="${game.url}" target="_blank" style="display:inline-block; margin-bottom:12px; color:#fff; text-decoration:underline;">Play Game</a>
+            <div style="margin-bottom:12px;">
+                <button onclick="likeGame(${idx})" style="background:#fff; color:#6c5ce7; border:none; border-radius:16px; padding:6px 16px; font-weight:bold; cursor:pointer; margin-right:8px;">👍 Like (${game.likes})</button>
+                <button onclick="shareGame(${idx})" style="background:#fff; color:#00b894; border:none; border-radius:16px; padding:6px 16px; font-weight:bold; cursor:pointer; margin-right:8px;">🔗 Share</button>
+                <button onclick="deleteGame(${idx})" style="background:#ff6b6b; color:#fff; border:none; border-radius:16px; padding:6px 16px; font-weight:bold; cursor:pointer;">🗑️ Delete</button>
+            </div>
+            <div style="font-size:0.97em; color:#ffeaa7; margin-bottom:4px;">MYR ${(game.likes * 0.10).toFixed(2)} earned (dummy)</div>
+            <div style="font-size:0.9em; color:#fff;">Shares: ${game.shares}</div>
+            <div style="margin-top:10px; font-size:0.95em; color:#fff; background:rgba(0,0,0,0.15); border-radius:8px; padding:8px;">
+                Contact us to redeem money at <a href="mailto:STEMShare@gmails.com" style="color:#ffeaa7;">STEMShare@gmails.com</a> or 0123456789
+            </div>
+        `;
+        gameList.appendChild(card);
+    });
+}
+
+// Delete function
+window.deleteGame = function(idx) {
+    if (confirm('Are you sure you want to delete this game?')) {
+        games.splice(idx, 1);
+        renderGames();
+    }
+};
+
+
+    // Like function
+    window.likeGame = function(idx) {
+        games[idx].likes++;
+        renderGames();
+    };
+
+    // Share function (dummy, just increments counter and copies link)
+    window.shareGame = function(idx) {
+        games[idx].shares++;
+        navigator.clipboard.writeText(games[idx].url);
+        alert('Game link copied to clipboard!');
+        renderGames();
+    };
+
+    // Upload form handler
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('uploadGameForm');
+        if (form) {
+            form.onsubmit = function(e) {
+                e.preventDefault();
+                const title = document.getElementById('gameTitle').value.trim();
+                const url = document.getElementById('gameUrl').value.trim();
+                const uploader = document.getElementById('uploaderName').value.trim();
+                if (title && url && uploader) {
+                    games.push({ title, url, likes: 0, shares: 0, uploader });
+                    form.reset();
+                    renderGames();
+                }
+            };
+        }
+        renderGames();
+    });
+
+
         // Tab switching logic
         const tabs = ['resourcesTab', 'gamesTab', 'chatbotTab', 'arvrTab'];
         const contents = ['resourcesContent', 'gamesContent', 'chatbotContent', 'arvrContent'];
@@ -1222,7 +1338,32 @@
         };
 
         // AI Chatbot functionality
-        function sendChatbotMessage() {
+        const GEMINI_API_KEY = "AIzaSyB8lWkJJ54LHM0iYpz83d7JMHLtKE01TQQ"; // IMPORTANT: Replace with your actual Gemini API Key
+        let genAI, model, chat;
+
+        const systemInstruction = {
+            role: "system",
+            parts: [{ text: "You are STEMShare AI, a friendly and enthusiastic AI assistant for students. Your goal is to explain complex STEM (Science, Technology, Engineering, and Mathematics) topics in a simple, engaging, and easy-to-understand way for a primary school student. Use simple language, fun analogies, and keep your answers concise and encouraging." }],
+        };
+
+        if (GEMINI_API_KEY !== "AIzaSyB8lWkJJ54LHM0iYpz83d7JMHLtKE01TQQ" && window.GoogleGenerativeAI) {
+            try {
+                genAI = new window.GoogleGenerativeAI(GEMINI_API_KEY);
+                model = genAI.getGenerativeModel({ 
+                    model: "gemini-1.5-flash",
+                    systemInstruction: systemInstruction,
+                });
+                chat = model.startChat({ history: [] });
+                console.log("Gemini AI Initialized Successfully with custom role.");
+            } catch (error) {
+                console.error("Error initializing Gemini AI:", error);
+                model = null;
+            }
+        } else {
+            console.warn("Gemini API Key not provided or is a placeholder. AI Assistant will use fallback responses.");
+        }
+
+        async function sendChatbotMessage() {
             const input = document.getElementById('chatbotInput');
             const message = input.value.trim();
             if (!message) return;
@@ -1230,19 +1371,41 @@
             addMessageToChat(message, true);
             input.value = '';
             
-            setTimeout(() => {
-                const response = generateAIResponse(message);
-                addMessageToChat(response, false);
-            }, 1000);
+            // Show typing indicator
+            const typingIndicator = addMessageToChat("✨ Typing...", false, true);
+
+            if (chat) {
+                try {
+                    const result = await chat.sendMessage(message);
+                    const response = await result.response;
+                    const text = response.text();
+                    typingIndicator.textContent = text; // Update message with AI response
+                    typingIndicator.classList.remove('typing');
+                } catch (error) {
+                    console.error("Error from Gemini API:", error);
+                    typingIndicator.textContent = "Sorry, I'm having trouble connecting to my brain right now. Please try again later.";
+                    typingIndicator.classList.remove('typing');
+                }
+            } else {
+                // Fallback if model isn't initialized
+                setTimeout(() => {
+                    typingIndicator.textContent = generateFallbackResponse(message);
+                    typingIndicator.classList.remove('typing');
+                }, 1000);
+            }
         }
 
-        function addMessageToChat(message, isUser = false) {
+        function addMessageToChat(message, isUser = false, isTyping = false) {
             const messagesContainer = document.getElementById('chatbotMessages');
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${isUser ? 'user' : 'ai'}`;
+            if (isTyping) {
+                messageDiv.classList.add('typing');
+            }
             messageDiv.textContent = message;
             messagesContainer.appendChild(messageDiv);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            return messageDiv;
         }
 
         function handleChatbotEnter(event) {
@@ -1251,37 +1414,21 @@
             }
         }
 
-        function generateAIResponse(userMessage) {
+        function generateFallbackResponse(userMessage) {
             const message = userMessage.toLowerCase();
             
             // Math help responses
             if (message.includes('math') || message.includes('mathematics') || message.includes('algebra') || message.includes('geometry')) {
-                const mathResponses = [
-                    "I'd be happy to help with math! What specific topic are you struggling with? Is it algebra, geometry, calculus, or something else?",
-                    "Math can be challenging, but let's break it down step by step. What particular math problem or concept would you like me to explain?",
-                    "Great question about math! I can help with equations, word problems, geometric shapes, and more. What would you like to start with?"
-                ];
-                return mathResponses[Math.floor(Math.random() * mathResponses.length)];
+                return "I'd be happy to help with math! What specific topic are you struggling with? (Note: AI is in fallback mode)";
             }
             
             // Science help responses
             if (message.includes('science') || message.includes('physics') || message.includes('chemistry') || message.includes('biology')) {
-                const scienceResponses = [
-                    "Science is fascinating! Whether it's physics, chemistry, biology, or earth science, I'm here to help. What scientific concept would you like to explore?",
-                    "Let's dive into science! What specific topic interests you? I can explain concepts with real-world examples to make them easier to understand."
-                ];
-                return scienceResponses[Math.floor(Math.random() * scienceResponses.length)];
+                return "Science is fascinating! What scientific concept would you like to explore? (Note: AI is in fallback mode)";
             }
             
             // Default responses
-            const defaultResponses = [
-                "That's a great question! I'd be happy to help you understand that concept better.",
-                "Let me break that down for you in simpler terms...",
-                "Here's what you need to know about that topic:",
-                "I can definitely help you with that! Let me explain..."
-            ];
-            
-            return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
+            return "That's a great question! I'd be happy to help you understand that concept better. (Note: AI is in fallback mode)";
         }
 
         // Initialize - fetch resources from Firebase
