@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>STEMShare Officer Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            background: linear-gradient(90deg, #cfd9ff 0%, #e0c3fc 100%);
+            font-family: 'Segoe UI', Arial, sans-serif;
+            min-height: 100vh;
+        }
+        .jpns-header {
+            background: linear-gradient(90deg, #43e0a0 0%, #6a8dff 100%);
+            padding: 18px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-radius: 8px 8px 0 0;
+        }
+        .jpns-title {
+            font-size: 2.3em;
+            font-weight: bold;
+            color: #222;
+            letter-spacing: 2px;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        .logout-btn {
+            background: #ff4444;
+            color: #fff;
+            border: none;
+            padding: 10px 28px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 1em;
+            cursor: pointer;
+            box-shadow: 0 2px 8px #0001;
+            transition: background 0.2s;
+            text-decoration: underline;
+        }
+        .logout-btn:hover {
+            background: #d32f2f;
+        }
+        .jpns-main {
+            display: flex;
+            max-width: 1200px;
+            margin: 0 auto;
+            min-height: 600px;
+        }
+        .jpns-sidebar {
+            background: linear-gradient(180deg, #43e0a0 0%, #6a8dff 100%);
+            border-radius: 0 0 0 0;
+            padding: 24px 16px;
+            width: 240px;
+            min-width: 220px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .jpns-profile-img {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 12px;
+            border: 2px solid #6a8dff;
+        }
+        .jpns-name {
+            font-weight: bold;
+            margin-bottom: 2px;
+            font-size: 1.08em;
+        }
+        .jpns-role {
+            font-size: 1.08em;
+            color: #222;
+            margin-bottom: 2px;
+        }
+        .jpns-sidebar button, .jpns-sidebar a {
+            display: block;
+            width: 100%;
+            margin: 8px 0;
+            padding: 10px 0;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-weight: bold;
+            color: #222;
+            text-decoration: none;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        .jpns-announcement {
+            background: #e0c3fc;
+            border-left: 6px solid #6a8dff;
+            padding: 10px 16px;
+            margin-top: 24px;
+            font-weight: bold;
+            border-radius: 8px;
+            width: 100%;
+        }
+        .announcement-title {
+            font-weight: bold;
+            font-size: 1.08em;
+            color: #222;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #6a8dff;
+            padding-bottom: 4px;
+        }
+        .announcement-list {
+            max-height: 120px;
+            overflow-y: auto;
+            font-size: 0.97em;
+        }
+        .announcement-list .announcement-item {
+            margin-bottom: 10px;
+            background: #fff;
+            border-radius: 6px;
+            padding: 6px 8px;
+            box-shadow: 0 1px 2px #0001;
+        }
+        .announcement-list .announcement-item b {
+            color: #6a8dff;
+            font-size: 0.98em;
+        }
+        .announcement-list .announcement-item .small {
+            font-size: 0.93em;
+            color: #555;
+        }
+        .jpns-content {
+            flex: 1;
+            padding: 32px 32px 0 32px;
+        }
+        .jpns-tabs {
+            display: flex;
+            gap: 0;
+            margin-bottom: 18px;
+            background: #e0c3fc;
+            border-radius: 12px 12px 0 0;
+            overflow: hidden;
+        }
+        .jpns-tab {
+            flex: 1;
+            background: #e0e0e0;
+            border: none;
+            padding: 16px 0;
+            font-weight: bold;
+            font-size: 1.15em;
+            border-radius: 0;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .jpns-tab.active {
+            background: #b7ffb7;
+            border-bottom: 3px solid #43e0a0;
+        }
+        .jpns-stat-card {
+            background: #eaffea;
+            border-radius: 24px;
+            padding: 38px 32px;
+            color: #222;
+            font-size: 1.2em;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px #0001;
+        }
+        .jpns-chart-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 18px;
+            color: #388e3c;
+        }
+        .jpns-legend {
+            display: flex;
+            gap: 18px;
+            margin-bottom: 18px;
+            font-size: 1em;
+        }
+        .jpns-legend span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .jpns-legend .dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .dot-blue { background: #2196f3; }
+        .dot-red { background: #e53935; }
+        .dot-green { background: #43a047; }
+        .dot-purple { background: #ab47bc; }
+        @media (max-width: 900px) {
+            .jpns-main {
+                flex-direction: column;
+            }
+            .jpns-sidebar {
+                width: 100%;
+                min-width: unset;
+                flex-direction: row;
+                justify-content: flex-start;
+                align-items: flex-start;
+                gap: 24px;
+            }
+            .jpns-content {
+                padding: 24px 8px 0 8px;
+            }
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="jpns-header">
+        <span class="jpns-title">STEMShare Officer</span>
+        <button class="logout-btn" onclick="window.location.href='index.html'">Log Out</button>
+    </div>
+    <div class="jpns-main">
+        <div class="jpns-sidebar">
+            <img src="https://img.icons8.com/color/96/businessman.png" alt="Profile" class="jpns-profile-img">
+            <div class="jpns-name">Ahmad Deedat</div>
+            <div class="jpns-role">JPNS</div>
+            <a href="#" id="officerProfileBtn">Officer Profile</a>
+            <a href="#" id="viewDataListBtn">View Data list</a>
+            <a href="#" id="viewRewardListBtn">View Reward List</a>
+            <a href="index.html">Back to Homepage</a>
+            <div class="jpns-announcement">
+                <div class="announcement-title">Announcement</div>
+                <div class="announcement-list">
+                    <div class="announcement-item">
+                        <span class="small"><b>Congratulations</b> Muhammad Ali has achieved Premium</span>
+                    </div>
+                    <div class="announcement-item">
+                        <span class="small"><b>🗓️ Midterm Exam Schedule Released</b><br>
+                        The Midterm Exam schedule has been uploaded to the Academic Calendar section.<br>
+                        Students are advised to check their subject slots and report any clashes to the Academic Office by Friday, July 26.
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="jpns-content">
+            <div id="jpnsWelcome">
+                <div class="jpns-stat-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; margin-bottom: 20px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;">
+                        <div style="flex: 1; min-width: 300px;">
+                            <div style="font-size: 1.8em; font-weight: bold; margin-bottom: 8px;">
+                                Good <span id="timeOfDay">Morning</span>, Ahmad Deedat! 👋
+                            </div>
+                            <div style="font-size: 1.1em; opacity: 0.9; margin-bottom: 20px;">
+                                Welcome back to your JPNS Officer Dashboard
+                            </div>
+                            <div style="font-size: 1em; opacity: 0.8;">
+                                <span id="currentDate"></span> • <span id="currentTime"></span>
+                            </div>
+                        </div>
+                        <div style="text-align: center; min-width: 200px;">
+                            <img src="https://img.icons8.com/color/96/businessman.png" alt="Profile" style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid white; margin-bottom: 8px;">
+                            <div style="font-weight: bold; font-size: 1.1em;">JPNS Officer</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 30px;">
+                    <div class="jpns-stat-card" style="background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%); color: white; text-align: center;">
+                        <div style="font-size: 2.5em; font-weight: bold; margin-bottom: 8px;">🎯</div>
+                        <div style="font-size: 1.3em; font-weight: bold; margin-bottom: 5px;">Your Role</div>
+                        <div style="font-size: 1em; opacity: 0.9;">Education Data Management</div>
+                        <div style="font-size: 0.9em; opacity: 0.8; margin-top: 8px;">Monitor & analyze school performance</div>
+                    </div>
+                    
+                    <div class="jpns-stat-card" style="background: linear-gradient(135deg, #00b894 0%, #00a085 100%); color: white; text-align: center;">
+                        <div style="font-size: 2.5em; font-weight: bold; margin-bottom: 8px;">📊</div>
+                        <div style="font-size: 1.3em; font-weight: bold; margin-bottom: 5px;">Quick Stats</div>
+                        <div style="font-size: 1em; opacity: 0.9;">5 Schools • 10 Teachers</div>
+                        <div style="font-size: 0.9em; opacity: 0.8; margin-top: 8px;">740 Active Students</div>
+                    </div>
+                    
+                    <div class="jpns-stat-card" style="background: linear-gradient(135deg, #fd79a8 0%, #e84393 100%); color: white; text-align: center;">
+                        <div style="font-size: 2.5em; font-weight: bold; margin-bottom: 8px;">🏆</div>
+                        <div style="font-size: 1.3em; font-weight: bold; margin-bottom: 5px;">Recent Activity</div>
+                        <div style="font-size: 1em; opacity: 0.9;">3 New Reports</div>
+                        <div style="font-size: 0.9em; opacity: 0.8; margin-top: 8px;">2 Achievements Unlocked</div>
+                    </div>
+                </div>
+                
+                <div class="jpns-stat-card" style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); color: #333;">
+                    <div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+                        <div style="font-size: 3em;">💡</div>
+                        <div style="flex: 1; min-width: 250px;">
+                            <div style="font-size: 1.3em; font-weight: bold; margin-bottom: 8px; color: #d63031;">Quick Actions</div>
+                            <div style="font-size: 1em; margin-bottom: 15px;">Get started with your most common tasks:</div>
+                            <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                                <button onclick="document.getElementById('viewDataListBtn').click()" style="background: #0984e3; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-size: 0.9em; cursor: pointer;">📊 View Statistics</button>
+                                <button onclick="document.getElementById('officerProfileBtn').click()" style="background: #00b894; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-size: 0.9em; cursor: pointer;">👤 My Profile</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="jpnsRewardList" style="display:none;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px;">
+                <div class="jpns-tabs" style="flex: 1;">
+                    <button class="jpns-tab active" id="schoolRewardTab">School</button>
+                    <button class="jpns-tab" id="teacherRewardTab">Teacher</button>
+                    <button class="jpns-tab" id="studentsRewardTab">Students</button>
+                </div>
+                <button id="rewardHomeBtn" style="background: linear-gradient(90deg,#43e0a0 0%,#6a8dff 100%); color: white; border: none; padding: 10px 28px; border-radius: 12px; font-weight: bold; font-size: 1em; cursor: pointer; box-shadow: 0 2px 8px #0001; margin-left: 18px;">Home</button>
+            </div>
+                <div id="schoolRewardContent">
+                    <div class="jpns-stat-card" style="background: linear-gradient(135deg, #a8e6cf 0%, #88d8a3 100%); padding: 30px;">
+                        <div class="jpns-chart-title" style="color: #2d5a3d; text-align: center; margin-bottom: 30px;">🏆 School Achievement Awards</div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px;">
+                            <div style="background: white; border-radius: 20px; padding: 25px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                                <div style="font-size: 1.2em; font-weight: bold; color: #2d5a3d; margin-bottom: 15px; padding: 8px 15px; background: #f0f8f0; border-radius: 15px;">Most Active User</div>
+                                <div style="font-size: 4em; margin: 15px 0;">🥇</div>
+                                <div style="font-size: 1.3em; font-weight: bold; color: #333; margin-bottom: 5px;">SMK Bandar Kuching No 1</div>
+                                <div style="font-size: 1em; color: #666; margin-bottom: 10px;">Monthly Active Users: 70</div>
+                                <div style="font-size: 0.9em; color: #888;">Outstanding engagement with platform</div>
+                            </div>
+                            <div style="background: white; border-radius: 20px; padding: 25px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                                <div style="font-size: 1.2em; font-weight: bold; color: #2d5a3d; margin-bottom: 15px; padding: 8px 15px; background: #f0f8f0; border-radius: 15px;">Most Notes Uploaded</div>
+                                <div style="font-size: 4em; margin: 15px 0;">🥇</div>
+                                <div style="font-size: 1.3em; font-weight: bold; color: #333; margin-bottom: 5px;">SMK Bandar Kuching No 1</div>
+                                <div style="font-size: 1em; color: #666; margin-bottom: 10px;">Total Notes: 600</div>
+                                <div style="font-size: 0.9em; color: #888;">Excellent content contribution</div>
+                            </div>
+                            <div style="background: white; border-radius: 20px; padding: 25px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                                <div style="font-size: 1.2em; font-weight: bold; color: #2d5a3d; margin-bottom: 15px; padding: 8px 15px; background: #f0f8f0; border-radius: 15px;">Most Notes Accessed</div>
+                                <div style="font-size: 4em; margin: 15px 0;">🥇</div>
+                                <div style="font-size: 1.3em; font-weight: bold; color: #333; margin-bottom: 5px;">SMK Bandar Kuching No 1</div>
+                                <div style="font-size: 1em; color: #666; margin-bottom: 10px;">Total Access: 6,500</div>
+                                <div style="font-size: 0.9em; color: #888;">High student engagement</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="teacherRewardContent" style="display:none;">
+                    <div class="jpns-stat-card" style="background: linear-gradient(135deg, #a8e6cf 0%, #88d8a3 100%); padding: 30px;">
+                        <div class="jpns-chart-title" style="color: #2d5a3d; text-align: center; margin-bottom: 30px;">🏆 Teacher Achievement Awards</div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px;">
+                            <div style="background: white; border-radius: 20px; padding: 25px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                                <div style="font-size: 1.2em; font-weight: bold; color: #2d5a3d; margin-bottom: 15px; padding: 8px 15px; background: #f0f8f0; border-radius: 15px;">Most Notes Uploaded</div>
+                                <div style="font-size: 4em; margin: 15px 0;">🥇</div>
+                                <div style="font-size: 1.3em; font-weight: bold; color: #333; margin-bottom: 5px;">Puan Siti</div>
+                                <div style="font-size: 1em; color: #666; margin-bottom: 10px;">Total Notes: 40</div>
+                                <div style="font-size: 0.9em; color: #888;">Exceptional content creation</div>
+                            </div>
+                            <div style="background: white; border-radius: 20px; padding: 25px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                                <div style="font-size: 1.2em; font-weight: bold; color: #2d5a3d; margin-bottom: 15px; padding: 8px 15px; background: #f0f8f0; border-radius: 15px;">Most Activities Created</div>
+                                <div style="font-size: 4em; margin: 15px 0;">🥇</div>
+                                <div style="font-size: 1.3em; font-weight: bold; color: #333; margin-bottom: 5px;">Encik Faiz</div>
+                                <div style="font-size: 1em; color: #666; margin-bottom: 10px;">Total Activities: 18</div>
+                                <div style="font-size: 0.9em; color: #888;">Creative learning activities</div>
+                            </div>
+                            <div style="background: white; border-radius: 20px; padding: 25px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                                <div style="font-size: 1.2em; font-weight: bold; color: #2d5a3d; margin-bottom: 15px; padding: 8px 15px; background: #f0f8f0; border-radius: 15px;">Most Games Developed</div>
+                                <div style="font-size: 4em; margin: 15px 0;">🥇</div>
+                                <div style="font-size: 1.3em; font-weight: bold; color: #333; margin-bottom: 5px;">Mr. Lim</div>
+                                <div style="font-size: 1em; color: #666; margin-bottom: 10px;">Total Games: 14</div>
+                                <div style="font-size: 0.9em; color: #888;">Innovative gamification approach</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="studentsRewardContent" style="display:none;">
+                    <div class="jpns-stat-card" style="background: linear-gradient(135deg, #a8e6cf 0%, #88d8a3 100%); padding: 30px;">
+                        <div class="jpns-chart-title" style="color: #2d5a3d; text-align: center; margin-bottom: 30px;">🏆 Student Achievement Awards</div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px;">
+                            <div style="background: white; border-radius: 20px; padding: 25px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                                <div style="font-size: 1.2em; font-weight: bold; color: #2d5a3d; margin-bottom: 15px; padding: 8px 15px; background: #f0f8f0; border-radius: 15px;">Most Games Played</div>
+                                <div style="font-size: 4em; margin: 15px 0;">🥇</div>
+                                <div style="font-size: 1.3em; font-weight: bold; color: #333; margin-bottom: 5px;">Siti</div>
+                                <div style="font-size: 1em; color: #666; margin-bottom: 10px;">Total Games: 20</div>
+                                <div style="font-size: 0.9em; color: #888;">Dedicated learner through gaming</div>
+                            </div>
+                            <div style="background: white; border-radius: 20px; padding: 25px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                                <div style="font-size: 1.2em; font-weight: bold; color: #2d5a3d; margin-bottom: 15px; padding: 8px 15px; background: #f0f8f0; border-radius: 15px;">Most Notes Accessed</div>
+                                <div style="font-size: 4em; margin: 15px 0;">🥇</div>
+                                <div style="font-size: 1.3em; font-weight: bold; color: #333; margin-bottom: 5px;">Siti</div>
+                                <div style="font-size: 1em; color: #666; margin-bottom: 10px;">Total Access: 12 notes</div>
+                                <div style="font-size: 0.9em; color: #888;">Consistent study habits</div>
+                            </div>
+                            <div style="background: white; border-radius: 20px; padding: 25px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                                <div style="font-size: 1.2em; font-weight: bold; color: #2d5a3d; margin-bottom: 15px; padding: 8px 15px; background: #f0f8f0; border-radius: 15px;">Most Achievements</div>
+                                <div style="font-size: 4em; margin: 15px 0;">🥇</div>
+                                <div style="font-size: 1.3em; font-weight: bold; color: #333; margin-bottom: 5px;">Siti & Rafiq</div>
+                                <div style="font-size: 1em; color: #666; margin-bottom: 10px;">Total Achievements: 6</div>
+                                <div style="font-size: 0.9em; color: #888;">Outstanding academic performance</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="jpnsProfile" style="display:none;">
+                <div class="jpns-stat-card">
+                    <div class="jpns-chart-title">Officer Profile</div>
+                    <div style="display: flex; align-items: center; margin-bottom: 30px;">
+                        <img src="https://img.icons8.com/color/96/businessman.png" alt="Profile" style="width: 80px; height: 80px; border-radius: 50%; margin-right: 20px; border: 3px solid #6a8dff;">
+                        <div>
+                            <div style="font-size: 1.4em; font-weight: bold; color: #222;">Ahmad Deedat</div>
+                            <div style="font-size: 1.1em; color: #666;">JPNS</div>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 40px; flex-wrap: wrap;">
+                        <div style="flex: 1; min-width: 300px;">
+                            <div style="margin-bottom: 20px;">
+                                <label style="display: block; font-weight: bold; margin-bottom: 8px; color: #388e3c;">NAME</label>
+                                <input type="text" value="Ahmad Deedat" style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 1em; background: white;">
+                            </div>
+                            <div style="margin-bottom: 20px;">
+                                <label style="display: block; font-weight: bold; margin-bottom: 8px; color: #388e3c;">AGE</label>
+                                <input type="number" value="35" style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 1em; background: white;">
+                            </div>
+                            <div style="margin-bottom: 20px;">
+                                <label style="display: block; font-weight: bold; margin-bottom: 8px; color: #388e3c;">ADDRESS</label>
+                                <textarea style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 1em; background: white; height: 80px; resize: vertical;">123 Jalan Maju, Taman Sejahtera, 93250 Kuching, Sarawak</textarea>
+                            </div>
+                        </div>
+                        <div style="flex: 1; min-width: 300px;">
+                            <div style="margin-bottom: 20px;">
+                                <label style="display: block; font-weight: bold; margin-bottom: 8px; color: #388e3c;">GENDER</label>
+                                <select style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 1em; background: white;">
+                                    <option value="male" selected>Male</option>
+                                    <option value="female">Female</option>
+                                </select>
+                            </div>
+                            <div style="margin-bottom: 20px;">
+                                <label style="display: block; font-weight: bold; margin-bottom: 8px; color: #388e3c;">PHONE</label>
+                                <input type="tel" value="+60 12-345 6789" style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 1em; background: white;">
+                            </div>
+                            <div style="margin-bottom: 20px;">
+                                <label style="display: block; font-weight: bold; margin-bottom: 8px; color: #388e3c;">EMAIL</label>
+                                <input type="email" value="ahmad.deedat@jpns.gov.my" style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 1em; background: white;">
+                            </div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 30px; text-align: center;">
+                        <button style="background: linear-gradient(90deg, #43e0a0 0%, #6a8dff 100%); color: white; border: none; padding: 12px 30px; border-radius: 8px; font-size: 1.1em; font-weight: bold; cursor: pointer; margin-right: 15px;">Update Profile</button>
+                        <button style="background: #ff4444; color: white; border: none; padding: 12px 30px; border-radius: 8px; font-size: 1.1em; font-weight: bold; cursor: pointer;">Cancel</button>
+                    </div>
+                </div>
+            </div>
+            <div id="jpnsStatistics" style="display:none;">
+                <div class="jpns-tabs">
+                    <button class="jpns-tab active" id="schoolTab">School</button>
+                    <button class="jpns-tab" id="teacherTab">Teacher</button>
+                    <button class="jpns-tab" id="studentsTab">Students</button>
+                </div>
+                <div id="schoolContent">
+                    <div class="jpns-stat-card">
+                        <div class="jpns-chart-title">School Statistics</div>
+                        <div class="jpns-legend">
+                            <span><span class="dot dot-blue"></span>Registered Students</span>
+                            <span><span class="dot dot-red"></span>Active Monthly Users</span>
+                            <span><span class="dot dot-green"></span>Total Notes Upload</span>
+                            <span><span class="dot dot-purple"></span>Notes Accessed</span>
+                        </div>
+                        <canvas id="schoolChart" height="260"></canvas>
+                    </div>
+                </div>
+                <div id="teacherContent" style="display:none;">
+                    <div class="jpns-stat-card">
+                        <div class="jpns-chart-title">Teacher Statistics</div>
+                        <div class="jpns-legend">
+                            <span><span class="dot dot-blue"></span>Uploads (Notes)</span>
+                            <span><span class="dot dot-red"></span>Uploads (Activities)</span>
+                            <span><span class="dot dot-green"></span>Uploads (Games)</span>
+                        </div>
+                        <canvas id="teacherChart" height="260"></canvas>
+                    </div>
+                </div>
+                <div id="studentsContent" style="display:none;">
+                    <div class="jpns-stat-card">
+                        <div class="jpns-chart-title">Student Statistics</div>
+                        <div class="jpns-legend">
+                            <span><span class="dot dot-blue"></span>Games Played</span>
+                            <span><span class="dot dot-red"></span>Notes Accessed</span>
+                            <span><span class="dot dot-green"></span>Achievements</span>
+                        </div>
+                        <canvas id="studentsChart" height="260"></canvas>
+                    </div>
+                    <div style="display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 32px;">
+                        <div style="flex:1; min-width:260px; background:linear-gradient(90deg,#e3f2fd,#bbdefb);border-radius:18px;padding:24px 18px;display:flex;align-items:center;box-shadow:0 2px 8px #0001;">
+                            <img src="https://img.icons8.com/color/48/trophy.png" alt="Quiz" style="width:48px;height:48px;margin-right:18px;">
+                            <div>
+                                <div style="font-size:1.15em;font-weight:bold;color:#1976d2;">Most Quiz Scored Highest</div>
+                                <div style="font-size:1.05em;color:#222;">Ali (98/100)</div>
+                            </div>
+                        </div>
+                        <div style="flex:1; min-width:260px; background:linear-gradient(90deg,#ffebee,#ffcdd2);border-radius:18px;padding:24px 18px;display:flex;align-items:center;box-shadow:0 2px 8px #0001;">
+                            <img src="https://img.icons8.com/color/48/open-book--v2.png" alt="Notes Accessed" style="width:48px;height:48px;margin-right:18px;">
+                            <div>
+                                <div style="font-size:1.15em;font-weight:bold;color:#d32f2f;">Most Notes Accessed</div>
+                                <div style="font-size:1.05em;color:#222;">Siti (12 notes)</div>
+                            </div>
+                        </div>
+                        <div style="flex:1; min-width:260px; background:linear-gradient(90deg,#e8f5e9,#c8e6c9);border-radius:18px;padding:24px 18px;display:flex;align-items:center;box-shadow:0 2px 8px #0001;">
+                            <img src="https://img.icons8.com/color/48/edit-file.png" alt="Notes Updated" style="width:48px;height:48px;margin-right:18px;">
+                            <div>
+                                <div style="font-size:1.15em;font-weight:bold;color:#388e3c;">Most Notes Updated</div>
+                                <div style="font-size:1.05em;color:#222;">Faiz (7 updates)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+    // Dynamic greeting and time display
+    function updateTimeAndGreeting() {
+        const now = new Date();
+        const hours = now.getHours();
+        const timeOfDayElement = document.getElementById('timeOfDay');
+        const currentDateElement = document.getElementById('currentDate');
+        const currentTimeElement = document.getElementById('currentTime');
+        
+        // Set greeting based on time
+        if (hours < 12) {
+            timeOfDayElement.textContent = 'Morning';
+        } else if (hours < 17) {
+            timeOfDayElement.textContent = 'Afternoon';
+        } else {
+            timeOfDayElement.textContent = 'Evening';
+        }
+        
+        // Set current date and time
+        currentDateElement.textContent = now.toLocaleDateString('en-US', { 
+            weekday: 'long', 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+        });
+        
+        currentTimeElement.textContent = now.toLocaleTimeString('en-US', { 
+            hour: '2-digit', 
+            minute: '2-digit',
+            second: '2-digit'
+        });
+    }
+    
+    // Update time every second
+    updateTimeAndGreeting();
+    setInterval(updateTimeAndGreeting, 1000);
+    
+    // Show Officer Profile when clicked
+    document.getElementById('officerProfileBtn').onclick = function(e) {
+        e.preventDefault();
+        document.getElementById('jpnsProfile').style.display = '';
+        document.getElementById('jpnsStatistics').style.display = 'none';
+        document.getElementById('jpnsWelcome').style.display = 'none';
+        document.getElementById('jpnsRewardList').style.display = 'none';
+    };
+    
+    // Show statistics only when 'View Data list' is clicked
+    document.getElementById('viewDataListBtn').onclick = function(e) {
+        e.preventDefault();
+        document.getElementById('jpnsStatistics').style.display = '';
+        document.getElementById('jpnsProfile').style.display = 'none';
+        document.getElementById('jpnsWelcome').style.display = 'none';
+        document.getElementById('jpnsRewardList').style.display = 'none';
+    };
+    
+    // Show Reward List when clicked
+    document.getElementById('viewRewardListBtn').onclick = function(e) {
+        e.preventDefault();
+        document.getElementById('jpnsRewardList').style.display = '';
+        document.getElementById('jpnsStatistics').style.display = 'none';
+        document.getElementById('jpnsProfile').style.display = 'none';
+        document.getElementById('jpnsWelcome').style.display = 'none';
+    };
+    // Home button in reward list section
+    document.getElementById('rewardHomeBtn').onclick = function(e) {
+        e.preventDefault();
+        document.getElementById('jpnsWelcome').style.display = '';
+        document.getElementById('jpnsRewardList').style.display = 'none';
+        document.getElementById('jpnsStatistics').style.display = 'none';
+        document.getElementById('jpnsProfile').style.display = 'none';
+    };
+    
+    // Reward List Tab switching logic
+    const schoolRewardTab = document.getElementById('schoolRewardTab');
+    const teacherRewardTab = document.getElementById('teacherRewardTab');
+    const studentsRewardTab = document.getElementById('studentsRewardTab');
+    const schoolRewardContent = document.getElementById('schoolRewardContent');
+    const teacherRewardContent = document.getElementById('teacherRewardContent');
+    const studentsRewardContent = document.getElementById('studentsRewardContent');
+
+    schoolRewardTab.onclick = function() {
+        schoolRewardTab.classList.add('active');
+        teacherRewardTab.classList.remove('active');
+        studentsRewardTab.classList.remove('active');
+        schoolRewardContent.style.display = '';
+        teacherRewardContent.style.display = 'none';
+        studentsRewardContent.style.display = 'none';
+    };
+    teacherRewardTab.onclick = function() {
+        teacherRewardTab.classList.add('active');
+        schoolRewardTab.classList.remove('active');
+        studentsRewardTab.classList.remove('active');
+        teacherRewardContent.style.display = '';
+        schoolRewardContent.style.display = 'none';
+        studentsRewardContent.style.display = 'none';
+    };
+    studentsRewardTab.onclick = function() {
+        studentsRewardTab.classList.add('active');
+        schoolRewardTab.classList.remove('active');
+        teacherRewardTab.classList.remove('active');
+        studentsRewardContent.style.display = '';
+        schoolRewardContent.style.display = 'none';
+        teacherRewardContent.style.display = 'none';
+    };
+    
+    // Statistics Tab switching logic
+    const schoolTab = document.getElementById('schoolTab');
+    const teacherTab = document.getElementById('teacherTab');
+    const studentsTab = document.getElementById('studentsTab');
+    const schoolContent = document.getElementById('schoolContent');
+    const teacherContent = document.getElementById('teacherContent');
+    const studentsContent = document.getElementById('studentsContent');
+
+    schoolTab.onclick = function() {
+        schoolTab.classList.add('active');
+        teacherTab.classList.remove('active');
+        studentsTab.classList.remove('active');
+        schoolContent.style.display = '';
+        teacherContent.style.display = 'none';
+        studentsContent.style.display = 'none';
+    };
+    teacherTab.onclick = function() {
+        teacherTab.classList.add('active');
+        schoolTab.classList.remove('active');
+        studentsTab.classList.remove('active');
+        teacherContent.style.display = '';
+        schoolContent.style.display = 'none';
+        studentsContent.style.display = 'none';
+    };
+    studentsTab.onclick = function() {
+        studentsTab.classList.add('active');
+        schoolTab.classList.remove('active');
+        teacherTab.classList.remove('active');
+        studentsContent.style.display = '';
+        schoolContent.style.display = 'none';
+        teacherContent.style.display = 'none';
+    };
+
+    // School Chart
+    new Chart(document.getElementById('schoolChart').getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels: ['Sekolah Menengah Sains Miri', 'SMK Bandar Kuching No.1', 'SMK Bintulu', 'SMK Sibu Jaya', 'Kolej Vokasional Matang'],
+            datasets: [
+                {
+                    label: 'Registered Students',
+                    backgroundColor: '#2196f3',
+                    data: [200, 180, 120, 150, 90]
+                },
+                {
+                    label: 'Active Monthly Users',
+                    backgroundColor: '#e53935',
+                    data: [80, 70, 50, 60, 30]
+                },
+                {
+                    label: 'Total Notes Upload',
+                    backgroundColor: '#43a047',
+                    data: [400, 600, 200, 300, 100]
+                },
+                {
+                    label: 'Notes Accessed',
+                    backgroundColor: '#ab47bc',
+                    data: [3000, 6500, 1800, 4000, 900]
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { stacked: true },
+                y: { stacked: true, beginAtZero: true }
+            }
+        }
+    });
+
+    // Teacher Chart
+    new Chart(document.getElementById('teacherChart').getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels: ['Mr. Azlan', 'Ms. Chong', 'Puan Siti', 'Mr. Lim', 'Encik Faiz', 'Ms. Tan', 'Mr. Rafiq', 'Cikgu Nor', 'Puan Halimah', 'Mr. Joseph'],
+            datasets: [
+                {
+                    label: 'Uploads (Notes)',
+                    backgroundColor: '#2196f3',
+                    data: [35, 22, 40, 38, 15, 32, 31, 12, 20, 18]
+                },
+                {
+                    label: 'Uploads (Activities)',
+                    backgroundColor: '#e53935',
+                    data: [10, 6, 13, 9, 18, 11, 13, 5, 7, 6]
+                },
+                {
+                    label: 'Uploads (Games)',
+                    backgroundColor: '#43a047',
+                    data: [3, 2, 5, 14, 14, 2, 2, 1, 1, 2]
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { stacked: true },
+                y: { stacked: true, beginAtZero: true }
+            }
+        }
+    });
+
+    // Students Chart
+    new Chart(document.getElementById('studentsChart').getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels: ['Ali', 'Siti', 'Faiz', 'Tan', 'Rafiq', 'Nor', 'Halimah', 'Joseph'],
+            datasets: [
+                {
+                    label: 'Games Played',
+                    backgroundColor: '#2196f3',
+                    data: [18, 20, 15, 17, 19, 12, 14, 13]
+                },
+                {
+                    label: 'Notes Accessed',
+                    backgroundColor: '#e53935',
+                    data: [10, 12, 8, 9, 11, 7, 8, 6]
+                },
+                {
+                    label: 'Achievements',
+                    backgroundColor: '#43a047',
+                    data: [5, 6, 4, 5, 6, 3, 4, 3]
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { stacked: true },
+                y: { stacked: true, beginAtZero: true }
+            }
+        }
+    });
+    </script>
+</body>
+</html>

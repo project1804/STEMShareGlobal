@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>STEMShare Parent</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            background: linear-gradient(90deg, #cfd9ff 0%, #e0c3fc 100%);
+            font-family: 'Segoe UI', Arial, sans-serif;
+            min-height: 100vh;
+        }
+        .parent-header {
+            background: linear-gradient(90deg, #b7b7ff 0%, #e0c3fc 100%);
+            padding: 18px 32px 18px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 2px solid #b7b7ff;
+            border-radius: 0 0 0 0;
+        }
+        .parent-title {
+            font-size: 2.3em;
+            font-weight: bold;
+            color: #222;
+            letter-spacing: 2px;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        .logout-btn {
+            background: #ff4444;
+            color: #fff;
+            border: none;
+            padding: 10px 28px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 1em;
+            cursor: pointer;
+            box-shadow: 0 2px 8px #0001;
+            transition: background 0.2s;
+            text-decoration: underline;
+        }
+        .logout-btn:hover {
+            background: #d32f2f;
+        }
+        .parent-main {
+            display: flex;
+            max-width: 1200px;
+            margin: 0 auto;
+            min-height: 600px;
+        }
+        .parent-sidebar {
+            background: linear-gradient(180deg, #e0c3fc 0%, #cfd9ff 100%);
+            border-radius: 0 0 0 0;
+            padding: 24px 16px;
+            width: 240px;
+            min-width: 220px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .parent-profile-img {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 12px;
+            border: 2px solid #b7b7ff;
+        }
+        .parent-name {
+            font-weight: bold;
+            margin-bottom: 2px;
+            font-size: 1.08em;
+        }
+        .parent-role {
+            font-size: 0.98em;
+            color: #222;
+            margin-bottom: 2px;
+        }
+        .parent-school {
+            font-size: 0.95em;
+            color: #555;
+            margin-bottom: 12px;
+            font-style: italic;
+        }
+        .parent-sidebar button, .parent-sidebar a {
+            display: block;
+            width: 100%;
+            margin: 8px 0;
+            padding: 10px 0;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-weight: bold;
+            color: #222;
+            text-decoration: none;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        .parent-announcement {
+            background: #f3e8ff;
+            border-left: 6px solid #b7b7ff;
+            padding: 10px 16px;
+            margin-top: 24px;
+            font-weight: bold;
+            border-radius: 8px;
+            width: 100%;
+        }
+        .announcement-title {
+            font-weight: bold;
+            font-size: 1.08em;
+            color: #222;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #b7b7ff;
+            padding-bottom: 4px;
+        }
+        .announcement-list {
+            max-height: 120px;
+            overflow-y: auto;
+            font-size: 0.97em;
+        }
+        .announcement-list .announcement-item {
+            margin-bottom: 10px;
+            background: #fff;
+            border-radius: 6px;
+            padding: 6px 8px;
+            box-shadow: 0 1px 2px #0001;
+        }
+        .announcement-list .announcement-item b {
+            color: #b7b7ff;
+            font-size: 0.98em;
+        }
+        .announcement-list .announcement-item .small {
+            font-size: 0.93em;
+            color: #555;
+        }
+        .parent-content {
+            flex: 1;
+            padding: 32px 32px 0 32px;
+        }
+        .parent-tabs {
+            display: flex;
+            gap: 0;
+            margin-bottom: 18px;
+            background: #f3e8ff;
+            border-radius: 12px 12px 0 0;
+            overflow: hidden;
+        }
+        .parent-tab {
+            flex: 1;
+            background: #e0e0e0;
+            border: none;
+            padding: 16px 0;
+            font-weight: bold;
+            font-size: 1.15em;
+            border-radius: 0;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .parent-tab.active {
+            background: #fff;
+            border-bottom: 3px solid #b7b7ff;
+        }
+        .parent-welcome-card {
+            background: linear-gradient(90deg, #6a8dff 0%, #e0c3fc 100%);
+            border-radius: 24px;
+            padding: 38px 32px;
+            color: #222;
+            font-size: 2em;
+            display: flex;
+            align-items: center;
+            gap: 38px;
+            margin-bottom: 24px;
+        }
+        .parent-welcome-card img {
+            width: 180px;
+            height: auto;
+            border-radius: 0;
+        }
+        @media (max-width: 900px) {
+            .parent-main {
+                flex-direction: column;
+            }
+            .parent-sidebar {
+                width: 100%;
+                min-width: unset;
+                flex-direction: row;
+                justify-content: flex-start;
+                align-items: flex-start;
+                gap: 24px;
+            }
+            .parent-content {
+                padding: 24px 8px 0 8px;
+            }
+            .parent-welcome-card {
+                flex-direction: column;
+                gap: 18px;
+                font-size: 1.3em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="parent-header">
+        <span class="parent-title">STEMShare Parent</span>
+        <button class="logout-btn" onclick="window.location.href='index.html'">Log Out</button>
+    </div>
+    <div class="parent-main">
+        <div class="parent-sidebar">
+            <img src="https://img.icons8.com/color/96/user-male-circle.png" alt="Profile" class="parent-profile-img">
+            <div class="parent-name">Welcome Ahmad Bin Kasim</div>
+            <div class="parent-role">Parent/Guardian of Ali Bin Ahmad</div>
+            <div class="parent-school">SMK Kapit</div>
+            <a href="#">My Profile</a>
+            <a href="index.html">Back to Homepage</a>
+            <div class="parent-announcement">
+                <div class="announcement-title">Announcement</div>
+                <div class="announcement-list">
+                    <div class="announcement-item">
+                        <span class="small"><b>Congratulations</b> Ali Bin Ahmad has achieved Majestic User</span>
+                    </div>
+                    <div class="announcement-item">
+                        <span class="small"><b>🗓️ Midterm Exam Schedule Released</b><br>
+                        The Midterm Exam schedule has been uploaded to the Academic Calendar section.<br>
+                        Please check your child's subject slots and report any clashes to the Academic Office by Friday, July 26.
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="parent-content">
+            <div class="parent-tabs">
+                <button class="parent-tab active" id="performanceTab">View Performance</button>
+                <button class="parent-tab" id="reportTab">Feedback</button>
+            </div>
+            <div id="performanceContent">
+                <div class="parent-performance-card" style="background: linear-gradient(90deg, #6a8dff 0%, #e0c3fc 100%); border-radius: 24px; padding: 38px 32px; color: #222; font-size: 1.2em; display: flex; align-items: flex-start; gap: 38px; margin-bottom: 24px;">
+                    <div style="flex:2;">
+                        <div style="font-size:2em; font-weight:bold; margin-bottom:8px;">Ali Bin Ahmad</div>
+                        <div style="font-size:1.1em; margin-bottom:18px;">Level : Basic</div>
+                        <div style="font-size:1.08em; margin-bottom:8px;">Time Spent : <b>37 hours</b></div>
+                        <div style="font-size:1.08em; margin-bottom:8px;">Game Played : <b>14/20</b></div>
+                        <div style="font-size:1.08em; margin-bottom:8px;">Notes accessed : <b>10</b></div>
+                        <div style="font-size:1.08em; margin-top:18px; font-weight:bold; color:#222;">Overall Performance : <span style="color:#388e3c;">Excellent</span></div>
+                    </div>
+                    <div style="flex:1;">
+                        <div style="font-size:1.3em; font-weight:bold; margin-bottom:12px;">Subject</div>
+                        <select id="subjectSelect" style="width:100%; font-size:1.08em; padding:10px 12px; border-radius:8px; border:1.5px solid #b7b7ff; background:#fff; margin-bottom:12px;">
+                            <option selected disabled>-Select type-</option>
+                            <option>Science</option>
+                            <option>Math</option>
+                        </select>
+                        <div id="subjectStats" style="margin-top:12px; font-size:1.08em; color:#222;"></div>
+                    </div>
+                </div>
+            </div>
+            <div id="reportContent" style="display:none;">
+                <div class="parent-feedback-card" style="background: linear-gradient(90deg, #6a8dff 0%, #e0c3fc 100%); border-radius: 24px; padding: 38px 32px; color: #222; font-size: 1.2em; display: flex; align-items: center; gap: 38px; margin-bottom: 24px;">
+                    <div style="flex:1;">
+                        <div style="font-size:2em; font-weight:bold; margin-bottom:12px;">In case of any problem,<br>you may submit any feedback to reach the teacher.</div>
+                        <div style="font-size:1.1em;">&nbsp;</div>
+                    </div>
+                    <img src="https://img.icons8.com/color/250/family.png" alt="Parent Illustration" style="width:180px; height:auto; border-radius:0;">
+                </div>
+                <form id="feedbackForm" style="background: linear-gradient(90deg, #6a8dff 0%, #e0c3fc 100%); border-radius: 12px; padding: 18px 18px 12px 18px; margin-bottom: 24px; box-shadow: 0 2px 8px #0001;">
+                    <div style="display:flex; gap:18px; margin-bottom:12px;">
+                        <div style="flex:1; display:flex; flex-direction:column;">
+                            <label for="feedbackTitle" style="font-weight:bold; margin-bottom:4px;">Title</label>
+                            <input type="text" id="feedbackTitle" name="feedbackTitle" style="padding:8px 12px; border-radius:6px; border:1.5px solid #b7b7ff; font-size:1em;">
+                        </div>
+                        <div style="flex:1; display:flex; flex-direction:column;">
+                            <label for="teacherName" style="font-weight:bold; margin-bottom:4px;">Teacher Name</label>
+                            <input type="text" id="teacherName" name="teacherName" style="padding:8px 12px; border-radius:6px; border:1.5px solid #b7b7ff; font-size:1em;">
+                        </div>
+                    </div>
+                    <textarea rows="7" style="width:100%; border-radius:6px; border:1.5px solid #b7b7ff; font-size:1em; padding:10px 12px; margin-bottom:12px;">Dear Teacher John,
+I hope this message finds you well. I am writing to express a concern regarding my son, Ali, in your Science class. He has shared with me that they are having difficulty understanding the lessons, feel they are not getting enough support, or experienced something upsetting in class.
+
+I understand that managing a classroom can be challenging, and I truly appreciate your dedication. However, I would like to request a brief meeting or discussion to better understand the situation and find a way to support Ali more effectively.
+Thank you for your time and attention. I look forward to working together to ensure the best learning experience for my child.
+
+Warm regards,
+Ahmad Bin Abu</textarea>
+                    <div style="text-align:center;">
+                        <button type="submit" style="background: linear-gradient(90deg, #cfd9ff 0%, #e0c3fc 100%); color:#222; border:none; border-radius:8px; padding:12px 38px; font-weight:bold; font-size:1.08em; box-shadow:0 2px 8px #0001; cursor:pointer; transition:background 0.2s;">SUBMIT</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+const performanceTab = document.getElementById('performanceTab');
+const reportTab = document.getElementById('reportTab');
+const performanceContent = document.getElementById('performanceContent');
+const reportContent = document.getElementById('reportContent');
+const subjectSelect = document.getElementById('subjectSelect');
+const subjectStats = document.getElementById('subjectStats');
+
+performanceTab.onclick = function() {
+    performanceTab.classList.add('active');
+    reportTab.classList.remove('active');
+    performanceContent.style.display = '';
+    reportContent.style.display = 'none';
+};
+reportTab.onclick = function() {
+    reportTab.classList.add('active');
+    performanceTab.classList.remove('active');
+    performanceContent.style.display = 'none';
+    reportContent.style.display = '';
+};
+
+subjectSelect.onchange = function() {
+    if (subjectSelect.value === 'Science') {
+        subjectStats.innerHTML = '<b>Science:</b> <br>Score: 92/100<br>Notes accessed: 6<br>Games played: 8/10';
+    } else if (subjectSelect.value === 'Math') {
+        subjectStats.innerHTML = '<b>Math:</b> <br>Score: 88/100<br>Notes accessed: 4<br>Games played: 6/10';
+    } else {
+        subjectStats.innerHTML = '';
+    }
+};
+
+document.getElementById('feedbackForm').onsubmit = function(e) {
+    e.preventDefault();
+    alert('Feedback submitted!');
+    // You can add AJAX or Firebase logic here
+};
+</script>
+</html>

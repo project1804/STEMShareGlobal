@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Science Quiz</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #42a5f5;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .quiz-container {
+      background-color: white;
+      border-radius: 20px;
+      padding: 30px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+      text-align: center;
+    }
+
+    .quiz-header {
+      font-size: 36px;
+      font-weight: bold;
+      color: #212121;
+    }
+
+    .question-text {
+      font-size: 20px;
+      color: #555;
+      margin: 20px 0;
+    }
+
+    .option-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .option {
+      background-color: #fff;
+      border: 2px solid #90caf9;
+      padding: 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+    .option:hover {
+      background-color: #e3f2fd;
+    }
+
+    #progress {
+      margin-top: 15px;
+      font-size: 14px;
+      color: #333;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    button {
+      background-color: #1976d2;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 16px;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #1565c0;
+    }
+
+    input[type="text"] {
+      width: 80%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+
+    #scoreboard ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    #scoreboard li {
+      text-align: left;
+      padding: 5px 0;
+    }
+  </style>
+</head>
+<body>
+
+<div class="quiz-container">
+  <div id="nameBox">
+    <h2 class="quiz-header">Science Quiz</h2>
+    <input type="text" id="studentName" placeholder="Enter your name..." />
+    <br>
+    <button onclick="startQuiz()">Start Quiz</button>
+  </div>
+
+  <div id="quizBox" class="hidden">
+    <div class="question-text" id="questionText"></div>
+    <div class="option-grid" id="options"></div>
+    <div id="progress"></div>
+  </div>
+
+  <div id="endScreen" class="hidden">
+    <h3 id="result"></h3>
+    <div id="scoreboard">
+      <h3>🏆 Previous Player Scores:</h3>
+      <ul id="playerList"></ul>
+    </div>
+    <button onclick="restart()">Play Again</button>
+  </div>
+</div>
+
+<script>
+  const questions = [
+    {
+      question: "What is the chemical symbol for water?",
+      options: ["H2O", "O2", "CO2", "NaCl"],
+      answer: "H2O"
+    },
+    {
+      question: "Which planet is known as the Red Planet?",
+      options: ["Venus", "Mars", "Jupiter", "Mercury"],
+      answer: "Mars"
+    },
+    {
+      question: "What gas do plants absorb from the atmosphere?",
+      options: ["Oxygen", "Carbon Dioxide", "Nitrogen", "Hydrogen"],
+      answer: "Carbon Dioxide"
+    },
+    {
+      question: "What part of the cell contains the genetic material (DNA)?",
+      options: ["Ribosome", "Nucleus", "Mitochondria", "Cytoplasm"],
+      answer: "Nucleus"
+    },
+    {
+      question: "What force keeps planets in orbit around the sun?",
+      options: ["Magnetism", "Electricity", "Friction", "Gravity"],
+      answer: "Gravity"
+    },
+    {
+      question: "Which organ is responsible for pumping blood throughout the body?",
+      options: ["Liver", "Brain", "Heart", "Lungs"],
+      answer: "Heart"
+    }
+  ];
+
+  const QUIZ_KEY = "science_quiz_scores";
+
+  let currentIndex = 0;
+  let score = 0;
+  let studentName = "";
+
+  function startQuiz() {
+    const nameInput = document.getElementById("studentName").value.trim();
+    if (nameInput === "") {
+      alert("Please enter your name.");
+      return;
+    }
+    studentName = nameInput;
+    document.getElementById("nameBox").classList.add("hidden");
+    document.getElementById("quizBox").classList.remove("hidden");
+    showQuestion();
+  }
+
+  function showQuestion() {
+    const q = questions[currentIndex];
+    document.getElementById("questionText").innerHTML = q.question;
+    const optionsBox = document.getElementById("options");
+    optionsBox.innerHTML = "";
+    q.options.forEach((option, index) => {
+      const btn = document.createElement("div");
+      const label = String.fromCharCode(65 + index); // A, B, C, D
+      btn.className = "option";
+      btn.innerText = `${label}: ${option}`;
+      btn.onclick = () => checkAnswer(option);
+      optionsBox.appendChild(btn);
+    });
+    document.getElementById("progress").innerText = `Question ${currentIndex + 1} of ${questions.length}`;
+  }
+
+  function checkAnswer(selected) {
+    if (selected === questions[currentIndex].answer) {
+      score++;
+    }
+    currentIndex++;
+    if (currentIndex < questions.length) {
+      showQuestion();
+    } else {
+      endQuiz();
+    }
+  }
+
+  function endQuiz() {
+    document.getElementById("quizBox").classList.add("hidden");
+    document.getElementById("endScreen").classList.remove("hidden");
+    document.getElementById("result").innerText = `🎉 ${studentName}, your score is ${score}/${questions.length}`;
+
+    saveScore(studentName, score);
+    showAllScores();
+  }
+
+  function saveScore(name, score) {
+    let scores = JSON.parse(localStorage.getItem(QUIZ_KEY)) || {};
+    scores[name] = score;
+    localStorage.setItem(QUIZ_KEY, JSON.stringify(scores));
+  }
+
+  function showAllScores() {
+    const scoreList = document.getElementById("playerList");
+    scoreList.innerHTML = "";
+    const scores = JSON.parse(localStorage.getItem(QUIZ_KEY)) || {};
+    for (const [name, score] of Object.entries(scores)) {
+      const li = document.createElement("li");
+      li.innerText = `${name}: ${score} / ${questions.length}`;
+      scoreList.appendChild(li);
+    }
+  }
+
+  function restart() {
+    currentIndex = 0;
+    score = 0;
+    studentName = "";
+    document.getElementById("studentName").value = "";
+    document.getElementById("endScreen").classList.add("hidden");
+    document.getElementById("nameBox").classList.remove("hidden");
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>STEMShare Teacher</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Firebase App (the core Firebase SDK) -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+</head>
+<body>
+    <div class="teacher-header">
+        <span class="teacher-title">STEMShare Teacher</span>
+        <button class="logout-btn" onclick="window.location.href='index.html'">Log Out</button>
+    </div>
+    <div class="teacher-main">
+        <nav class="teacher-sidebar">
+            <ul>
+                <li><a href="#">Teacher Profile</a></li>
+                <li><a href="#">Student Performance</a></li>
+                <li><a href="#">View Achievements</a></li>
+                <li><a href="index.html">Back to Homepage</a></li>
+            </ul>
+        </nav>
+        <div class="teacher-content-card">
+            <div class="teacher-tabs">
+                <button class="teacher-tab active" id="uploadNotesTab">Upload Resources</button>
+                <button class="teacher-tab" id="uploadGamesTab">Upload Games</button>
+                <button class="teacher-tab" id="uploadActivitiesTab">Upload Activities</button>
+            </div>
+            <div style="padding:36px 40px 0 40px;">
+                <div style="background:linear-gradient(90deg,#ffe066 60%,#baff80 100%);border-radius:14px;padding:24px 28px;margin-bottom:18px;box-shadow:0 2px 8px #0001;">
+                    <div class="teacher-welcome-text" style="font-size:2em; font-weight:bold; color:#222; line-height:1.2;">
+                        Welcome to the teacher’s page.<br>
+                        <span style="font-size:1.15em; font-weight:normal; color:#444;">You may upload <span style="color:#ff9800;font-weight:bold;">notes</span>, <span style="color:#3ec6ff;font-weight:bold;">games</span> and <span style="color:#43a047;font-weight:bold;">activities</span>.</span>
+                    </div>
+                </div>
+            </div>
+            <div id="uploadNotesContent" style="padding:32px 40px;">
+                <div style="max-width:480px;margin:0 auto;">
+                    <div style="margin-bottom:24px;">
+                        <label for="noteYear" style="font-weight:bold; color:#222; font-size:1.08em; margin-bottom:8px; display:block;">Select Year</label>
+                        <select id="noteYear" style="width:100%; font-size:1.1em; padding:10px 12px; border-radius:8px; border:1.5px solid #ffb347; margin-bottom:10px;">
+                            <option value="" disabled selected>- Select Year -</option>
+                            <option value="primary1">Primary Year 1</option>
+                            <option value="primary2">Primary Year 2</option>
+                            <option value="primary3">Primary Year 3</option>
+                            <option value="primary4">Primary Year 4</option>
+                            <option value="primary5">Primary Year 5</option>
+                            <option value="primary6">Primary Year 6</option>
+                        </select>
+                    </div>
+                    <div style="margin-bottom:18px;">
+                        <label for="noteFileName" style="font-weight:bold; color:#222; font-size:1.08em; margin-bottom:8px; display:block;">File Name</label>
+                        <input type="text" id="noteFileName" placeholder="Enter file name (e.g. Photosynthesis_Chapter1)" style="width:100%; font-size:1.1em; padding:10px 12px; border-radius:8px; border:1.5px solid #ffb347;">
+                    </div>
+                    <div id="dropZone" style="background:#f8f8f8; border:2px dashed #baff80; border-radius:16px; padding:40px 24px; text-align:center; transition:border-color 0.2s;">
+                        <img src="upload-illustration.png" alt="Upload" style="height:70px; margin-bottom:16px;">
+                        <div style="font-size:1.2em; font-weight:bold; color:#222;">Drag &amp; drop your note file here</div>
+                        <div style="margin:10px 0 18px 0; color:#888;">or</div>
+                        <label style="display:inline-block; background:#baff80; color:#222; font-weight:bold; border-radius:8px; padding:10px 32px; cursor:pointer;">
+                            Select File
+                            <input type="file" id="fileInput" style="display:none;">
+                        </label>
+                        <div id="fileName" style="margin-top:14px; color:#444; font-size:1em;"></div>
+                    </div>
+                    <button id="uploadBtn" style="margin-top:28px; background:#222; color:#fff; border:none; border-radius:8px; padding:12px 32px; font-weight:bold; font-size:1.1em; width:100%;">Upload</button>
+                </div>
+                <div style="margin-top:40px;">
+                    <div style="font-weight:bold; font-size:1.15em; color:#222; margin-bottom:12px;">Recent Note Uploads</div>
+                    <div id="recentNotesList" style="display:flex; flex-direction:column; gap:12px;">
+                        <!-- Recent uploads will appear here -->
+                    </div>
+                </div>
+            </div>
+            <div id="uploadGamesContent" style="display:none; padding:32px 40px;">
+                <div style="max-width:520px;margin:0 auto;">
+                    <!-- Add Game Name input here -->
+                    <div style="margin-bottom:24px;">
+                        <label for="gameName" style="font-weight:bold; color:#222; font-size:1.08em; margin-bottom:8px; display:block;">Game Name</label>
+                        <input type="text" id="gameName" placeholder="Enter game name (e.g. Solar System Quiz)" style="width:100%; font-size:1.1em; padding:10px 12px; border-radius:8px; border:1.5px solid #3ec6ff;">
+                    </div>
+                    <div style="margin-bottom:24px;">
+                        <label for="gameType" style="font-weight:bold; color:#222; font-size:1.08em; margin-bottom:8px; display:block;">Choose Type of Game</label>
+                        <select id="gameType" style="width:100%; font-size:1.1em; padding:10px 12px; border-radius:8px; border:1.5px solid #3ec6ff; margin-bottom:16px;">
+                            <option value="" disabled selected>- Select Game Type -</option>
+                            <option value="quiz">Quiz</option>
+                            <option value="flashcard">Flashcard</option>
+                            <option value="puzzle">Puzzle Game</option>
+                            <option value="memory">Memory Card</option>
+                        </select>
+                    </div>
+                    <div style="margin-bottom:24px;">
+                        <label for="gameCategory" style="font-weight:bold; color:#222; font-size:1.08em; margin-bottom:8px; display:block;">STEM Category</label>
+                        <div id="gameCategory" style="display:flex; gap:12px; flex-wrap:wrap;">
+                            <label class="stem-category-label" style="flex:1; min-width:100px; background:#e3f7ff; border:2px solid #3ec6ff; border-radius:8px; padding:10px 0; text-align:center; cursor:pointer; font-weight:bold; color:#222;">
+                                <input type="radio" name="stemCategory" value="Science" style="display:none;">
+                                <span>Science</span>
+                            </label>
+                            <label class="stem-category-label" style="flex:1; min-width:100px; background:#fffbe6; border:2px solid #ffe066; border-radius:8px; padding:10px 0; text-align:center; cursor:pointer; font-weight:bold; color:#222;">
+                                <input type="radio" name="stemCategory" value="Technology" style="display:none;">
+                                <span>Technology</span>
+                            </label>
+                            <label class="stem-category-label" style="flex:1; min-width:100px; background:#e6ffe6; border:2px solid #43a047; border-radius:8px; padding:10px 0; text-align:center; cursor:pointer; font-weight:bold; color:#222;">
+                                <input type="radio" name="stemCategory" value="Engineering" style="display:none;">
+                                <span>Engineering</span>
+                            </label>
+                            <label class="stem-category-label" style="flex:1; min-width:100px; background:#ffe6f7; border:2px solid #ff80bf; border-radius:8px; padding:10px 0; text-align:center; cursor:pointer; font-weight:bold; color:#222;">
+                                <input type="radio" name="stemCategory" value="Mathematics" style="display:none;">
+                                <span>Mathematics</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div style="background:#f8f8f8; border:2px dashed #3ec6ff; border-radius:16px; padding:40px 24px; text-align:center; transition:border-color 0.2s;">
+                        <img src="game-upload.png" alt="Upload Game" style="height:70px; margin-bottom:16px;">
+                        <div style="font-size:1.2em; font-weight:bold; color:#222;">Drag &amp; drop your game file here</div>
+                        <div style="margin:10px 0 18px 0; color:#888;">or</div>
+                        <label style="display:inline-block; background:#3ec6ff; color:#fff; font-weight:bold; border-radius:8px; padding:10px 32px; cursor:pointer;">
+                            Select Game File
+                            <input type="file" id="gameFileInput" style="display:none;">
+                        </label>
+                        <div id="gameFileName" style="margin-top:14px; color:#444; font-size:1em;"></div>
+                    </div>
+                    <div style="margin-top:24px; background:#e3f7ff; border-radius:12px; padding:18px 16px; color:#222; font-size:1.08em;">
+                        <b>Game Upload Guidelines:</b>
+                        <ul style="margin:10px 0 0 18px; padding:0; color:#444; font-size:0.98em;">
+                            <li>Accepted formats: .zip, .exe, .html, .apk</li>
+                            <li>Max file size: 100MB</li>
+                            <li>Include a short description and instructions in a text file</li>
+                        </ul>
+                    </div>
+                    <button id="uploadGameBtn" style="margin-top:28px; background:#3ec6ff; color:#fff; border:none; border-radius:8px; padding:12px 32px; font-weight:bold; font-size:1.1em; width:100%;">Upload Game</button>
+                </div>
+                <div style="margin-top:40px;">
+                    <div style="font-weight:bold; font-size:1.15em; color:#222; margin-bottom:12px;">Recent Game Uploads</div>
+                    <div id="recentGamesList" style="display:flex; flex-direction:column; gap:12px;">
+                        <!-- Recent uploads will appear here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="loadingOverlay" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:9999;background:rgba(255,255,255,0.7);align-items:center;justify-content:center;">
+        <div style="background:#fff;padding:32px 40px;border-radius:16px;box-shadow:0 2px 12px #0002;display:flex;flex-direction:column;align-items:center;">
+            <div class="loader" style="border:6px solid #eee;border-top:6px solid #3ec6ff;border-radius:50%;width:48px;height:48px;animation:spin 1s linear infinite;margin-bottom:18px;"></div>
+            <div style="font-size:1.15em;color:#222;font-weight:bold;">Uploading, please wait...</div>
+        </div>
+    </div>
+    <script src="teacher.js"></script>
+</body>
+</html>

@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AR Scanner - STEMShare</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .scanner-container {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px 32px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+        }
+        
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(116, 185, 255, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .back-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(116, 185, 255, 0.6);
+        }
+        
+        .scanner-title {
+            color: #2c3e50;
+            font-size: 2em;
+            font-weight: 700;
+            margin-bottom: 16px;
+            margin-top: 20px;
+        }
+        
+        .scanner-subtitle {
+            color: #636e72;
+            font-size: 1.1em;
+            line-height: 1.5;
+            margin-bottom: 32px;
+        }
+        
+        .qr-code-container {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            margin: 24px auto;
+            width: fit-content;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .qr-code-image {
+            width: 200px;
+            height: 200px;
+            border-radius: 16px;
+            border: 3px solid #667eea;
+            box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+            object-fit: contain;
+            display: block;
+            margin: 0 auto 16px auto;
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 0.9em;
+            color: #00b894;
+            margin-top: 8px;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #00b894;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        
+        .instructions {
+            background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            font-weight: 600;
+            line-height: 1.6;
+            box-shadow: 0 4px 16px rgba(0, 184, 148, 0.3);
+        }
+        
+        .instructions-title {
+            font-size: 1.2em;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .steps {
+            text-align: left;
+            font-size: 0.95em;
+            margin: 0 auto;
+            max-width: 400px;
+        }
+        
+        .steps li {
+            margin-bottom: 8px;
+            padding-left: 8px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #fdcb6e 0%, #e17055 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(253, 203, 110, 0.4);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(253, 203, 110, 0.6);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(162, 155, 254, 0.4);
+        }
+        
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(162, 155, 254, 0.6);
+        }
+        
+        .scanning-animation {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .scanning-animation::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.3), transparent);
+            animation: scan 2s infinite;
+        }
+        
+        @keyframes scan {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        @media (max-width: 768px) {
+            .scanner-container {
+                padding: 32px 24px;
+                margin: 16px;
+            }
+            
+            .scanner-title {
+                font-size: 1.6em;
+            }
+            
+            .qr-code-image {
+                width: 160px;
+                height: 160px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .steps {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="scanner-container">
+        <button class="back-btn" onclick="window.location.href='student.html'" title="Back to Student Dashboard">
+            ←
+        </button>
+        
+        <div class="scanner-title">🚀 AR Scanner Ready</div>
+        <div class="scanner-subtitle">
+            Point your device camera at the QR code below to start the interactive AR experience
+        </div>
+        
+        <div class="qr-code-container scanning-animation">
+            <img src="frame.png" alt="AR Experience QR Code" class="qr-code-image">
+            <div class="status-indicator">
+                <div class="status-dot"></div>
+                Ready to scan
+            </div>
+        </div>
+        
+        <div class="instructions">
+            <div class="instructions-title">
+                📱 How to Use AR Scanner
+            </div>
+            <ol class="steps">
+                <li>Open your device's camera app</li>
+                <li>Point the camera at the QR code above</li>
+                <li>Tap the notification that appears</li>
+                <li>Allow camera permissions if prompted</li>
+                <li>Place the roster and tap to make it move and produce sound</li>
+                <li>Enjoy the interactive AR experience!</li>
+            </ol>
+        </div>
+        
+        <div class="action-buttons">
+            <button class="btn btn-primary" onclick="downloadQR()">
+                📥 Download QR Code
+            </button>
+            <a href="student.html" class="btn btn-secondary">
+                🔙 Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+    <script>
+        function downloadQR() {
+            const link = document.createElement('a');
+            link.href = 'frame.png';
+            link.download = 'stemshare-ar-qr-code.png';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showMessage('QR Code downloaded successfully!');
+        }
+        
+        function showMessage(text) {
+            const messageDiv = document.createElement('div');
+            messageDiv.textContent = text;
+            messageDiv.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+                color: white;
+                padding: 12px 20px;
+                border-radius: 8px;
+                font-weight: 600;
+                box-shadow: 0 4px 16px rgba(0, 184, 148, 0.3);
+                z-index: 1000;
+                animation: slideIn 0.3s ease-out;
+            `;
+            
+            document.body.appendChild(messageDiv);
+            
+            setTimeout(() => {
+                messageDiv.style.animation = 'slideOut 0.3s ease-in';
+                setTimeout(() => {
+                    if (document.body.contains(messageDiv)) {
+                        document.body.removeChild(messageDiv);
+                    }
+                }, 300);
+            }, 3000);
+        }
+        
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

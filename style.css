@@ -1,0 +1,254 @@
+body {
+    background: #baff80;
+    font-family: Arial, sans-serif;
+}
+.container {
+    width: 400px;
+    margin: 40px auto;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+    padding: 32px 24px;
+    text-align: center;
+}
+.logo {
+    width: 120px;
+    margin-bottom: 8px;
+}
+.illustration img {
+    width: 180px;
+    margin-bottom: 12px;
+}
+h1 {
+    margin: 0 0 8px 0;
+    font-size: 2.2em;
+    font-weight: bold;
+}
+.highlight {
+    background: #baff9c;
+    padding: 0 8px;
+    border-radius: 6px;
+}
+.subtitle {
+    font-size: 1em;
+    margin-bottom: 24px;
+    color: #222;
+}
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+input[type="text"], input[type="password"] {
+    padding: 10px;
+    border: 2px solid #b2b2b2;
+    border-radius: 24px;
+    font-size: 1em;
+    outline: none;
+}
+button.login {
+    background: #baff9c;
+    color: #222;
+    border: none;
+    border-radius: 24px;
+    padding: 10px 0;
+    font-size: 1em;
+    font-weight: bold;
+    cursor: pointer;
+    margin-bottom: 4px;
+    transition: background 0.2s;
+}
+button.login:hover {
+    background: #a0e87a;
+}
+button.register {
+    background: #d4ffb2;
+    color: #222;
+    border: none;
+    border-radius: 24px;
+    padding: 10px 0;
+    font-size: 1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+button.register:hover {
+    background: #baff9c;
+}
+.teacher-header {
+    background: #baff80;
+    padding: 20px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 0 0 0 0;
+    box-shadow: none;
+}
+.teacher-title {
+    font-size: 2.5em;
+    font-weight: bold;
+    color: #222;
+    background: #fff;
+    padding: 0 18px;
+    border-radius: 0;
+    box-shadow: none;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    display: inline-block;
+}
+.logout-btn {
+    background: #ffe066;
+    color: #222;
+    border: none;
+    padding: 10px 28px;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 1.1em;
+    cursor: pointer;
+    box-shadow: 0 1px 4px #0001;
+}
+.teacher-main {
+    display: flex;
+    margin: 0 auto;
+    max-width: 950px;
+    gap: 0;
+    background: #fff;
+    border-radius: 0 0 16px 16px;
+    box-shadow: 0 2px 8px #0002;
+    min-height: 520px;
+}
+.teacher-sidebar {
+    background: #fff;
+    border-radius: 0;
+    padding: 0;
+    width: 210px;
+    min-width: 180px;
+    border-right: 2px solid #e0e0e0;
+    margin-right: 0;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+.teacher-sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
+.teacher-sidebar li {
+    margin: 0;
+}
+.teacher-sidebar a {
+    display: block;
+    padding: 16px 18px;
+    color: #222;
+    text-decoration: none;
+    font-weight: bold;
+    border-bottom: 1px solid #eee;
+    border-radius: 0;
+    margin: 0;
+    transition: background 0.2s;
+    background: #fff;
+}
+.teacher-sidebar a:last-child {
+    border-bottom: none;
+}
+.teacher-sidebar a:hover {
+    background: #f0f0f0;
+}
+.teacher-content-card {
+    flex: 1;
+    background: #fff;
+    border-radius: 0 0 16px 0;
+    min-height: 420px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+.teacher-tabs {
+    display: flex;
+    border-bottom: 2px solid #ccc;
+    background: #f8f8f8;
+    border-radius: 0;
+    padding: 0;
+}
+.teacher-tab {
+    flex: 1;
+    background: #eee;
+    border: none;
+    padding: 18px 0;
+    font-weight: bold;
+    font-size: 1.1em;
+    border-radius: 0;
+    cursor: pointer;
+    margin-bottom: -2px;
+    transition: background 0.2s;
+    border-right: 1px solid #ccc;
+}
+.teacher-tab:last-child {
+    border-right: none;
+}
+.teacher-tab.active {
+    background: #fff;
+    border-bottom: 3px solid #222;
+}
+.teacher-welcome {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    padding: 48px 40px 24px 40px;
+}
+.teacher-welcome-text {
+    font-size: 2em;
+    font-weight: bold;
+    color: #222;
+    line-height: 1.2;
+}
+.teacher-welcome-sub {
+    font-size: 1.15em;
+    color: #222;
+    margin-top: 12px;
+    font-weight: normal;
+}
+.teacher-welcome-img {
+    height: 180px;
+    width: auto;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+    padding: 0;
+}
+.stem-category-label {
+    flex: 1;
+    min-width: 100px;
+    background: #e3f7ff;
+    border: 2px solid #3ec6ff;
+    border-radius: 8px;
+    padding: 10px 0;
+    text-align: center;
+    cursor: pointer;
+    font-weight: bold;
+    color: #222;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+.stem-category-label input[type="radio"] {
+    display: none;
+}
+.stem-category-label.selected {
+    outline: 3px solid #222;
+    box-shadow: 0 0 0 2px #3ec6ff33;
+    background: #d0f0ff !important;
+}
+@keyframes spin {
+    0% { transform: rotate(0deg);}
+    100% { transform: rotate(360deg);}
+}
+@media (max-width: 900px) {
+    .teacher-main { flex-direction: column; gap: 18px; }
+    .teacher-sidebar, .teacher-content-card { border-radius: 16px; }
+    .teacher-welcome { flex-direction: column; gap: 18px; padding: 32px 12px 18px 12px; }
+}

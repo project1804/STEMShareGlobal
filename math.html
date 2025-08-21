@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Math Maze Game</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #74ebd5, #acb6e5);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    #maze {
+      display: grid;
+      grid-template-columns: repeat(10, 40px);
+      grid-template-rows: repeat(10, 40px);
+      gap: 2px;
+      margin-bottom: 20px;
+    }
+
+    .cell {
+      width: 40px;
+      height: 40px;
+      background: white;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .wall {
+      background: #333;
+    }
+
+    .player {
+      background: #4CAF50;
+      color: white;
+    }
+
+    .answer {
+      background: #FFD700;
+      color: #222;
+    }
+
+    #questionBox {
+      background: white;
+      padding: 10px 15px;
+      border-radius: 8px;
+      margin: 15px 0;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    input[type="text"] {
+      padding: 5px;
+      width: 200px;
+      margin-right: 10px;
+    }
+
+    button {
+      padding: 6px 12px;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #388E3C;
+    }
+
+    #scoreboard {
+      margin-top: 20px;
+      background: #fff;
+      padding: 10px;
+      border-radius: 8px;
+      max-width: 300px;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+
+<h1>🔢 Math Maze Quiz</h1>
+<div>
+  <input type="text" id="playerName" placeholder="Enter your name">
+  <button onclick="startGame()">Start Game</button>
+</div>
+
+<div id="questionBox">
+  <strong id="questionText">Press "Start Game" to begin!</strong><br>
+  <span id="roundInfo"></span>
+</div>
+
+<div id="maze"></div>
+
+<div id="scoreboard">
+  <h3>🏆 Scores</h3>
+  <ul id="scoreList"></ul>
+</div>
+
+<script>
+  const mazeLayoutTemplate = [
+    "##########",
+    "#   #    #",
+    "# # # ## #",
+    "# #    # #",
+    "# #### # #",
+    "#      # #",
+    "######   #",
+    "#   # ## #",
+    "# #      #",
+    "#P########"
+  ];
+
+  const answerSpots = [
+    { x: 1, y: 1 },
+    { x: 8, y: 1 },
+    { x: 2, y: 5 }
+  ]; // these are dead ends
+
+  const maze = document.getElementById("maze");
+  const questionText = document.getElementById("questionText");
+  const roundInfo = document.getElementById("roundInfo");
+  const scoreList = document.getElementById("scoreList");
+
+  let mazeLayout = [];
+  let playerPos = { x: 1, y: 9 };
+  let playerName = "";
+  let round = 0;
+  let totalRounds = 5;
+  let score = 0;
+  let correctAnswer = 0;
+  let currentOptions = [];
+
+  function generateMathQuestion() {
+    const a = Math.floor(Math.random() * 10 + 1);
+    const b = Math.floor(Math.random() * 10 + 1);
+    const op = ["+", "-", "×"][Math.floor(Math.random() * 3)];
+    let question, answer;
+
+    switch (op) {
+      case "+": question = `${a} + ${b}`; answer = a + b; break;
+      case "-": question = `${a} - ${b}`; answer = a - b; break;
+      case "×": question = `${a} × ${b}`; answer = a * b; break;
+    }
+
+    let options = [answer];
+    while (options.length < 3) {
+      let wrong = answer + Math.floor(Math.random() * 10 - 5);
+      if (!options.includes(wrong)) options.push(wrong);
+    }
+
+    options.sort(() => Math.random() - 0.5);
+    return { question, answer, options };
+  }
+
+  function injectAnswersIntoMaze(options) {
+    mazeLayout = mazeLayoutTemplate.map(row => row.split(""));
+
+    for (let i = 0; i < answerSpots.length; i++) {
+      const { x, y } = answerSpots[i];
+      mazeLayout[y][x] = options[i].toString(); // use number directly
+    }
+  }
+
+  function renderMaze() {
+    maze.innerHTML = "";
+    for (let y = 0; y < mazeLayout.length; y++) {
+      for (let x = 0; x < mazeLayout[y].length; x++) {
+        const cell = document.createElement("div");
+        cell.classList.add("cell");
+        const char = mazeLayout[y][x];
+
+        if (char === "#") cell.classList.add("wall");
+        else if (x === playerPos.x && y === playerPos.y) cell.classList.add("player");
+        else if (!isNaN(parseInt(char))) cell.classList.add("answer");
+
+        cell.textContent = (x === playerPos.x && y === playerPos.y) ? "" : char;
+        maze.appendChild(cell);
+      }
+    }
+  }
+
+  function handleKey(e) {
+    let { x, y } = playerPos;
+    if (e.key === "ArrowUp") y--;
+    else if (e.key === "ArrowDown") y++;
+    else if (e.key === "ArrowLeft") x--;
+    else if (e.key === "ArrowRight") x++;
+
+    const cell = mazeLayout[y]?.[x];
+    if (cell && cell !== "#") {
+      playerPos = { x, y };
+      renderMaze();
+
+      if (!isNaN(parseInt(cell))) {
+        const selected = parseInt(cell);
+        if (selected === correctAnswer) {
+          alert("✅ Correct!");
+          score++;
+        } else {
+          alert(`❌ Incorrect! The correct answer was ${correctAnswer}`);
+        }
+        round++;
+        if (round < totalRounds) {
+          startRound();
+        } else {
+          alert(`🎉 Game Over! Your final score: ${score}/${totalRounds}`);
+          updateScore(playerName, score);
+          questionText.textContent = "Game over! Click 'Start Game' to play again.";
+          roundInfo.textContent = "";
+        }
+      }
+    }
+  }
+
+  function startGame() {
+    const nameInput = document.getElementById("playerName");
+    const name = nameInput.value.trim();
+    if (!name) return alert("Enter your name!");
+    playerName = name;
+    score = 0;
+    round = 0;
+    startRound();
+    document.removeEventListener("keydown", handleKey);
+    document.addEventListener("keydown", handleKey);
+  }
+
+  function startRound() {
+    playerPos = { x: 1, y: 9 };
+    const q = generateMathQuestion();
+    correctAnswer = q.answer;
+    currentOptions = q.options;
+    injectAnswersIntoMaze(currentOptions);
+    renderMaze();
+    questionText.textContent = `🧮 ${q.question}`;
+    roundInfo.textContent = `Round ${round + 1} of ${totalRounds}`;
+  }
+
+  function updateScore(name, points) {
+    let scores = JSON.parse(localStorage.getItem("mathMazeScores")) || {};
+    scores[name] = (scores[name] || 0) + points;
+    localStorage.setItem("mathMazeScores", JSON.stringify(scores));
+    displayScores();
+    
+    // Update performance data
+    updatePerformanceData(name, points);
+  }
+
+  function updatePerformanceData(name, quizScore) {
+    // Calculate percentage score
+    const percentage = Math.round((quizScore / totalRounds) * 100);
+    
+    // Get existing performance data from localStorage
+    let performanceData = JSON.parse(localStorage.getItem('studentPerformance')) || {
+      student: {
+        name: name,
+        school: "SMK Kapit",
+        level: "Basic"
+      },
+      subjects: {
+        science: {
+          name: "Science Quiz Game",
+          topics: [
+            { name: "Topic 1", score: 85, maxScore: 100 },
+            { name: "Topic 2", score: 92, maxScore: 100 },
+            { name: "Topic 3", score: 78, maxScore: 100 }
+          ]
+        },
+        math: {
+          name: "Math Quiz Game",
+          topics: [
+            { name: "Topic 1", score: 88, maxScore: 100 },
+            { name: "Topic 2", score: 95, maxScore: 100 },
+            { name: "Topic 3", score: 82, maxScore: 100 }
+          ]
+        }
+      },
+      stats: {
+        totalQuizzes: 12,
+        averageScore: 86,
+        bestSubject: "Math",
+        studyStreak: 5
+      },
+      achievements: [
+        { icon: "🎯", title: "Perfect Score!", desc: "Scored 100% on a quiz" },
+        { icon: "🔥", title: "5 Day Streak", desc: "Studied for 5 days straight" },
+        { icon: "🌟", title: "Quick Learner", desc: "Completed 10 quizzes" },
+        { icon: "🏆", title: "Top Performer", desc: "Scored above 85% average" }
+      ]
+    };
+
+    // Update math performance with new quiz result
+    const mathTopics = performanceData.subjects.math.topics;
+    const currentTopicIndex = (performanceData.stats.totalQuizzes - 1) % mathTopics.length;
+    mathTopics[currentTopicIndex].score = percentage;
+
+    // Update overall statistics
+    performanceData.stats.totalQuizzes += 1;
+    performanceData.student.name = name;
+    
+    // Recalculate average score
+    const allScores = [
+      ...performanceData.subjects.science.topics.map(t => t.score),
+      ...performanceData.subjects.math.topics.map(t => t.score)
+    ];
+    performanceData.stats.averageScore = Math.round(
+      allScores.reduce((a, b) => a + b, 0) / allScores.length
+    );
+
+    // Update best subject
+    const scienceAvg = performanceData.subjects.science.topics.reduce((a, b) => a + b.score, 0) / performanceData.subjects.science.topics.length;
+    const mathAvg = performanceData.subjects.math.topics.reduce((a, b) => a + b.score, 0) / performanceData.subjects.math.topics.length;
+    performanceData.stats.bestSubject = mathAvg > scienceAvg ? "Math" : "Science";
+
+    // Add new achievements based on performance
+    if (percentage === 100 && !performanceData.achievements.some(a => a.title === "Perfect Score!")) {
+      performanceData.achievements.unshift({
+        icon: "🎯",
+        title: "Perfect Score!",
+        desc: "Scored 100% on Math Quiz"
+      });
+    }
+
+    if (performanceData.stats.totalQuizzes >= 15 && !performanceData.achievements.some(a => a.title === "Quiz Master")) {
+      performanceData.achievements.unshift({
+        icon: "🧠",
+        title: "Quiz Master",
+        desc: "Completed 15 quizzes"
+      });
+    }
+
+    // Save updated performance data
+    localStorage.setItem('studentPerformance', JSON.stringify(performanceData));
+    
+    // Show success message
+    setTimeout(() => {
+      alert(`🎉 Performance updated! Your math score: ${percentage}%\nCheck "My Performance" to see your progress!`);
+    }, 1000);
+  }
+
+  function displayScores() {
+    let scores = JSON.parse(localStorage.getItem("mathMazeScores")) || {};
+    scoreList.innerHTML = "";
+    for (let [name, score] of Object.entries(scores)) {
+      const li = document.createElement("li");
+      li.textContent = `${name}: ${score}`;
+      scoreList.appendChild(li);
+    }
+  }
+
+  displayScores();
+</script>
+
+</body>
+</html>

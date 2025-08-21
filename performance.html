@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Performance - STEMShare</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .performance-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+        
+        .performance-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 32px;
+            color: white;
+            text-align: center;
+            position: relative;
+        }
+        
+        .back-btn {
+            position: absolute;
+            top: 32px;
+            left: 32px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+        }
+        
+        .back-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.1);
+        }
+        
+        .performance-title {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 16px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .performance-subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+            margin-bottom: 24px;
+        }
+        
+        .student-info {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+            margin-top: 16px;
+        }
+        
+        .student-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 4px solid rgba(255,255,255,0.3);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+        }
+        
+        .student-details h3 {
+            font-size: 1.4em;
+            margin-bottom: 8px;
+        }
+        
+        .student-details p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+        
+        .performance-content {
+            padding: 40px;
+        }
+        
+        .performance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 32px;
+            margin-bottom: 40px;
+        }
+        
+        .performance-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 20px;
+            padding: 32px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.8);
+            transition: all 0.3s ease;
+        }
+        
+        .performance-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 16px 48px rgba(0,0,0,0.15);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8em;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .science-icon {
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+        }
+        
+        .math-icon {
+            background: linear-gradient(135deg, #fdcb6e 0%, #e17055 100%);
+        }
+        
+        .card-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+        
+        .card-subtitle {
+            color: #7f8c8d;
+            font-size: 1em;
+        }
+        
+        .progress-section {
+            margin-bottom: 24px;
+        }
+        
+        .topic-progress {
+            margin-bottom: 20px;
+        }
+        
+        .topic-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .topic-name {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 1.1em;
+        }
+        
+        .topic-score {
+            font-weight: 700;
+            color: #27ae60;
+            font-size: 1.1em;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: #ecf0f1;
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            border-radius: 6px;
+            transition: width 0.8s ease;
+            position: relative;
+        }
+        
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .science-progress {
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+        }
+        
+        .math-progress {
+            background: linear-gradient(135deg, #fdcb6e 0%, #e17055 100%);
+        }
+        
+        .overall-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+            margin-top: 40px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            border: 1px solid rgba(255,255,255,0.8);
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        }
+        
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+        
+        .stat-label {
+            color: #7f8c8d;
+            font-size: 1.1em;
+            font-weight: 500;
+        }
+        
+        .achievements-section {
+            margin-top: 40px;
+            padding: 32px;
+            background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);
+            border-radius: 20px;
+            color: white;
+        }
+        
+        .achievements-title {
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+        
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .achievement-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .achievement-icon {
+            font-size: 3em;
+            margin-bottom: 12px;
+        }
+        
+        .achievement-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .achievement-desc {
+            opacity: 0.9;
+            font-size: 0.95em;
+        }
+        
+        .refresh-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 24px rgba(0, 184, 148, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .refresh-btn:hover {
+            transform: scale(1.1) rotate(180deg);
+            box-shadow: 0 12px 32px rgba(0, 184, 148, 0.4);
+        }
+        
+        @media (max-width: 768px) {
+            .performance-container {
+                margin: 0 10px;
+            }
+            
+            .performance-header {
+                padding: 24px;
+            }
+            
+            .performance-title {
+                font-size: 2em;
+            }
+            
+            .performance-content {
+                padding: 24px;
+            }
+            
+            .performance-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+            
+            .student-info {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .overall-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .achievements-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="performance-container">
+        <div class="performance-header">
+            <button class="back-btn" onclick="window.location.href='student.html'" title="Back to Dashboard">
+                ←
+            </button>
+            <h1 class="performance-title">📊 My Performance</h1>
+            <p class="performance-subtitle">Track your progress across all subjects</p>
+            <div class="student-info">
+                <img src="https://img.icons8.com/color/96/student-male.png" alt="Student Avatar" class="student-avatar">
+                <div class="student-details">
+                    <h3 id="studentName">Darwin Danish Anak Nora</h3>
+                    <p id="studentSchool">SMK Kapit • Level Basic</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="performance-content">
+            <div class="performance-grid">
+                <!-- Science Quiz Performance -->
+                <div class="performance-card">
+                    <div class="card-header">
+                        <div class="card-icon science-icon">🔬</div>
+                        <div>
+                            <h3 class="card-title">Science Quiz Game</h3>
+                            <p class="card-subtitle">Overall Progress</p>
+                        </div>
+                    </div>
+                    <div class="progress-section" id="scienceProgress">
+                        <!-- Science topics will be populated here -->
+                    </div>
+                </div>
+                
+                <!-- Math Quiz Performance -->
+                <div class="performance-card">
+                    <div class="card-header">
+                        <div class="card-icon math-icon">📐</div>
+                        <div>
+                            <h3 class="card-title">Math Quiz Game</h3>
+                            <p class="card-subtitle">Overall Progress</p>
+                        </div>
+                    </div>
+                    <div class="progress-section" id="mathProgress">
+                        <!-- Math topics will be populated here -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Overall Statistics -->
+            <div class="overall-stats">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalQuizzes">0</div>
+                    <div class="stat-label">Total Quizzes</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="averageScore">0%</div>
+                    <div class="stat-label">Average Score</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="bestSubject">-</div>
+                    <div class="stat-label">Best Subject</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="studyStreak">0</div>
+                    <div class="stat-label">Study Streak</div>
+                </div>
+            </div>
+            
+            <!-- Achievements Section -->
+            <div class="achievements-section">
+                <h2 class="achievements-title">🏆 Recent Achievements</h2>
+                <div class="achievements-grid" id="achievementsGrid">
+                    <!-- Achievements will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <button class="refresh-btn" onclick="refreshData()" title="Refresh Data">
+        🔄
+    </button>
+
+    <script>
+        // Performance data structure - easily modifiable
+        let performanceData = {
+            student: {
+                name: "Darwin Danish Anak Nora",
+                school: "SMK Kapit",
+                level: "Basic"
+            },
+            subjects: {
+                science: {
+                    name: "Science Quiz Game",
+                    topics: [
+                        { name: "Topic 1", score: 85, maxScore: 100 },
+                        { name: "Topic 2", score: 92, maxScore: 100 },
+                        { name: "Topic 3", score: 78, maxScore: 100 }
+                    ]
+                },
+                math: {
+                    name: "Math Quiz Game",
+                    topics: [
+                        { name: "Topic 1", score: 88, maxScore: 100 },
+                        { name: "Topic 2", score: 95, maxScore: 100 },
+                        { name: "Topic 3", score: 82, maxScore: 100 }
+                    ]
+                }
+            },
+            stats: {
+                totalQuizzes: 12,
+                averageScore: 86,
+                bestSubject: "Math",
+                studyStreak: 5
+            },
+            achievements: [
+                { icon: "🎯", title: "Perfect Score!", desc: "Scored 100% on a quiz" },
+                { icon: "🔥", title: "5 Day Streak", desc: "Studied for 5 days straight" },
+                { icon: "🌟", title: "Quick Learner", desc: "Completed 10 quizzes" },
+                { icon: "🏆", title: "Top Performer", desc: "Scored above 85% average" }
+            ]
+        };
+
+        // Function to render progress bars
+        function renderProgressBar(container, topics, progressClass) {
+            container.innerHTML = '';
+            topics.forEach(topic => {
+                const percentage = Math.round((topic.score / topic.maxScore) * 100);
+                const topicDiv = document.createElement('div');
+                topicDiv.className = 'topic-progress';
+                topicDiv.innerHTML = `
+                    <div class="topic-header">
+                        <span class="topic-name">${topic.name}</span>
+                        <span class="topic-score">${topic.score}/${topic.maxScore}</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill ${progressClass}" style="width: ${percentage}%"></div>
+                    </div>
+                `;
+                container.appendChild(topicDiv);
+            });
+        }
+
+        // Function to render achievements
+        function renderAchievements() {
+            const grid = document.getElementById('achievementsGrid');
+            grid.innerHTML = '';
+            performanceData.achievements.forEach(achievement => {
+                const achievementDiv = document.createElement('div');
+                achievementDiv.className = 'achievement-card';
+                achievementDiv.innerHTML = `
+                    <div class="achievement-icon">${achievement.icon}</div>
+                    <div class="achievement-title">${achievement.title}</div>
+                    <div class="achievement-desc">${achievement.desc}</div>
+                `;
+                grid.appendChild(achievementDiv);
+            });
+        }
+
+        // Function to update statistics
+        function updateStatistics() {
+            document.getElementById('totalQuizzes').textContent = performanceData.stats.totalQuizzes;
+            document.getElementById('averageScore').textContent = performanceData.stats.averageScore + '%';
+            document.getElementById('bestSubject').textContent = performanceData.stats.bestSubject;
+            document.getElementById('studyStreak').textContent = performanceData.stats.studyStreak;
+        }
+
+        // Function to update student info
+        function updateStudentInfo() {
+            document.getElementById('studentName').textContent = performanceData.student.name;
+            document.getElementById('studentSchool').textContent = 
+                `${performanceData.student.school} • Level ${performanceData.student.level}`;
+        }
+
+        // Function to refresh all data
+        function refreshData() {
+            // Add loading animation
+            const refreshBtn = document.querySelector('.refresh-btn');
+            refreshBtn.style.transform = 'scale(1.1) rotate(360deg)';
+            
+            setTimeout(() => {
+                // Update all components
+                updateStudentInfo();
+                renderProgressBar(
+                    document.getElementById('scienceProgress'), 
+                    performanceData.subjects.science.topics, 
+                    'science-progress'
+                );
+                renderProgressBar(
+                    document.getElementById('mathProgress'), 
+                    performanceData.subjects.math.topics, 
+                    'math-progress'
+                );
+                updateStatistics();
+                renderAchievements();
+                
+                // Reset button
+                refreshBtn.style.transform = 'scale(1) rotate(0deg)';
+                
+                // Show success message
+                showMessage('Data refreshed successfully!');
+            }, 1000);
+        }
+
+        // Load performance data from localStorage
+        function loadPerformanceData() {
+            const savedData = localStorage.getItem('studentPerformance');
+            if (savedData) {
+                performanceData = JSON.parse(savedData);
+            }
+        }
+
+        // Save performance data to localStorage
+        function savePerformanceData() {
+            localStorage.setItem('studentPerformance', JSON.stringify(performanceData));
+        }
+
+        // Function to update performance data programmatically
+        function updatePerformanceData(newData) {
+            performanceData = { ...performanceData, ...newData };
+            savePerformanceData();
+            refreshData();
+        }
+
+        // Function to show success message
+        function showMessage(text) {
+            const messageDiv = document.createElement('div');
+            messageDiv.textContent = text;
+            messageDiv.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+                color: white;
+                padding: 16px 24px;
+                border-radius: 12px;
+                font-weight: 600;
+                box-shadow: 0 8px 24px rgba(0, 184, 148, 0.3);
+                z-index: 1000;
+                animation: slideIn 0.5s ease-out;
+            `;
+            
+            document.body.appendChild(messageDiv);
+            
+            setTimeout(() => {
+                messageDiv.style.animation = 'slideOut 0.5s ease-in';
+                setTimeout(() => {
+                    if (document.body.contains(messageDiv)) {
+                        document.body.removeChild(messageDiv);
+                    }
+                }, 500);
+            }, 3000);
+        }
+
+        // Add CSS animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            loadPerformanceData();
+            refreshData();
+        });
+    </script>
+</body>
+</html>
+        //         totalQuizzes: 15,
+        //         averageScore: 90
+        //     }
+        // });
+    </script>
+</body>
+</html>
