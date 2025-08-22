@@ -10,20 +10,19 @@
   height: 100vh;
   font-family: 'Segoe UI', sans-serif;
 
-  /* Layer 1 = gradient (black fade), Layer 2 = image */
   background: 
-    linear-gradient(to bottom, black 0%, rgba(0,0,0,0) 20%, rgba(0,0,0,0) 80%, black 100%),
-    url("Game Night.png") no-repeat center center;
+    linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.3) 30%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0.9) 100%),
+    url("stemshare-bg.png") no-repeat center center;
 
-  background-size: contain;   /* ✅ keeps image aspect ratio */
-  background-color: black;    /* ✅ black edges if needed */
-  background-repeat: no-repeat;
-  background-position: center;
-  
+  background-size: cover;   /* ✅ fills screen without bars */
+  background-attachment: fixed;
+  background-color: black;
+
   display: flex;
   justify-content: center;
   align-items: center;
 }
+
 
 
     .login-box {
