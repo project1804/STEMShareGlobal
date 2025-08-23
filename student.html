@@ -135,8 +135,12 @@
 .student-stats {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 12px;
             width: 100%;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
         }
         
         .level-info {
@@ -148,16 +152,34 @@
         .points-display {
             font-weight: 700;
             color: #2c3e50;
-            font-size: 1.1em;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .points-display::before {
+            content: "🏆";
+            background: linear-gradient(135deg, #ffd700, #ffa500);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8em;
+            box-shadow: 0 2px 5px rgba(255, 165, 0, 0.3);
         }
         
         .progress-container {
             width: 100%;
             background: #e0e0e0;
             border-radius: 10px;
-            height: 12px;
+            height: 15px;
             overflow: hidden;
             box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+            position: relative;
         }
         
         .progress-bar {
@@ -166,14 +188,38 @@
             border-radius: 10px;
             width: 0%;
             transition: width 0.5s ease-in-out;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                90deg,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.3) 50%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            animation: shimmer 1.5s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
         }
         
         .progress-labels {
             display: flex;
             justify-content: space-between;
-            font-size: 0.8em;
-            color: #7f8c8d;
-            margin-top: 4px;
+            font-size: 0.9em;
+            color: #2c3e50;
+            margin-top: 8px;
+            font-weight: 600;
         }
         }
         
@@ -698,31 +744,201 @@
         <button class="logout-btn" onclick="window.location.href='index.html'">Log Out</button>
     </div>
 
+    <!-- Simple JavaScript to initialize the progress bar -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set initial progress (for demonstration)
+            const progressBar = document.getElementById('progressBar');
+            const currentPoints = 15; // Example: 15 points
+            
+            // Calculate progress percentage (assuming 100 is max)
+            const maxPoints = 100;
+            const progressPercentage = (currentPoints / maxPoints) * 100;
+            
+            // Set progress bar width
+            progressBar.style.width = progressPercentage + '%';
+            
+            // Update points display
+            document.getElementById('pointsValue').textContent = currentPoints;
+        });
+    </script>
+
     <!-- Main Container -->
     <div class="main-container">
         <!-- Profile Card -->
         <div class="profile-card">
             <div class="profile-header">
                 <div class="profile-img-container">
-                    <img src="https://img.icons8.com/color/96/student-male.png" alt="Profile" class="profile-img">
+                    <!-- All three images are loaded but only one is visible based on level -->
+                    <img src="Basic.png" alt="Basic Avatar" class="profile-img" id="basicAvatar" style="display: block;">
+                    <img src="Premium.png" alt="Premium Avatar" class="profile-img" id="premiumAvatar" style="display: none;">
+                    <img src="Majestic.png" alt="Majestic Avatar" class="profile-img" id="majesticAvatar" style="display: none;">
                 </div>
                 <div class="profile-details">
                     <h3>Darwin Danish Anak Nora</h3>
                     <p>SMK Kapit • Primary Year 2</p>
-                    <div class="student-stats">
+                    <div class="student-stats" style="background: rgba(255, 255, 255, 0.8); padding: 15px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);">
                         <div class="level-info">
-                            <div class="level-badge">LEVEL BASIC</div>
-                            <div class="points-display">Points: <span id="pointsValue">0</span></div>
+                            <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                                <div class="level-badge" style="background: linear-gradient(135deg, #ffd700, #ff9500); padding: 8px 15px; border-radius: 20px; color: white; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">LEVEL BASIC</div>
+                                <div style="margin-left: 10px; font-size: 0.8em; color: #666; font-style: italic;">Upgrade your level to unlock new Avatar</div>
+                            </div>
+                            <div class="points-display" style="font-weight: 700; color: #2c3e50; font-size: 1.2em; display: flex; align-items: center;">
+                                <span style="background: linear-gradient(135deg, #ffd700, #ffa500); color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">🏆</span>
+                                Points: <span id="pointsValue" style="color: #4CAF50; font-weight: bold; margin-left: 5px;">15</span>
+                            </div>
                         </div>
-                        <div class="progress-container">
-                            <div class="progress-bar" id="progressBar"></div>
+                        <div class="progress-container" style="width: 100%; background: #e0e0e0; border-radius: 10px; height: 15px; overflow: hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.2); margin-top: 10px;">
+                            <div class="progress-bar" id="progressBar" style="height: 100%; background: linear-gradient(90deg, #4CAF50, #8BC34A); border-radius: 10px; width: 15%; transition: width 0.5s ease-in-out;"></div>
                         </div>
-                        <div class="progress-labels">
+                        <div class="progress-labels" style="display: flex; justify-content: space-between; font-size: 0.9em; color: #2c3e50; margin-top: 8px; font-weight: 600;">
                             <span>Basic (0)</span>
                             <span>Premium (50)</span>
                             <span>Majestic (100)</span>
                         </div>
                     </div>
+                    
+                    <script>
+                        // Wait for DOM to be fully loaded
+                        window.onload = function() {
+                            // Initialize with current points
+                            let currentPoints = 15;
+                            const pointsValue = document.getElementById('pointsValue');
+                            const progressBar = document.getElementById('progressBar');
+                            const profileAvatar = document.getElementById('profileAvatar');
+                            const levelBadge = document.querySelector('.level-badge');
+                            
+                            // Update points display
+                            if (pointsValue) pointsValue.textContent = currentPoints;
+                            
+                            // Update progress bar (max 100 points)
+                            const progressPercentage = (currentPoints / 100) * 100;
+                            if (progressBar) progressBar.style.width = progressPercentage + '%';
+                            
+                            // Function to update avatar and level based on points
+                            function updateAvatarAndLevel() {
+                                if (currentPoints >= 100) {
+                                    if (profileAvatar) profileAvatar.src = 'Majestic.png';
+                                    if (levelBadge) {
+                                        levelBadge.textContent = 'LEVEL MAJESTIC';
+                                        levelBadge.style.background = 'linear-gradient(135deg, #9c27b0, #673ab7)';
+                                    }
+                                } else if (currentPoints >= 50) {
+                                    if (profileAvatar) profileAvatar.src = 'Premium.png';
+                                    if (levelBadge) {
+                                        levelBadge.textContent = 'LEVEL PREMIUM';
+                                        levelBadge.style.background = 'linear-gradient(135deg, #2196F3, #03A9F4)';
+                                    }
+                                } else {
+                                    if (profileAvatar) profileAvatar.src = 'Basic.png';
+                                    if (levelBadge) {
+                                        levelBadge.textContent = 'LEVEL BASIC';
+                                        levelBadge.style.background = 'linear-gradient(135deg, #ffd700, #ff9500)';
+                                    }
+                                }
+                            }
+                            
+                            // Add a visible button to add points for better user interaction
+                            const addPointsButton = document.createElement('button');
+                            addPointsButton.textContent = '+10 Points';
+                            addPointsButton.style.padding = '8px 15px';
+                            addPointsButton.style.background = 'linear-gradient(135deg, #4CAF50, #8BC34A)';
+                            addPointsButton.style.color = 'white';
+                            addPointsButton.style.border = 'none';
+                            addPointsButton.style.borderRadius = '20px';
+                            addPointsButton.style.cursor = 'pointer';
+                            addPointsButton.style.marginTop = '10px';
+                            
+                            // Global function to add points from playing games
+                            window.addGamePoints = function() {
+                                // Add 10 points when a game is played
+                                currentPoints += 10;
+                                
+                                // Update points display
+                                if (pointsValue) pointsValue.textContent = currentPoints;
+                                
+                                // Update progress bar
+                                const progressPercentage = (currentPoints / 100) * 100;
+                                if (progressBar) progressBar.style.width = progressPercentage + '%';
+                                
+                                // Update avatar based on new points
+                                updateAvatarBasedOnPoints();
+                                
+                                // Show a small notification
+                                alert('You earned 10 points for playing a game!');
+                                
+                                return true; // Allow the link to continue
+                            };
+                            
+                            // Function to update avatar based on points
+                            function updateAvatarBasedOnPoints() {
+                                // Get all avatar images
+                                const basicAvatar = document.getElementById('basicAvatar');
+                                const premiumAvatar = document.getElementById('premiumAvatar');
+                                const majesticAvatar = document.getElementById('majesticAvatar');
+                                const levelBadge = document.querySelector('.level-badge');
+                                
+                                // Hide all avatars first
+                                if (basicAvatar) basicAvatar.style.display = 'none';
+                                if (premiumAvatar) premiumAvatar.style.display = 'none';
+                                if (majesticAvatar) majesticAvatar.style.display = 'none';
+                                
+                                // Show the appropriate avatar based on points
+                                if (currentPoints >= 100) {
+                                    if (majesticAvatar) majesticAvatar.style.display = 'block';
+                                    if (levelBadge) {
+                                        levelBadge.textContent = 'LEVEL MAJESTIC';
+                                        levelBadge.style.background = 'linear-gradient(135deg, #9c27b0, #673ab7)';
+                                    }
+                                } else if (currentPoints >= 50) {
+                                    if (premiumAvatar) premiumAvatar.style.display = 'block';
+                                    if (levelBadge) {
+                                        levelBadge.textContent = 'LEVEL PREMIUM';
+                                        levelBadge.style.background = 'linear-gradient(135deg, #2196F3, #03A9F4)';
+                                    }
+                                } else {
+                                    if (basicAvatar) basicAvatar.style.display = 'block';
+                                    if (levelBadge) {
+                                        levelBadge.textContent = 'LEVEL BASIC';
+                                        levelBadge.style.background = 'linear-gradient(135deg, #ffd700, #ff9500)';
+                                    }
+                                }
+                            }
+                            addPointsButton.style.fontWeight = 'bold';
+                            addPointsButton.style.boxShadow = '0 2px 5px rgba(0,0,0,0.1)';
+                            
+                            // Also update the +10 Points button to use the same avatar update function
+                            addPointsButton.addEventListener('click', function() {
+                                currentPoints += 10;
+                                if (pointsValue) pointsValue.textContent = currentPoints;
+                                
+                                // Update progress bar
+                                const progressPercentage = (currentPoints / 100) * 100;
+                                if (progressBar) progressBar.style.width = progressPercentage + '%';
+                                
+                                // Use the same function to update avatar
+                                updateAvatarBasedOnPoints();
+                            });
+                            
+                            // Insert button after progress labels
+                            const progressLabels = document.querySelector('.progress-labels');
+                            if (progressLabels) progressLabels.parentNode.insertBefore(addPointsButton, progressLabels.nextSibling);
+                            
+                            // Add click event to button to simulate adding points
+                            addPointsButton.addEventListener('click', function() {
+                                currentPoints += 10;
+                                if (currentPoints > 100) currentPoints = 100;
+                                
+                                if (pointsValue) pointsValue.textContent = currentPoints;
+                                if (progressBar) progressBar.style.width = (currentPoints / 100) * 100 + '%';
+                                
+                                updateAvatarAndLevel();
+                            });
+                            
+                            // Initialize avatar and level
+                            updateAvatarAndLevel();
+                        };
+                    </script>
                 </div>
             </div>
             <div class="quick-actions">
