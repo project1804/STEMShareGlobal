@@ -846,26 +846,52 @@
                             addPointsButton.style.cursor = 'pointer';
                             addPointsButton.style.marginTop = '10px';
                             
-                            // Global function to add points from playing games
-                            window.addGamePoints = function() {
-                                // Add 10 points when a game is played
-                                currentPoints += 10;
-                                
-                                // Update points display
-                                if (pointsValue) pointsValue.textContent = currentPoints;
-                                
-                                // Update progress bar
-                                const progressPercentage = (currentPoints / 100) * 100;
-                                if (progressBar) progressBar.style.width = progressPercentage + '%';
-                                
-                                // Update avatar based on new points
-                                updateAvatarBasedOnPoints();
-                                
-                                // Show a small notification
-                                alert('You earned 10 points for playing a game!');
-                                
-                                return true; // Allow the link to continue
-                            };
+                                    // Global function to add points from playing games
+        window.addGamePoints = function() {
+            // Add 10 points when a game is played
+            currentPoints += 10;
+            
+            // Save to localStorage
+            localStorage.setItem('studentPoints', currentPoints.toString());
+            
+            // Update points display
+            if (pointsValue) pointsValue.textContent = currentPoints;
+            
+            // Update progress bar
+            const progressPercentage = (currentPoints / 100) * 100;
+            if (progressBar) progressBar.style.width = progressPercentage + '%';
+            
+            // Update avatar based on new points
+            updateAvatarBasedOnPoints();
+            
+            // Track game plays
+            let gamesPlayed = parseInt(localStorage.getItem('gamesPlayed')) || 0;
+            gamesPlayed += 1;
+            localStorage.setItem('gamesPlayed', gamesPlayed.toString());
+            
+            // Update the main gamification system variables
+            if (typeof points !== 'undefined') {
+                points = currentPoints;
+            }
+            if (typeof level !== 'undefined') {
+                // Check for level progression
+                if (currentPoints >= 100) {
+                    level = "MAJESTIC";
+                    localStorage.setItem('studentLevel', level);
+                } else if (currentPoints >= 50) {
+                    level = "PREMIUM";
+                    localStorage.setItem('studentLevel', level);
+                } else {
+                    level = "BASIC";
+                    localStorage.setItem('studentLevel', level);
+                }
+            }
+            
+            // Show a small notification
+            alert('You earned 10 points for playing a game!');
+            
+            return true; // Allow the link to continue
+        };
                             
                             // Function to update avatar based on points
                             function updateAvatarBasedOnPoints() {
@@ -2085,6 +2111,11 @@
             
             // Update UI
             updateUI();
+            
+            // Update the global currentPoints variable to keep everything in sync
+            if (typeof currentPoints !== 'undefined') {
+                currentPoints = points;
+            }
         }
         
         // Show level up notification
@@ -2146,6 +2177,11 @@
             // This would be called when a note is uploaded
             window.addNotePoints = function() {
                 addPoints(5);
+                
+                // Track note uploads
+                let notesUploaded = parseInt(localStorage.getItem('notesUploaded')) || 0;
+                notesUploaded += 1;
+                localStorage.setItem('notesUploaded', notesUploaded.toString());
             };
             
             // AI-Powered Note Transformation to Infographic
@@ -2753,8 +2789,8 @@ Notes: ${noteContent}`;
                     }
                 ];
                 
-                // Get current points
-                const currentPoints = points;
+                // Get current points from localStorage to ensure accuracy
+                const currentPoints = parseInt(localStorage.getItem('studentPoints')) || 0;
                 
                 // Generate rewards HTML
                 let rewardsHTML = '';
@@ -2879,13 +2915,17 @@ Notes: ${noteContent}`;
                 // Show profile content
                 document.getElementById('profileContent').style.display = 'block';
                 
-                // Update profile information
-                document.getElementById('profileLevel').textContent = level;
-                document.getElementById('profilePoints').textContent = points;
+                // Get current points from localStorage to ensure accuracy
+                const currentPointsFromStorage = parseInt(localStorage.getItem('studentPoints')) || 0;
+                const currentLevelFromStorage = localStorage.getItem('studentLevel') || 'BASIC';
                 
-                // Update resources count
-                const communityNotes = JSON.parse(localStorage.getItem('communityNotes')) || [];
-                document.getElementById('profileResources').textContent = communityNotes.length;
+                // Update profile information
+                document.getElementById('profileLevel').textContent = currentLevelFromStorage;
+                document.getElementById('profilePoints').textContent = currentPointsFromStorage;
+                
+                // Update resources count - use actual uploads tracking
+                const notesUploaded = parseInt(localStorage.getItem('notesUploaded')) || 0;
+                document.getElementById('profileResources').textContent = notesUploaded;
                 
                 // Update games count - get actual games played from localStorage
                 const gamesPlayed = parseInt(localStorage.getItem('gamesPlayed')) || 0;
