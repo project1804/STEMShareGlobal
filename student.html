@@ -15,7 +15,7 @@
         
         /* Header */
         .student-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
             padding: 16px 32px;
             display: flex;
             align-items: center;
@@ -28,10 +28,21 @@
         }
         
         .student-title {
-            font-size: 2em;
+            display: flex;
+            align-items: center;
+            font-size: 1.9rem;
             font-weight: 700;
-            color: white;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            color: #f8f9fa;
+            text-shadow: 0 2px 8px rgba(138, 43, 226, 0.6);
+        }
+        
+        .student-logo {
+            font-size: 2.2rem;
+            margin-right: 12px;
+            filter: drop-shadow(0 2px 8px rgba(255,255,255,0.4));
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .logout-btn {
@@ -740,28 +751,14 @@
 <body>
     <!-- Header -->
     <div class="student-header">
-        <span class="student-title">STEMShare Student</span>
+        <div class="student-title">
+            <div class="student-logo">🎓</div>
+            <span>STEMShare Student</span>
+        </div>
         <button class="logout-btn" onclick="window.location.href='index.html'">Log Out</button>
     </div>
 
-    <!-- Simple JavaScript to initialize the progress bar -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Set initial progress (for demonstration)
-            const progressBar = document.getElementById('progressBar');
-            const currentPoints = 15; // Example: 15 points
-            
-            // Calculate progress percentage (assuming 100 is max)
-            const maxPoints = 100;
-            const progressPercentage = (currentPoints / maxPoints) * 100;
-            
-            // Set progress bar width
-            progressBar.style.width = progressPercentage + '%';
-            
-            // Update points display
-            document.getElementById('pointsValue').textContent = currentPoints;
-        });
-    </script>
+    <!-- Progress bar will be updated by the main gamification system -->
 
     <!-- Main Container -->
     <div class="main-container">
@@ -801,8 +798,8 @@
                     <script>
                         // Wait for DOM to be fully loaded
                         window.onload = function() {
-                            // Initialize with current points
-                            let currentPoints = 15;
+                            // Get current points from localStorage or start at 0
+                            let currentPoints = parseInt(localStorage.getItem('studentPoints')) || 0;
                             const pointsValue = document.getElementById('pointsValue');
                             const progressBar = document.getElementById('progressBar');
                             const profileAvatar = document.getElementById('profileAvatar');
@@ -1280,63 +1277,173 @@
         }
     }
 
-    // Render games
-function renderGames() {
-    const gameList = document.getElementById('gameList');
-    gameList.innerHTML = '';
-    if (!games.length) {
-        gameList.innerHTML = '<div style="color:#888; padding:24px;">No games uploaded yet.</div>';
-        return;
+    // Render all games (combined)
+    function renderAllGames(allGames) {
+        const gameList = document.getElementById('gameList');
+        gameList.innerHTML = '';
+        if (!allGames || !allGames.length) {
+            gameList.innerHTML = '<div style="color:#888; padding:24px;">No games uploaded yet.</div>';
+            return;
+        }
+        
+        // Separate local and Firebase games for proper indexing
+        const localGames = [];
+        const firebaseGames = [];
+        
+        allGames.forEach((game) => {
+            if (game.id) {
+                firebaseGames.push(game);
+            } else {
+                localGames.push(game);
+            }
+        });
+        
+        // Render local games
+        localGames.forEach((game, localIdx) => {
+            const card = document.createElement('div');
+            card.className = 'feature-card';
+            card.style.background = 'linear-gradient(135deg,#a29bfe 0%,#6c5ce7 100%)';
+            
+            card.innerHTML = `
+                <div class="feature-title" style="margin-bottom:8px;">${game.title || 'Unknown Game'}</div>
+                <div style="font-size:0.8em; color:#ddd; margin-bottom:4px;">💾 Local</div>
+                <div style="font-size:0.97em; color:#ffeaa7; margin-bottom:4px;">
+                    Uploaded by: <b>${game.uploader || "Unknown"}</b>
+                </div>
+                <a href="${game.url || '#'}" target="_blank" style="display:inline-block; margin-bottom:12px; color:#fff; text-decoration:underline;" onclick="addGamePoints()">Play Game</a>
+                <div style="margin-bottom:12px;">
+                    <button onclick="likeLocalGame(${localIdx})" style="background:#fff; color:#6c5ce7; border:none; border-radius:16px; padding:6px 16px; font-weight:bold; cursor:pointer; margin-right:8px;">👍 Like (${game.likes || 0})</button>
+                    <button onclick="shareLocalGame(${localIdx})" style="background:#fff; color:#00b894; border:none; border-radius:16px; padding:6px 16px; font-weight:bold; cursor:pointer; margin-right:8px;">🔗 Share</button>
+                    <button onclick="deleteLocalGame(${localIdx})" style="background:#ff6b6b; color:#fff; border:none; border-radius:16px; padding:6px 16px; font-weight:bold; cursor:pointer;">🗑️ Delete</button>
+                </div>
+                <div style="font-size:0.97em; color:#ffeaa7; margin-bottom:4px;">MYR ${((game.likes || 0) * 0.10).toFixed(2)} earned (dummy)</div>
+                <div style="font-size:0.9em; color:#fff;">Shares: ${game.shares || 0}</div>
+                <div style="margin-top:10px; font-size:0.95em; color:#fff; background:rgba(0,0,0,0.15); border-radius:8px; padding:8px;">
+                    Contact us to redeem money at <a href="mailto:STEMShare@gmails.com" style="color:#ffeaa7;">STEMShare@gmails.com</a> or 0123456789
+                </div>
+            `;
+            gameList.appendChild(card);
+        });
+        
+        // Render Firebase games
+        firebaseGames.forEach((game, firebaseIdx) => {
+            const card = document.createElement('div');
+            card.className = 'feature-card';
+            card.style.background = 'linear-gradient(135deg,#a29bfe 0%,#6c5ce7 100%)';
+            
+            // Firebase games use different field names
+            const gameTitle = game.gameName || game.title || 'Untitled Game';
+            const gameUrl = game.link || game.fileUrl || game.url || '#';
+            const uploader = game.teacherName || game.uploader || 'Unknown';
+            
+            card.innerHTML = `
+                <div class="feature-title" style="margin-bottom:8px;">${gameTitle}</div>
+                <div style="font-size:0.8em; color:#ddd; margin-bottom:4px;">🔥 Firebase</div>
+                <div style="font-size:0.97em; color:#ffeaa7; margin-bottom:4px;">
+                    Uploaded by: <b>${uploader}</b>
+                </div>
+                <div style="font-size:0.85em; color:#ddd; margin-bottom:8px;">
+                    Type: ${game.type || 'Game'} • Category: ${game.category || 'General'}
+                </div>
+                <a href="${gameUrl}" target="_blank" style="display:inline-block; margin-bottom:12px; color:#fff; text-decoration:underline;" onclick="addGamePoints()">Play Game</a>
+                <div style="margin-bottom:12px;">
+                    <button onclick="likeFirebaseGame(${firebaseIdx})" style="background:#fff; color:#6c5ce7; border:none; border-radius:16px; padding:6px 16px; font-weight:bold; cursor:pointer; margin-right:8px;">👍 Like (${game.likes || 0})</button>
+                    <button onclick="shareFirebaseGame(${firebaseIdx})" style="background:#fff; color:#00b894; border:none; border-radius:16px; padding:6px 16px; font-weight:bold; cursor:pointer; margin-right:8px;">🔗 Share</button>
+                    <button onclick="deleteFirebaseGame(${firebaseIdx})" style="background:#ff6b6b; color:#fff; border:none; border-radius:16px; padding:6px 16px; font-weight:bold; cursor:pointer;">🗑️ Delete</button>
+                </div>
+                <div style="font-size:0.97em; color:#ffeaa7; margin-bottom:4px;">MYR ${((game.likes || 0) * 0.10).toFixed(2)} earned (dummy)</div>
+                <div style="font-size:0.9em; color:#fff;">Shares: ${game.shares || 0}</div>
+                <div style="margin-top:10px; font-size:0.95em; color:#fff; background:rgba(0,0,0,0.15); border-radius:8px; padding:8px;">
+                    Contact us to redeem money at <a href="mailto:STEMShare@gmails.com" style="color:#ffeaa7;">STEMShare@gmails.com</a> or 0123456789
+                </div>
+            `;
+            gameList.appendChild(card);
+        });
     }
-    games.forEach((game, idx) => {
-        const card = document.createElement('div');
-        card.className = 'feature-card';
-        card.style.background = 'linear-gradient(135deg,#a29bfe 0%,#6c5ce7 100%)';
-        card.innerHTML = `
-            <div class="feature-title" style="margin-bottom:8px;">${game.title}</div>
-            <div style="font-size:0.97em; color:#ffeaa7; margin-bottom:4px;">
-                Uploaded by: <b>${game.uploader || "Unknown"}</b>
-            </div>
-            <a href="${game.url}" target="_blank" style="display:inline-block; margin-bottom:12px; color:#fff; text-decoration:underline;" onclick="addGamePoints()">Play Game</a>
-            <div style="margin-bottom:12px;">
-                <button onclick="likeGame(${idx})" style="background:#fff; color:#6c5ce7; border:none; border-radius:16px; padding:6px 16px; font-weight:bold; cursor:pointer; margin-right:8px;">👍 Like (${game.likes})</button>
-                <button onclick="shareGame(${idx})" style="background:#fff; color:#00b894; border:none; border-radius:16px; padding:6px 16px; font-weight:bold; cursor:pointer; margin-right:8px;">🔗 Share</button>
-                <button onclick="deleteGame(${idx})" style="background:#ff6b6b; color:#fff; border:none; border-radius:16px; padding:6px 16px; font-weight:bold; cursor:pointer;">🗑️ Delete</button>
-            </div>
-            <div style="font-size:0.97em; color:#ffeaa7; margin-bottom:4px;">MYR ${(game.likes * 0.10).toFixed(2)} earned (dummy)</div>
-            <div style="font-size:0.9em; color:#fff;">Shares: ${game.shares}</div>
-            <div style="margin-top:10px; font-size:0.95em; color:#fff; background:rgba(0,0,0,0.15); border-radius:8px; padding:8px;">
-                Contact us to redeem money at <a href="mailto:STEMShare@gmails.com" style="color:#ffeaa7;">STEMShare@gmails.com</a> or 0123456789
-            </div>
-        `;
-        gameList.appendChild(card);
-    });
-}
 
-// Delete function
-window.deleteGame = function(idx) {
-    if (confirm('Are you sure you want to delete this game?')) {
-        games.splice(idx, 1);
-        saveGames(); // Save to localStorage
-        renderGames();
+    // Render local games only (fallback)
+    function renderGames() {
+        renderAllGames(games);
     }
-};
 
-
-    // Like function
-    window.likeGame = function(idx) {
-        games[idx].likes++;
-        saveGames(); // Save to localStorage
-        renderGames();
+    // Local game functions
+    window.deleteLocalGame = function(idx) {
+        if (confirm('Are you sure you want to delete this game?')) {
+            games.splice(idx, 1);
+            saveGames();
+            fetchFirebaseGames(); // Refresh to show updated combined list
+        }
     };
 
-    // Share function (dummy, just increments counter and copies link)
-    window.shareGame = function(idx) {
-        games[idx].shares++;
-        saveGames(); // Save to localStorage
+    window.likeLocalGame = function(idx) {
+        games[idx].likes = (games[idx].likes || 0) + 1;
+        saveGames();
+        fetchFirebaseGames(); // Refresh to show updated combined list
+    };
+
+    window.shareLocalGame = function(idx) {
+        games[idx].shares = (games[idx].shares || 0) + 1;
+        saveGames();
         navigator.clipboard.writeText(games[idx].url);
         alert('Game link copied to clipboard!');
-        renderGames();
+        fetchFirebaseGames(); // Refresh to show updated combined list
+    };
+
+    // Firebase game functions - store reference to Firebase games
+    let currentFirebaseGames = [];
+
+    window.deleteFirebaseGame = function(idx) {
+        if (confirm('Are you sure you want to delete this game?')) {
+            const gameToDelete = currentFirebaseGames[idx];
+            if (gameToDelete && gameToDelete.id) {
+                db.ref(`games/${gameToDelete.id}`).remove()
+                    .then(() => {
+                        console.log("Game deleted from Firebase");
+                        fetchFirebaseGames(); // Refresh the list
+                    })
+                    .catch(error => {
+                        console.error("Error deleting game from Firebase:", error);
+                        alert("Error deleting game. Please try again.");
+                    });
+            }
+        }
+    };
+
+    window.likeFirebaseGame = function(idx) {
+        const gameToUpdate = currentFirebaseGames[idx];
+        if (gameToUpdate && gameToUpdate.id) {
+            const currentLikes = gameToUpdate.likes || 0;
+            db.ref(`games/${gameToUpdate.id}/likes`).set(currentLikes + 1)
+                .then(() => {
+                    console.log("Game likes updated in Firebase");
+                    fetchFirebaseGames(); // Refresh the list
+                })
+                .catch(error => {
+                    console.error("Error updating likes in Firebase:", error);
+                });
+        }
+    };
+
+    window.shareFirebaseGame = function(idx) {
+        const gameToUpdate = currentFirebaseGames[idx];
+        if (gameToUpdate && gameToUpdate.id) {
+            const currentShares = gameToUpdate.shares || 0;
+            const gameUrl = gameToUpdate.link || gameToUpdate.fileUrl || gameToUpdate.url || '#';
+            
+            // Copy URL to clipboard
+            navigator.clipboard.writeText(gameUrl);
+            alert('Game link copied to clipboard!');
+            
+            // Update share count in Firebase
+            db.ref(`games/${gameToUpdate.id}/shares`).set(currentShares + 1)
+                .then(() => {
+                    console.log("Game shares updated in Firebase");
+                    fetchFirebaseGames(); // Refresh the list
+                })
+                .catch(error => {
+                    console.error("Error updating shares in Firebase:", error);
+                });
+        }
     };
 
     // Upload form handler
@@ -1365,7 +1472,7 @@ window.deleteGame = function(idx) {
 
         // Tab switching logic
         const tabs = ['resourcesTab', 'gamesTab', 'chatbotTab', 'arvrTab'];
-        const contents = ['resourcesContent', 'gamesContent', 'chatbotContent', 'arvrContent'];
+        const contents = ['resourcesContent', 'gamesContent', 'chatbotContent', 'arvrContent', 'profileContent'];
 
         function switchTab(activeTabId) {
             // Remove active class from all tabs
@@ -1373,7 +1480,7 @@ window.deleteGame = function(idx) {
                 document.getElementById(tabId).classList.remove('active');
             });
             
-            // Hide all content
+            // Hide all content including profile content
             contents.forEach(contentId => {
                 document.getElementById(contentId).style.display = 'none';
             });
@@ -1394,7 +1501,14 @@ window.deleteGame = function(idx) {
 
         // Add event listeners
         tabs.forEach(tabId => {
-            document.getElementById(tabId).addEventListener('click', () => switchTab(tabId));
+            document.getElementById(tabId).addEventListener('click', () => {
+                switchTab(tabId);
+                
+                // Fetch Firebase games when Games tab is clicked
+                if (tabId === 'gamesTab') {
+                    fetchFirebaseGames();
+                }
+            });
         });
 
         // Firebase config (replace with your actual config)
@@ -1428,6 +1542,29 @@ window.deleteGame = function(idx) {
                 console.error("Error fetching resources:", error);
                 // Fallback to demo data if Firebase fails
                 renderResources(demoResources);
+            });
+        }
+
+        // Fetch games from Firebase
+        function fetchFirebaseGames() {
+            db.ref('games').once('value').then(snapshot => {
+                const firebaseGames = [];
+                snapshot.forEach(child => {
+                    const gameData = { id: child.key, ...child.val() };
+                    firebaseGames.push(gameData);
+                });
+                console.log("Fetched games from Firebase:", firebaseGames);
+                
+                // Store reference to Firebase games for interaction functions
+                currentFirebaseGames = firebaseGames;
+                
+                // Merge with local games
+                const allGames = [...games, ...firebaseGames];
+                renderAllGames(allGames);
+            }).catch(error => {
+                console.error("Error fetching games:", error);
+                currentFirebaseGames = [];
+                renderAllGames(games); // Fallback to local games only
             });
         }
 
@@ -1787,7 +1924,7 @@ window.deleteGame = function(idx) {
             parts: [{ text: "You are STEMShare AI, a friendly and enthusiastic AI assistant for students. Your goal is to explain complex STEM (Science, Technology, Engineering, and Mathematics) topics in a simple, engaging, and easy-to-understand way for a primary school student. Use simple language, fun analogies, and keep your answers concise and encouraging." }],
         };
 
-        if (GEMINI_API_KEY !== "AIzaSyB8lWkJJ54LHM0iYpz83d7JMHLtKE01TQQ" && window.GoogleGenerativeAI) {
+        if (GEMINI_API_KEY && window.GoogleGenerativeAI) {
             try {
                 genAI = new window.GoogleGenerativeAI(GEMINI_API_KEY);
                 model = genAI.getGenerativeModel({ 
@@ -1979,12 +2116,30 @@ window.deleteGame = function(idx) {
         
         // Initialize gamification when page loads
         document.addEventListener('DOMContentLoaded', function() {
+            // Use saved points from localStorage or start at 0
+            const savedPoints = localStorage.getItem('studentPoints');
+            if (savedPoints) {
+                points = parseInt(savedPoints);
+            } else {
+                points = 0;
+            }
+            // Use saved level or start BASIC
+            const savedLevel = localStorage.getItem('studentLevel');
+            if (savedLevel) {
+                level = savedLevel;
+            } else {
+                level = 'BASIC';
+            }
             initGamification();
             
             // Example: Add points for playing a game
             // This would be called when a game is completed
             window.addGamePoints = function() {
                 addPoints(10);
+                // Track game plays
+                let gamesPlayed = parseInt(localStorage.getItem('gamesPlayed')) || 0;
+                gamesPlayed += 1;
+                localStorage.setItem('gamesPlayed', gamesPlayed.toString());
             };
             
             // Example: Add points for uploading a note
@@ -2064,23 +2219,50 @@ window.deleteGame = function(idx) {
                     try {
                         // Use existing AI model if available
                         if (chat) {
-                            const prompt = `Transform the following educational notes into an engaging infographic format. Organize the information with clear headings, bullet points, and visual elements descriptions. Make it visually appealing with a clear structure. Notes: ${noteContent}`;
+                            const prompt = `Transform the following educational notes into a structured infographic with these exact sections:
+1. "Main Concepts" - Key topics and fundamental ideas
+2. "Key Points" - Important details and facts to remember
+3. "Examples & Applications" - Real-world applications and examples
+
+Format your response with clear section headers using markdown (e.g., ## Main Concepts) and use bullet points for list items. Keep your response concise and well-organized.
+
+Notes: ${noteContent}`;
                             const result = await chat.sendMessage(prompt);
                             const response = await result.response;
-                            let infographicContent = response.text();
+                            let aiResponse = response.text();
                             
-                            // Process the AI response to ensure proper formatting
-                            // Replace line breaks with HTML line breaks for better display
-                            infographicContent = infographicContent.replace(/\n/g, '<br>');
+                            // Parse the AI response into structured sections
+                            const sections = parseAIResponse(aiResponse);
                             
-                            // Display the result in a better formatted way
+                            // Display the result in a structured, visually appealing format
                             document.getElementById('infographicContent').innerHTML = `
                                 <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 100%; overflow-x: auto;">
                                     <div style="background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); color: white; padding: 20px; border-radius: 10px; margin-bottom: 20px; text-align: center;">
                                         <h2 style="margin: 0; font-size: 1.8em;">Knowledge Infographic</h2>
                                         <p style="margin: 10px 0 0; opacity: 0.9;">AI-Powered Learning Summary</p>
                                     </div>
-                                    <div style="padding: 15px; line-height: 1.6;">${infographicContent}</div>
+                                    
+                                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 20px;">
+                                        <div style="background: #e3f2fd; border-radius: 10px; padding: 20px; border-left: 5px solid #2196f3;">
+                                            <h3 style="color: #0d47a1; margin-top: 0;">Main Concepts</h3>
+                                            <ul style="padding-left: 20px;">
+                                                ${sections.concepts.map(concept => `<li>${concept}</li>`).join('')}
+                                            </ul>
+                                        </div>
+                                        <div style="background: #e8f5e9; border-radius: 10px; padding: 20px; border-left: 5px solid #4caf50;">
+                                            <h3 style="color: #1b5e20; margin-top: 0;">Key Points</h3>
+                                            <ul style="padding-left: 20px;">
+                                                ${sections.points.map(point => `<li>${point}</li>`).join('')}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    
+                                    <div style="background: #fff3e0; border-radius: 10px; padding: 20px; border-left: 5px solid #ff9800; margin-bottom: 20px;">
+                                        <h3 style="color: #e65100; margin-top: 0;">Examples & Applications</h3>
+                                        <ul style="padding-left: 20px;">
+                                            ${sections.examples.map(example => `<li>${example}</li>`).join('')}
+                                        </ul>
+                                    </div>
                                 </div>
                             `;
                             document.getElementById('infographicResult').style.display = 'block';
@@ -2198,7 +2380,68 @@ window.deleteGame = function(idx) {
                     URL.revokeObjectURL(url);
                 });
                 
-                // Function to parse note content into sections
+                // Function to parse AI response into structured sections
+                function parseAIResponse(response) {
+                    // Initialize sections
+                    const sections = {
+                        concepts: [],
+                        points: [],
+                        examples: []
+                    };
+                    
+                    // Split response into lines
+                    const lines = response.split('\n');
+                    
+                    // Track current section
+                    let currentSection = null;
+                    
+                    // Process each line
+                    for (const line of lines) {
+                        const trimmedLine = line.trim();
+                        
+                        // Skip empty lines
+                        if (!trimmedLine) continue;
+                        
+                        // Check for section headers (both markdown and plain text formats)
+                        if (trimmedLine.match(/^#+\s*Main\s*Concepts/i) || 
+                            trimmedLine.match(/^Main\s*Concepts:?$/i)) {
+                            currentSection = 'concepts';
+                            continue;
+                        } else if (trimmedLine.match(/^#+\s*Key\s*Points/i) || 
+                                  trimmedLine.match(/^Key\s*Points:?$/i)) {
+                            currentSection = 'points';
+                            continue;
+                        } else if (trimmedLine.match(/^#+\s*Examples\s*(&|and)\s*Applications/i) || 
+                                  trimmedLine.match(/^Examples\s*(&|and)\s*Applications:?$/i)) {
+                            currentSection = 'examples';
+                            continue;
+                        }
+                        
+                        // If we have a current section and the line looks like a bullet point
+                        if (currentSection && (trimmedLine.startsWith('-') || 
+                                              trimmedLine.startsWith('*') || 
+                                              trimmedLine.match(/^\d+\.\s/))) {
+                            // Extract the content after the bullet point marker
+                            const content = trimmedLine.replace(/^[-*]\s+|^\d+\.\s+/, '').trim();
+                            if (content) {
+                                sections[currentSection].push(content);
+                            }
+                        }
+                        // If it's not a bullet point but we're in a section, it might be a paragraph
+                        else if (currentSection && trimmedLine) {
+                            sections[currentSection].push(trimmedLine);
+                        }
+                    }
+                    
+                    // Ensure we have at least some content in each section
+                    if (sections.concepts.length === 0) sections.concepts = ['No main concepts identified'];
+                    if (sections.points.length === 0) sections.points = ['No key points identified'];
+                    if (sections.examples.length === 0) sections.examples = ['No examples identified'];
+                    
+                    return sections;
+                }
+                
+                // Function to parse note content into sections (fallback method)
                 function parseNoteContent(content) {
                     // Split content into lines
                     const lines = content.split('\n').filter(line => line.trim() !== '');
@@ -2210,8 +2453,7 @@ window.deleteGame = function(idx) {
                         examples: []
                     };
                     
-                    // Simple parsing logic - this can be enhanced based on note structure
-                    // For now, we'll distribute lines across sections
+                    // Improved parsing logic - look for keywords and structure
                     lines.forEach((line, index) => {
                         const trimmedLine = line.trim();
                         if (trimmedLine.length > 0) {
@@ -2220,13 +2462,22 @@ window.deleteGame = function(idx) {
                                 return;
                             }
                             
-                            // Add to appropriate section based on position or content
-                            if (index < Math.floor(lines.length / 3)) {
+                            // Try to intelligently categorize based on content
+                            if (trimmedLine.match(/concept|definition|mean|refer|describe|explain/i)) {
                                 sections.concepts.push(trimmedLine);
-                            } else if (index < 2 * Math.floor(lines.length / 3)) {
+                            } else if (trimmedLine.match(/important|key|critical|remember|note|point/i)) {
                                 sections.points.push(trimmedLine);
-                            } else {
+                            } else if (trimmedLine.match(/example|application|instance|case|scenario|use/i)) {
                                 sections.examples.push(trimmedLine);
+                            } else {
+                                // Fallback to position-based categorization
+                                if (index < Math.floor(lines.length / 3)) {
+                                    sections.concepts.push(trimmedLine);
+                                } else if (index < 2 * Math.floor(lines.length / 3)) {
+                                    sections.points.push(trimmedLine);
+                                } else {
+                                    sections.examples.push(trimmedLine);
+                                }
                             }
                         }
                     });
@@ -2636,8 +2887,9 @@ window.deleteGame = function(idx) {
                 const communityNotes = JSON.parse(localStorage.getItem('communityNotes')) || [];
                 document.getElementById('profileResources').textContent = communityNotes.length;
                 
-                // Update games count (placeholder)
-                document.getElementById('profileGames').textContent = '0';
+                // Update games count - get actual games played from localStorage
+                const gamesPlayed = parseInt(localStorage.getItem('gamesPlayed')) || 0;
+                document.getElementById('profileGames').textContent = gamesPlayed;
             });
         });
     </script>
