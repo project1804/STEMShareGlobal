@@ -1,152 +1,879 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>STEMShare Teacher</title>
-    <link rel="stylesheet" href="style.css">
-    <!-- Firebase App (the core Firebase SDK) -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <meta charset="UTF-8">
+  <title>STEMShare Teacher</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <style>
+    /* Import Google Fonts */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    
+    :root {
+      --primary-gradient: linear-gradient(135deg, #ff6b9d 0%, #e91e63 100%);
+      --secondary-gradient: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+      --accent-gradient: linear-gradient(135deg, #ff6b9d 0%, #c2185b 100%);
+      --success-gradient: linear-gradient(135deg, #81ff00 0%, #32cd32 100%);
+      --background: #fdf2f8;
+      --surface: #ffffff;
+      --text-primary: #1e293b;
+      --text-secondary: #64748b;
+      --border: #f3e8ff;
+      --shadow-light: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+      --shadow-medium: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --shadow-large: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--background);
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .teacher-header {
+      background: var(--primary-gradient);
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: white;
+      box-shadow: var(--shadow-medium);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .teacher-header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="20" cy="20" r="1" fill="white" opacity="0.1"/><circle cx="80" cy="80" r="1" fill="white" opacity="0.1"/><circle cx="40" cy="60" r="1" fill="white" opacity="0.05"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>') repeat;
+      pointer-events: none;
+    }
+
+    .teacher-title {
+      display: flex;
+      align-items: center;
+      font-size: 1.9rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      position: relative;
+      z-index: 1;
+      text-shadow: 0 1px 10px rgba(255,105,180,0.7);
+    }
+    
+    .teacher-logo {
+      font-size: 2.2rem;
+      margin-right: 12px;
+      filter: drop-shadow(0 2px 8px rgba(255,255,255,0.4));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logout-btn {
+      background: rgba(255, 255, 255, 0.2);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 12px;
+      padding: 12px 24px;
+      font-weight: 600;
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      position: relative;
+      z-index: 1;
+    }
+
+    .logout-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      border-color: rgba(255, 255, 255, 0.5);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .teacher-main {
+      display: flex;
+      min-height: calc(100vh - 80px);
+      gap: 24px;
+      padding: 24px;
+    }
+
+    .teacher-sidebar {
+      width: 280px;
+      background: var(--surface);
+      border-radius: 20px;
+      box-shadow: var(--shadow-medium);
+      padding: 32px 0;
+      height: fit-content;
+      position: sticky;
+      top: 24px;
+    }
+
+    .teacher-sidebar ul {
+      list-style: none;
+    }
+
+    .teacher-sidebar li {
+      margin-bottom: 8px;
+      padding: 0 20px;
+    }
+
+    .teacher-sidebar a {
+      text-decoration: none;
+      color: var(--text-secondary);
+      font-weight: 500;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .teacher-sidebar a::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 4px;
+      height: 0;
+      background: var(--primary-gradient);
+      border-radius: 0 4px 4px 0;
+      transition: height 0.3s ease;
+    }
+
+    .teacher-sidebar a:hover {
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+      color: var(--text-primary);
+      transform: translateX(8px);
+    }
+
+    .teacher-sidebar a:hover::before {
+      height: 32px;
+    }
+
+    .teacher-content-card {
+      flex: 1;
+      background: var(--surface);
+      border-radius: 24px;
+      box-shadow: var(--shadow-large);
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .teacher-tabs {
+      display: flex;
+      background: linear-gradient(90deg, #f8fafc 0%, #f1f5f9 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 8px;
+      gap: 8px;
+    }
+
+    .teacher-tab {
+      flex: 1;
+      padding: 16px 24px;
+      background: transparent;
+      border: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+      color: var(--text-secondary);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .teacher-tab::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: var(--primary-gradient);
+      transition: left 0.3s ease;
+      z-index: -1;
+    }
+
+    .teacher-tab.active {
+      background: var(--primary-gradient);
+      color: white;
+      box-shadow: var(--shadow-medium);
+    }
+
+    .teacher-tab.active::before {
+      left: 0;
+    }
+
+    .teacher-tab:hover:not(.active) {
+      background: rgba(102, 126, 234, 0.1);
+      color: var(--text-primary);
+    }
+
+    .welcome-section {
+      padding: 40px;
+      background: linear-gradient(135deg, rgba(240, 171, 252, 0.1) 0%, rgba(245, 101, 101, 0.1) 100%);
+      margin: 24px;
+      border-radius: 20px;
+      border: 1px solid rgba(240, 171, 252, 0.2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .welcome-section::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(102, 126, 234, 0.1) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+
+    .welcome-title {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+
+    .welcome-subtitle {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      font-weight: 400;
+    }
+
+    .upload-section {
+      padding: 40px;
+    }
+
+    .form-container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .form-group {
+      margin-bottom: 24px;
+    }
+
+    .form-label {
+      display: block;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+    }
+
+    .form-input, .form-select {
+      width: 100%;
+      padding: 16px 20px;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      font-size: 1rem;
+      font-family: inherit;
+      transition: all 0.3s ease;
+      background: var(--surface);
+    }
+
+    .form-input:focus, .form-select:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .drop-zone {
+      border: 3px dashed var(--border);
+      border-radius: 16px;
+      padding: 48px 32px;
+      text-align: center;
+      transition: all 0.3s ease;
+      background: linear-gradient(135deg, rgba(79, 172, 254, 0.02) 0%, rgba(0, 242, 254, 0.02) 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .drop-zone::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100px;
+      height: 100px;
+      background: radial-gradient(circle, rgba(79, 172, 254, 0.1) 0%, transparent 70%);
+      border-radius: 50%;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .drop-zone:hover {
+      border-color: #4facfe;
+      background: linear-gradient(135deg, rgba(79, 172, 254, 0.05) 0%, rgba(0, 242, 254, 0.05) 100%);
+    }
+
+    .drop-zone:hover::before {
+      opacity: 1;
+    }
+
+    .drop-zone-text {
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .drop-zone-subtext {
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .file-select-btn {
+      background: var(--accent-gradient);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      z-index: 1;
+    }
+
+    .file-select-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(79, 172, 254, 0.3);
+    }
+
+    .upload-btn {
+      width: 100%;
+      padding: 16px;
+      background: var(--primary-gradient);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 1.05rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 24px;
+    }
+
+    .upload-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
+    }
+
+    .category-group {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .category-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 500;
+      background: var(--surface);
+    }
+
+    .category-label:hover {
+      border-color: #667eea;
+      background: rgba(102, 126, 234, 0.05);
+    }
+
+    .category-label input[type="radio"] {
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--border);
+      border-radius: 50%;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .category-label input[type="radio"]:checked {
+      border-color: #667eea;
+      background: #667eea;
+    }
+
+    .category-label input[type="radio"]:checked::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 8px;
+      height: 8px;
+      background: white;
+      border-radius: 50%;
+    }
+
+    .recent-uploads {
+      margin-top: 48px;
+    }
+
+    .recent-uploads h3 {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 20px;
+    }
+
+    .upload-card {
+      background: linear-gradient(135deg, rgba(248, 250, 252, 0.8) 0%, rgba(241, 245, 249, 0.8) 100%);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 12px;
+      transition: all 0.3s ease;
+    }
+
+    .upload-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-medium);
+      border-color: rgba(102, 126, 234, 0.3);
+    }
+
+    .upload-card-title {
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .upload-card-meta {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    .loader {
+      border: 4px solid rgba(102, 126, 234, 0.1);
+      border-top: 4px solid #667eea;
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      100% { transform: rotate(360deg); }
+    }
+
+    .achievement-card {
+      background: linear-gradient(135deg, rgba(129, 255, 0, 0.1) 0%, rgba(50, 205, 50, 0.1) 100%);
+      border: 2px solid rgba(129, 255, 0, 0.3);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.3s ease;
+      font-weight: 500;
+    }
+
+    .achievement-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-medium);
+    }
+
+    .achievement-card.earned {
+      background: var(--success-gradient);
+      border-color: #32cd32;
+      color: white;
+      font-weight: 600;
+      box-shadow: 0 8px 25px rgba(50, 205, 50, 0.3);
+    }
+
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    .loading-content {
+      background: var(--surface);
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: var(--shadow-large);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      min-width: 200px;
+    }
+
+    .loading-text {
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .teacher-main {
+        flex-direction: column;
+        gap: 16px;
+        padding: 16px;
+      }
+
+      .teacher-sidebar {
+        width: 100%;
+        position: static;
+      }
+
+      .teacher-header {
+        padding: 16px 20px;
+      }
+
+      .teacher-title {
+        font-size: 1.4rem;
+      }
+
+      .welcome-section {
+        margin: 16px;
+        padding: 24px;
+      }
+
+      .welcome-title {
+        font-size: 1.8rem;
+      }
+
+      .category-group {
+        gap: 8px;
+      }
+
+      .category-label {
+        font-size: 0.9rem;
+        padding: 8px 12px;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="teacher-header">
-        <span class="teacher-title">STEMShare Teacher</span>
-        <button class="logout-btn" onclick="window.location.href='index.html'">Log Out</button>
+  <div class="teacher-header">
+    <div class="teacher-title">
+      <div class="teacher-logo">📚</div>
+      <span>STEMShare Teacher</span>
     </div>
-    <div class="teacher-main">
-        <nav class="teacher-sidebar">
-            <ul>
-                <li><a href="#">Teacher Profile</a></li>
-                <li><a href="#">Student Performance</a></li>
-                <li><a href="#">View Achievements</a></li>
-                <li><a href="index.html">Back to Homepage</a></li>
-            </ul>
-        </nav>
-        <div class="teacher-content-card">
-            <div class="teacher-tabs">
-                <button class="teacher-tab active" id="uploadNotesTab">Upload Resources</button>
-                <button class="teacher-tab" id="uploadGamesTab">Upload Games</button>
-                <button class="teacher-tab" id="uploadActivitiesTab">Upload Activities</button>
-            </div>
-            <div style="padding:36px 40px 0 40px;">
-                <div style="background:linear-gradient(90deg,#ffe066 60%,#baff80 100%);border-radius:14px;padding:24px 28px;margin-bottom:18px;box-shadow:0 2px 8px #0001;">
-                    <div class="teacher-welcome-text" style="font-size:2em; font-weight:bold; color:#222; line-height:1.2;">
-                        Welcome to the teacher’s page.<br>
-                        <span style="font-size:1.15em; font-weight:normal; color:#444;">You may upload <span style="color:#ff9800;font-weight:bold;">notes</span>, <span style="color:#3ec6ff;font-weight:bold;">games</span> and <span style="color:#43a047;font-weight:bold;">activities</span>.</span>
-                    </div>
-                </div>
-            </div>
-            <div id="uploadNotesContent" style="padding:32px 40px;">
-                <div style="max-width:480px;margin:0 auto;">
-                    <div style="margin-bottom:24px;">
-                        <label for="noteYear" style="font-weight:bold; color:#222; font-size:1.08em; margin-bottom:8px; display:block;">Select Year</label>
-                        <select id="noteYear" style="width:100%; font-size:1.1em; padding:10px 12px; border-radius:8px; border:1.5px solid #ffb347; margin-bottom:10px;">
-                            <option value="" disabled selected>- Select Year -</option>
-                            <option value="primary1">Primary Year 1</option>
-                            <option value="primary2">Primary Year 2</option>
-                            <option value="primary3">Primary Year 3</option>
-                            <option value="primary4">Primary Year 4</option>
-                            <option value="primary5">Primary Year 5</option>
-                            <option value="primary6">Primary Year 6</option>
-                        </select>
-                    </div>
-                    <div style="margin-bottom:18px;">
-                        <label for="noteFileName" style="font-weight:bold; color:#222; font-size:1.08em; margin-bottom:8px; display:block;">File Name</label>
-                        <input type="text" id="noteFileName" placeholder="Enter file name (e.g. Photosynthesis_Chapter1)" style="width:100%; font-size:1.1em; padding:10px 12px; border-radius:8px; border:1.5px solid #ffb347;">
-                    </div>
-                    <div id="dropZone" style="background:#f8f8f8; border:2px dashed #baff80; border-radius:16px; padding:40px 24px; text-align:center; transition:border-color 0.2s;">
-                        <img src="upload-illustration.png" alt="Upload" style="height:70px; margin-bottom:16px;">
-                        <div style="font-size:1.2em; font-weight:bold; color:#222;">Drag &amp; drop your note file here</div>
-                        <div style="margin:10px 0 18px 0; color:#888;">or</div>
-                        <label style="display:inline-block; background:#baff80; color:#222; font-weight:bold; border-radius:8px; padding:10px 32px; cursor:pointer;">
-                            Select File
-                            <input type="file" id="fileInput" style="display:none;">
-                        </label>
-                        <div id="fileName" style="margin-top:14px; color:#444; font-size:1em;"></div>
-                    </div>
-                    <button id="uploadBtn" style="margin-top:28px; background:#222; color:#fff; border:none; border-radius:8px; padding:12px 32px; font-weight:bold; font-size:1.1em; width:100%;">Upload</button>
-                </div>
-                <div style="margin-top:40px;">
-                    <div style="font-weight:bold; font-size:1.15em; color:#222; margin-bottom:12px;">Recent Note Uploads</div>
-                    <div id="recentNotesList" style="display:flex; flex-direction:column; gap:12px;">
-                        <!-- Recent uploads will appear here -->
-                    </div>
-                </div>
-            </div>
-            <div id="uploadGamesContent" style="display:none; padding:32px 40px;">
-                <div style="max-width:520px;margin:0 auto;">
-                    <!-- Add Game Name input here -->
-                    <div style="margin-bottom:24px;">
-                        <label for="gameName" style="font-weight:bold; color:#222; font-size:1.08em; margin-bottom:8px; display:block;">Game Name</label>
-                        <input type="text" id="gameName" placeholder="Enter game name (e.g. Solar System Quiz)" style="width:100%; font-size:1.1em; padding:10px 12px; border-radius:8px; border:1.5px solid #3ec6ff;">
-                    </div>
-                    <div style="margin-bottom:24px;">
-                        <label for="gameType" style="font-weight:bold; color:#222; font-size:1.08em; margin-bottom:8px; display:block;">Choose Type of Game</label>
-                        <select id="gameType" style="width:100%; font-size:1.1em; padding:10px 12px; border-radius:8px; border:1.5px solid #3ec6ff; margin-bottom:16px;">
-                            <option value="" disabled selected>- Select Game Type -</option>
-                            <option value="quiz">Quiz</option>
-                            <option value="flashcard">Flashcard</option>
-                            <option value="puzzle">Puzzle Game</option>
-                            <option value="memory">Memory Card</option>
-                        </select>
-                    </div>
-                    <div style="margin-bottom:24px;">
-                        <label for="gameCategory" style="font-weight:bold; color:#222; font-size:1.08em; margin-bottom:8px; display:block;">STEM Category</label>
-                        <div id="gameCategory" style="display:flex; gap:12px; flex-wrap:wrap;">
-                            <label class="stem-category-label" style="flex:1; min-width:100px; background:#e3f7ff; border:2px solid #3ec6ff; border-radius:8px; padding:10px 0; text-align:center; cursor:pointer; font-weight:bold; color:#222;">
-                                <input type="radio" name="stemCategory" value="Science" style="display:none;">
-                                <span>Science</span>
-                            </label>
-                            <label class="stem-category-label" style="flex:1; min-width:100px; background:#fffbe6; border:2px solid #ffe066; border-radius:8px; padding:10px 0; text-align:center; cursor:pointer; font-weight:bold; color:#222;">
-                                <input type="radio" name="stemCategory" value="Technology" style="display:none;">
-                                <span>Technology</span>
-                            </label>
-                            <label class="stem-category-label" style="flex:1; min-width:100px; background:#e6ffe6; border:2px solid #43a047; border-radius:8px; padding:10px 0; text-align:center; cursor:pointer; font-weight:bold; color:#222;">
-                                <input type="radio" name="stemCategory" value="Engineering" style="display:none;">
-                                <span>Engineering</span>
-                            </label>
-                            <label class="stem-category-label" style="flex:1; min-width:100px; background:#ffe6f7; border:2px solid #ff80bf; border-radius:8px; padding:10px 0; text-align:center; cursor:pointer; font-weight:bold; color:#222;">
-                                <input type="radio" name="stemCategory" value="Mathematics" style="display:none;">
-                                <span>Mathematics</span>
-                            </label>
-                        </div>
-                    </div>
-                    <div style="background:#f8f8f8; border:2px dashed #3ec6ff; border-radius:16px; padding:40px 24px; text-align:center; transition:border-color 0.2s;">
-                        <img src="game-upload.png" alt="Upload Game" style="height:70px; margin-bottom:16px;">
-                        <div style="font-size:1.2em; font-weight:bold; color:#222;">Drag &amp; drop your game file here</div>
-                        <div style="margin:10px 0 18px 0; color:#888;">or</div>
-                        <label style="display:inline-block; background:#3ec6ff; color:#fff; font-weight:bold; border-radius:8px; padding:10px 32px; cursor:pointer;">
-                            Select Game File
-                            <input type="file" id="gameFileInput" style="display:none;">
-                        </label>
-                        <div id="gameFileName" style="margin-top:14px; color:#444; font-size:1em;"></div>
-                    </div>
-                    <div style="margin-top:24px; background:#e3f7ff; border-radius:12px; padding:18px 16px; color:#222; font-size:1.08em;">
-                        <b>Game Upload Guidelines:</b>
-                        <ul style="margin:10px 0 0 18px; padding:0; color:#444; font-size:0.98em;">
-                            <li>Accepted formats: .zip, .exe, .html, .apk</li>
-                            <li>Max file size: 100MB</li>
-                            <li>Include a short description and instructions in a text file</li>
-                        </ul>
-                    </div>
-                    <button id="uploadGameBtn" style="margin-top:28px; background:#3ec6ff; color:#fff; border:none; border-radius:8px; padding:12px 32px; font-weight:bold; font-size:1.1em; width:100%;">Upload Game</button>
-                </div>
-                <div style="margin-top:40px;">
-                    <div style="font-weight:bold; font-size:1.15em; color:#222; margin-bottom:12px;">Recent Game Uploads</div>
-                    <div id="recentGamesList" style="display:flex; flex-direction:column; gap:12px;">
-                        <!-- Recent uploads will appear here -->
-                    </div>
-                </div>
-            </div>
+    <button class="logout-btn" onclick="window.location.href='index.html'">Log Out</button>
+  </div>
+
+  <div class="teacher-main">
+    <nav class="teacher-sidebar">
+      <ul>
+        <li><a href="#">Teacher Profile</a></li>
+        <li><a href="#" id="viewAchievementsTab">View Achievements</a></li>
+        <li><a href="index.html">Back to Homepage</a></li>
+      </ul>
+    </nav>
+
+    <div class="teacher-content-card">
+      <div class="teacher-tabs">
+        <button class="teacher-tab active" id="uploadNotesTab">Upload Resources</button>
+        <button class="teacher-tab" id="uploadGamesTab">Upload Games</button>
+      </div>
+
+      <!-- Welcome Section -->
+      <div class="welcome-section">
+        <div class="welcome-title">
+          Welcome to the teacher's dashboard
         </div>
-    </div>
-    <div id="loadingOverlay" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:9999;background:rgba(255,255,255,0.7);align-items:center;justify-content:center;">
-        <div style="background:#fff;padding:32px 40px;border-radius:16px;box-shadow:0 2px 12px #0002;display:flex;flex-direction:column;align-items:center;">
-            <div class="loader" style="border:6px solid #eee;border-top:6px solid #3ec6ff;border-radius:50%;width:48px;height:48px;animation:spin 1s linear infinite;margin-bottom:18px;"></div>
-            <div style="font-size:1.15em;color:#222;font-weight:bold;">Uploading, please wait...</div>
+        <div class="welcome-subtitle">
+          Upload and manage your educational <strong>resources</strong> and interactive <strong>games</strong> to enhance student learning experiences.
         </div>
+      </div>
+
+      <!-- Upload Notes -->
+      <div id="uploadNotesContent" class="upload-section">
+        <div class="form-container">
+          <div class="form-group">
+            <label for="noteYear" class="form-label">Select Year</label>
+            <select id="noteYear" class="form-select">
+              <option value="" disabled selected>- Select Year -</option>
+              <option value="primary1">Primary Year 1</option>
+              <option value="primary2">Primary Year 2</option>
+              <option value="primary3">Primary Year 3</option>
+              <option value="primary4">Primary Year 4</option>
+              <option value="primary5">Primary Year 5</option>
+              <option value="primary6">Primary Year 6</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="noteFileName" class="form-label">File Name</label>
+            <input type="text" id="noteFileName" class="form-input" placeholder="Enter a descriptive name for your resource">
+          </div>
+          
+          <div class="form-group">
+            <div id="dropZone" class="drop-zone">
+              <div class="drop-zone-text">📚 Drag & drop your resource file here</div>
+              <div class="drop-zone-subtext">or</div>
+              <label class="file-select-btn">
+                Select File <input type="file" id="fileInput" style="display:none;">
+              </label>
+              <div id="fileName" style="margin-top:14px; font-weight: 600; color: var(--text-primary);"></div>
+            </div>
+          </div>
+          
+          <button id="uploadBtn" class="upload-btn">Upload Resource</button>
+        </div>
+        
+        <div class="recent-uploads">
+          <h3>Recent Resource Uploads</h3>
+          <div id="recentNotesList"></div>
+        </div>
+      </div>
+
+      <!-- Upload Games -->
+      <div id="uploadGamesContent" class="upload-section" style="display:none;">
+        <div class="form-container">
+          <div class="form-group">
+            <label for="gameName" class="form-label">Game Name</label>
+            <input type="text" id="gameName" class="form-input" placeholder="Enter an engaging game name">
+          </div>
+
+          <div class="form-group">
+            <label for="gameType" class="form-label">Game Type</label>
+            <select id="gameType" class="form-select">
+              <option value="" disabled selected>- Select Game Type -</option>
+              <option value="quiz">Quiz</option>
+              <option value="flashcard">Flashcard</option>
+              <option value="puzzle">Puzzle Game</option>
+              <option value="memory">Memory Card</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">STEM Category</label>
+            <div class="category-group">
+              <label class="category-label">
+                <input type="radio" name="stemCategory" value="Science"> Science
+              </label>
+              <label class="category-label">
+                <input type="radio" name="stemCategory" value="Technology"> Technology
+              </label>
+              <label class="category-label">
+                <input type="radio" name="stemCategory" value="Engineering"> Engineering
+              </label>
+              <label class="category-label">
+                <input type="radio" name="stemCategory" value="Mathematics"> Mathematics
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="gameLink" class="form-label">Game Link (optional)</label>
+            <input type="text" id="gameLink" class="form-input" placeholder="Paste link to online game or leave empty to upload file">
+          </div>
+
+          <div class="form-group">
+            <div id="gameFileUploadSection" class="drop-zone">
+              <div class="drop-zone-text">🎮 Drag & drop your game file here</div>
+              <div class="drop-zone-subtext">or</div>
+              <label class="file-select-btn">
+                Select File <input type="file" id="gameFileInput" style="display:none;">
+              </label>
+              <div id="gameFileName" style="margin-top:14px; font-weight: 600; color: var(--text-primary);"></div>
+            </div>
+          </div>
+
+          <button id="uploadGameBtn" class="upload-btn">Upload Game</button>
+        </div>
+        
+        <div class="recent-uploads">
+          <h3>Recent Game Uploads</h3>
+          <div id="recentGamesList"></div>
+        </div>
+      </div>
+
+      <!-- Teacher Profile Settings -->
+      <div id="profileContent" class="upload-section" style="display:none;">
+        <div class="form-container">
+          <h2 style="font-size: 1.8rem; font-weight: 700; color: var(--text-primary); margin-bottom: 32px; text-align: center;">👤 Teacher Profile Settings</h2>
+          
+          <!-- Profile Picture Section -->
+          <div class="form-group">
+            <label class="form-label">Profile Avatar</label>
+            <div style="display: flex; align-items: center; gap: 20px; margin-top: 12px;">
+              <div id="currentAvatar" style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; font-size: 2em; color: white; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);">👤</div>
+              <div style="flex: 1;">
+                <div style="margin-bottom: 12px; font-weight: 500; color: var(--text-secondary);">Choose your profile avatar:</div>
+                <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                  <button type="button" class="avatar-option" data-avatar="👤" style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--border); background: #f8fafc; cursor: pointer; font-size: 1.5em; transition: all 0.3s ease;">👤</button>
+                  <button type="button" class="avatar-option" data-avatar="👨‍🏫" style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--border); background: #f8fafc; cursor: pointer; font-size: 1.5em; transition: all 0.3s ease;">👨‍🏫</button>
+                  <button type="button" class="avatar-option" data-avatar="👩‍🏫" style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--border); background: #f8fafc; cursor: pointer; font-size: 1.5em; transition: all 0.3s ease;">👩‍🏫</button>
+                  <button type="button" class="avatar-option" data-avatar="🧑‍💻" style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--border); background: #f8fafc; cursor: pointer; font-size: 1.5em; transition: all 0.3s ease;">🧑‍💻</button>
+                  <button type="button" class="avatar-option" data-avatar="👨‍🔬" style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--border); background: #f8fafc; cursor: pointer; font-size: 1.5em; transition: all 0.3s ease;">👨‍🔬</button>
+                  <button type="button" class="avatar-option" data-avatar="👩‍🔬" style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--border); background: #f8fafc; cursor: pointer; font-size: 1.5em; transition: all 0.3s ease;">👩‍🔬</button>
+                  <button type="button" class="avatar-option" data-avatar="🎓" style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--border); background: #f8fafc; cursor: pointer; font-size: 1.5em; transition: all 0.3s ease;">🎓</button>
+                  <button type="button" class="avatar-option" data-avatar="📚" style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--border); background: #f8fafc; cursor: pointer; font-size: 1.5em; transition: all 0.3s ease;">📚</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Personal Information -->
+          <div class="form-group">
+            <label for="teacherName" class="form-label">Full Name</label>
+            <input type="text" id="teacherName" class="form-input" placeholder="Enter your full name" value="Dr. Sarah Johnson">
+          </div>
+
+          <div class="form-group">
+            <label for="teacherEmail" class="form-label">Email Address</label>
+            <input type="email" id="teacherEmail" class="form-input" placeholder="Enter your email address" value="sarah.johnson@school.edu">
+          </div>
+
+          <div class="form-group">
+            <label for="schoolName" class="form-label">School Name</label>
+            <input type="text" id="schoolName" class="form-input" placeholder="Enter your school name" value="SMK Kapit">
+          </div>
+
+          <div class="form-group">
+            <label for="subjectSpecialty" class="form-label">Subject Specialty</label>
+            <select id="subjectSpecialty" class="form-select">
+              <option value="" disabled>- Select Your Primary Subject -</option>
+              <option value="Mathematics" selected>Mathematics</option>
+              <option value="Science">Science</option>
+              <option value="Physics">Physics</option>
+              <option value="Chemistry">Chemistry</option>
+              <option value="Biology">Biology</option>
+              <option value="Technology">Technology</option>
+              <option value="Engineering">Engineering</option>
+              <option value="Computer Science">Computer Science</option>
+              <option value="General Education">General Education</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="teachingExperience" class="form-label">Years of Teaching Experience</label>
+            <select id="teachingExperience" class="form-select">
+              <option value="" disabled>- Select Experience Level -</option>
+              <option value="1-2 years">1-2 years</option>
+              <option value="3-5 years">3-5 years</option>
+              <option value="6-10 years" selected>6-10 years</option>
+              <option value="11-15 years">11-15 years</option>
+              <option value="16-20 years">16-20 years</option>
+              <option value="20+ years">20+ years</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="teacherBio" class="form-label">Bio / About Me</label>
+            <textarea id="teacherBio" class="form-input" rows="4" placeholder="Tell us about yourself, your teaching philosophy, or interests..." style="resize: vertical; min-height: 100px;">Passionate mathematics educator with over 8 years of experience in making complex concepts accessible and engaging for students. I believe in hands-on learning and integrating technology to enhance the educational experience.</textarea>
+          </div>
+
+          <!-- Contact Information -->
+          <div class="form-group">
+            <label for="phoneNumber" class="form-label">Phone Number (Optional)</label>
+            <input type="tel" id="phoneNumber" class="form-input" placeholder="Enter your phone number" value="+60 12-345-6789">
+          </div>
+
+          <div class="form-group">
+            <label for="officeLocation" class="form-label">Office Location (Optional)</label>
+            <input type="text" id="officeLocation" class="form-input" placeholder="e.g., Room 205, Science Building" value="Room 301, Mathematics Department">
+          </div>
+
+          <!-- Preferences -->
+          <div class="form-group">
+            <label class="form-label">Notification Preferences</label>
+            <div style="margin-top: 12px; display: flex; flex-direction: column; gap: 12px;">
+              <label style="display: flex; align-items: center; gap: 12px; cursor: pointer;">
+                <input type="checkbox" id="emailNotifications" checked style="width: 18px; height: 18px; accent-color: #667eea;">
+                <span>Email notifications for student interactions</span>
+              </label>
+              <label style="display: flex; align-items: center; gap: 12px; cursor: pointer;">
+                <input type="checkbox" id="uploadNotifications" checked style="width: 18px; height: 18px; accent-color: #667eea;">
+                <span>Notifications for successful uploads</span>
+              </label>
+              <label style="display: flex; align-items: center; gap: 12px; cursor: pointer;">
+                <input type="checkbox" id="weeklyReports" style="width: 18px; height: 18px; accent-color: #667eea;">
+                <span>Weekly activity reports</span>
+              </label>
+            </div>
+          </div>
+
+          <button id="saveProfileBtn" class="upload-btn" style="margin-top: 32px;">💾 Save Profile Settings</button>
+          
+          <!-- Profile Preview -->
+          <div id="profilePreview" style="margin-top: 32px; padding: 24px; background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border-radius: 16px; border: 1px solid var(--border);">
+            <h3 style="margin: 0 0 20px 0; color: var(--text-primary); display: flex; align-items: center; gap: 12px;">
+              <span>👀</span> Profile Preview
+            </h3>
+            <div style="display: flex; align-items: center; gap: 20px;">
+              <div id="previewAvatar" style="width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; font-size: 1.5em; color: white; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);">👤</div>
+              <div>
+                <div id="previewName" style="font-weight: 600; font-size: 1.2em; color: var(--text-primary); margin-bottom: 4px;">Dr. Sarah Johnson</div>
+                <div id="previewSchool" style="color: var(--text-secondary); margin-bottom: 2px;">SMK Kapit</div>
+                <div id="previewSubject" style="color: var(--text-secondary); font-size: 0.9em;">Mathematics • 6-10 years experience</div>
+              </div>
+            </div>
+            <div id="previewBio" style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); color: var(--text-secondary); font-style: italic; line-height: 1.5;">Passionate mathematics educator with over 8 years of experience in making complex concepts accessible and engaging for students. I believe in hands-on learning and integrating technology to enhance the educational experience.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Achievements -->
+      <div id="achievementsContent" class="upload-section" style="display:none;">
+        <div class="form-container">
+          <h2 style="font-size: 1.8rem; font-weight: 700; color: var(--text-primary); margin-bottom: 32px; text-align: center;">🏆 Your Achievements</h2>
+          <div id="achievementList">
+            <div class="achievement-card" id="ach1">🏅 First Upload</div>
+            <div class="achievement-card" id="ach5">🥈 5 Uploads</div>
+            <div class="achievement-card" id="ach10">🥇 10 Uploads</div>
+            <div class="achievement-card" id="ach20">🌟 20 Uploads</div>
+          </div>
+        </div>
+      </div>
+
     </div>
-    <script src="teacher.js"></script>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay" class="loading-overlay" style="display:none;">
+    <div class="loading-content">
+      <div class="loader"></div>
+      <div class="loading-text">Uploading, please wait...</div>
+    </div>
+  </div>
+
+  <script src="teacher.js"></script>
 </body>
 </html>
