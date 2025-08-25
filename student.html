@@ -1220,28 +1220,23 @@
     </div>
 
 
-                    <!-- AI Chatbot Content -->
+                    <!-- AI Assistant Content -->
                     <div id="chatbotContent" class="tab-content" style="display:none;">
                         <div style="display: flex; flex-direction: column; height: 600px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 20px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.1);">
-                            <!-- Chat Header -->
+                            <!-- AI Header -->
                             <div style="background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%); padding: 20px; color: white; text-align: center;">
-                                <div style="font-size: 1.4em; font-weight: bold; margin-bottom: 5px;">✨ STEMSHARE AI Assistant</div>
-                                <div style="font-size: 0.9em; opacity: 0.9;">Ask me anything about your studies!</div>
+                                <div style="font-size: 1.4em; font-weight: bold; margin-bottom: 5px;">🤖 AI Assistant</div>
+                                <div style="font-size: 0.9em; opacity: 0.9;">Powered by Simple AI - Your intelligent study companion</div>
                             </div>
                             
-                            <!-- Chat Messages -->
-                            <div id="customChatMessages" style="flex: 1; padding: 20px; overflow-y: auto; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); display: flex; flex-direction: column; gap: 15px;">
-                                <div style="max-width: 80%; padding: 12px 16px; border-radius: 18px; font-size: 0.95em; line-height: 1.4; background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%); color: #333; align-self: flex-start; border-left: 4px solid #4CAF50; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                                    <strong>👋 Welcome to STEMSHARE AI!</strong><br><br>I'm your smart study companion! I can help with:<br><br><strong>📐 Math</strong>: Algebra, geometry, fractions, equations<br><strong>🔬 Science</strong>: Physics, chemistry, biology<br><strong>📝 Study Skills</strong>: Problem-solving strategies<br><br><strong>Try asking me</strong>:<br>• "Help me solve 2x + 5 = 11"<br>• "Explain photosynthesis"<br>• "What's the Pythagorean theorem?"<br><br>What would you like to learn today?
-                                </div>
-                            </div>
-                            
-                            <!-- Chat Input -->
-                            <div style="padding: 20px; background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%); border-top: 1px solid #e0e0e0; display: flex; gap: 12px; align-items: center;">
-                                <input type="text" id="customChatInput" placeholder="Type your question here..." style="flex: 1; padding: 12px 16px; border: 2px solid #e0e0e0; border-radius: 25px; font-size: 1em; outline: none; transition: all 0.3s ease; background: white;" onkeypress="if(event.key==='Enter') sendCustomChatMessage()">
-                                <button onclick="sendCustomChatMessage()" style="background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%); color: white; border: none; border-radius: 50%; width: 48px; height: 48px; font-size: 1.2em; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);">
-                                    ➤
-                                </button>
+                            <!-- Simple AI Iframe -->
+                            <div style="flex: 1; position: relative;">
+                                <iframe 
+                                    src="https://simple-ai.io/" 
+                                    style="width: 100%; height: 100%; border: none;"
+                                    title="Simple AI Assistant"
+                                    allowfullscreen>
+                                </iframe>
                             </div>
                         </div>
                     </div>
