@@ -13,18 +13,21 @@
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
     
     :root {
-      --primary-gradient: linear-gradient(135deg, #ff6b9d 0%, #e91e63 100%);
-      --secondary-gradient: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
-      --accent-gradient: linear-gradient(135deg, #ff6b9d 0%, #c2185b 100%);
-      --success-gradient: linear-gradient(135deg, #81ff00 0%, #32cd32 100%);
-      --background: #fdf2f8;
+      --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      --accent-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      --success-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+      --warning-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+      --rainbow-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #43e97b 100%);
+      --background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
       --surface: #ffffff;
-      --text-primary: #1e293b;
-      --text-secondary: #64748b;
-      --border: #f3e8ff;
+      --text-primary: #2d3748;
+      --text-secondary: #718096;
+      --border: rgba(102, 126, 234, 0.1);
       --shadow-light: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
       --shadow-medium: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
       --shadow-large: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      --shadow-colorful: 0 10px 40px rgba(102, 126, 234, 0.2);
     }
 
     * {
@@ -36,52 +39,89 @@
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       background: var(--background);
+      background-attachment: fixed;
       color: var(--text-primary);
       line-height: 1.6;
       min-height: 100vh;
-    }
-
-    .teacher-header {
-      background: var(--primary-gradient);
-      padding: 20px 40px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      color: white;
-      box-shadow: var(--shadow-medium);
       position: relative;
-      overflow: hidden;
+      width: 100%;
+      margin: 0;
+      padding: 0;
     }
-
-    .teacher-header::before {
+    
+    body::before {
       content: '';
-      position: absolute;
+      position: fixed;
       top: 0;
       left: 0;
       right: 0;
       bottom: 0;
-      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="20" cy="20" r="1" fill="white" opacity="0.1"/><circle cx="80" cy="80" r="1" fill="white" opacity="0.1"/><circle cx="40" cy="60" r="1" fill="white" opacity="0.05"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>') repeat;
+      background: 
+        radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 80%, rgba(120, 200, 255, 0.1) 0%, transparent 50%);
+      z-index: -1;
       pointer-events: none;
     }
+
+    .teacher-header {
+      background: var(--rainbow-gradient);
+      background-size: 400% 400%;
+      padding: 24px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: white;
+      box-shadow: var(--shadow-colorful);
+      position: relative;
+      overflow: hidden;
+      animation: gradientShift 8s ease-in-out infinite;
+    }
+    
+    @keyframes gradientShift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+
 
     .teacher-title {
       display: flex;
       align-items: center;
-      font-size: 1.9rem;
+      font-size: 2rem;
       font-weight: 700;
       letter-spacing: -0.03em;
       position: relative;
       z-index: 1;
-      text-shadow: 0 1px 10px rgba(255,105,180,0.7);
+      text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+      animation: titleGlow 3s ease-in-out infinite alternate;
+      background: transparent;
+    }
+    
+    @keyframes titleGlow {
+      0% { text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3); }
+      100% { text-shadow: 0 2px 30px rgba(255, 255, 255, 0.5); }
     }
     
     .teacher-logo {
-      font-size: 2.2rem;
-      margin-right: 12px;
-      filter: drop-shadow(0 2px 8px rgba(255,255,255,0.4));
+      margin-right: 16px;
       display: flex;
       align-items: center;
       justify-content: center;
+      animation: logoFloat 4s ease-in-out infinite;
+      background: transparent;
+    }
+    
+    .teacher-logo img {
+      width: 120px;
+      height: 120px;
+      object-fit: contain;
+      filter: drop-shadow(0 4px 15px rgba(255,255,255,0.6));
+    }
+    
+    @keyframes logoFloat {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-5px) rotate(5deg); }
     }
 
     .logout-btn {
@@ -108,19 +148,43 @@
     .teacher-main {
       display: flex;
       min-height: calc(100vh - 80px);
-      gap: 24px;
-      padding: 24px;
+      gap: 32px;
+      padding: 20px;
+      max-width: 1600px;
+      margin: 0 auto;
+      width: 100%;
     }
 
     .teacher-sidebar {
-      width: 280px;
-      background: var(--surface);
-      border-radius: 20px;
-      box-shadow: var(--shadow-medium);
+      width: 320px;
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.85));
+      backdrop-filter: blur(20px);
+      border-radius: 24px;
+      box-shadow: var(--shadow-colorful);
+      border: 1px solid rgba(255, 255, 255, 0.2);
       padding: 32px 0;
       height: fit-content;
       position: sticky;
       top: 24px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    
+    .teacher-sidebar::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: conic-gradient(from 0deg, transparent, rgba(102, 126, 234, 0.03), transparent, rgba(240, 147, 251, 0.03), transparent);
+      animation: rotate 20s linear infinite;
+      z-index: -1;
+    }
+    
+    @keyframes rotate {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
 
     .teacher-sidebar ul {
@@ -129,19 +193,21 @@
 
     .teacher-sidebar li {
       margin-bottom: 8px;
-      padding: 0 20px;
+      padding: 0 4px;
     }
 
     .teacher-sidebar a {
       text-decoration: none;
       color: var(--text-secondary);
       font-weight: 500;
-      padding: 16px 20px;
+      padding: 16px 24px;
       display: flex;
       align-items: center;
-      border-radius: 12px;
-      transition: all 0.3s ease;
+      border-radius: 16px;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       position: relative;
+      margin: 0 16px;
+      overflow: hidden;
     }
 
     .teacher-sidebar a::before {
@@ -150,50 +216,82 @@
       left: 0;
       top: 50%;
       transform: translateY(-50%);
-      width: 4px;
+      width: 5px;
       height: 0;
-      background: var(--primary-gradient);
-      border-radius: 0 4px 4px 0;
-      transition: height 0.3s ease;
+      background: var(--accent-gradient);
+      border-radius: 0 8px 8px 0;
+      transition: height 0.4s ease;
+    }
+    
+    .teacher-sidebar a::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(79, 172, 254, 0.15) 100%);
+      transition: left 0.4s ease;
+      z-index: -1;
     }
 
     .teacher-sidebar a:hover {
-      background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+      background: rgba(255, 255, 255, 0.8);
       color: var(--text-primary);
-      transform: translateX(8px);
+      transform: translateX(12px) scale(1.02);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
     }
 
     .teacher-sidebar a:hover::before {
-      height: 32px;
+      height: 40px;
+    }
+    
+    .teacher-sidebar a:hover::after {
+      left: 0;
     }
 
     .teacher-content-card {
       flex: 1;
-      background: var(--surface);
-      border-radius: 24px;
-      box-shadow: var(--shadow-large);
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.9));
+      backdrop-filter: blur(20px);
+      border-radius: 28px;
+      box-shadow: var(--shadow-colorful);
       overflow: hidden;
-      border: 1px solid var(--border);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      position: relative;
+    }
+    
+    .teacher-content-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--rainbow-gradient);
+      background-size: 400% 400%;
+      animation: gradientShift 6s ease-in-out infinite;
     }
 
     .teacher-tabs {
       display: flex;
-      background: linear-gradient(90deg, #f8fafc 0%, #f1f5f9 100%);
-      border-bottom: 1px solid var(--border);
-      padding: 8px;
-      gap: 8px;
+      background: linear-gradient(135deg, rgba(248, 250, 252, 0.8) 0%, rgba(241, 245, 249, 0.8) 100%);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+      padding: 12px;
+      gap: 12px;
     }
 
     .teacher-tab {
       flex: 1;
-      padding: 16px 24px;
+      padding: 18px 28px;
       background: transparent;
-      border: none;
+      border: 2px solid transparent;
       font-weight: 600;
       font-size: 0.95rem;
       cursor: pointer;
-      border-radius: 12px;
-      transition: all 0.3s ease;
+      border-radius: 16px;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       color: var(--text-secondary);
       position: relative;
       overflow: hidden;
@@ -206,15 +304,18 @@
       left: -100%;
       width: 100%;
       height: 100%;
-      background: var(--primary-gradient);
-      transition: left 0.3s ease;
+      background: var(--secondary-gradient);
+      transition: left 0.4s ease;
       z-index: -1;
+      border-radius: 14px;
     }
 
     .teacher-tab.active {
       background: var(--primary-gradient);
       color: white;
-      box-shadow: var(--shadow-medium);
+      box-shadow: var(--shadow-colorful);
+      transform: translateY(-2px);
+      border-color: rgba(255, 255, 255, 0.3);
     }
 
     .teacher-tab.active::before {
@@ -222,16 +323,18 @@
     }
 
     .teacher-tab:hover:not(.active) {
-      background: rgba(102, 126, 234, 0.1);
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(79, 172, 254, 0.15) 100%);
       color: var(--text-primary);
+      transform: translateY(-2px) scale(1.02);
+      border-color: rgba(102, 126, 234, 0.2);
     }
 
     .welcome-section {
-      padding: 40px;
-      background: linear-gradient(135deg, rgba(240, 171, 252, 0.1) 0%, rgba(245, 101, 101, 0.1) 100%);
-      margin: 24px;
-      border-radius: 20px;
-      border: 1px solid rgba(240, 171, 252, 0.2);
+      padding: 48px 60px;
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(240, 147, 251, 0.08) 50%, rgba(79, 172, 254, 0.08) 100%);
+      margin: 32px;
+      border-radius: 24px;
+      border: 1px solid rgba(102, 126, 234, 0.15);
       position: relative;
       overflow: hidden;
     }
@@ -240,11 +343,19 @@
       content: '';
       position: absolute;
       top: -50%;
-      right: -50%;
-      width: 200px;
-      height: 200px;
-      background: radial-gradient(circle, rgba(102, 126, 234, 0.1) 0%, transparent 70%);
+      right: -30%;
+      width: 300px;
+      height: 300px;
+      background: 
+        radial-gradient(circle at 30% 70%, rgba(102, 126, 234, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 70% 30%, rgba(240, 147, 251, 0.15) 0%, transparent 50%);
       border-radius: 50%;
+      animation: float 8s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      50% { transform: translate(-20px, -20px) rotate(180deg); }
     }
 
     .welcome-title {
@@ -262,11 +373,11 @@
     }
 
     .upload-section {
-      padding: 40px;
+      padding: 48px;
     }
 
     .form-container {
-      max-width: 600px;
+      max-width: 800px;
       margin: 0 auto;
     }
 
@@ -295,8 +406,10 @@
 
     .form-input:focus, .form-select:focus {
       outline: none;
-      border-color: #667eea;
-      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      border-color: transparent;
+      background: linear-gradient(white, white) padding-box, var(--accent-gradient) border-box;
+      box-shadow: 0 0 20px rgba(79, 172, 254, 0.2);
+      transform: translateY(-2px);
     }
 
     .drop-zone {
@@ -368,21 +481,40 @@
 
     .upload-btn {
       width: 100%;
-      padding: 16px;
-      background: var(--primary-gradient);
+      padding: 18px;
+      background: var(--success-gradient);
       color: white;
       border: none;
-      border-radius: 12px;
-      font-weight: 600;
-      font-size: 1.05rem;
+      border-radius: 16px;
+      font-weight: 700;
+      font-size: 1.1rem;
       cursor: pointer;
-      transition: all 0.3s ease;
-      margin-top: 24px;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: var(--shadow-colorful);
+      margin-top: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .upload-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: var(--warning-gradient);
+      transition: left 0.4s ease;
+      z-index: -1;
     }
 
     .upload-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 20px 50px rgba(67, 233, 123, 0.4);
+    }
+    
+    .upload-btn:hover::before {
+      left: 0;
     }
 
     .category-group {
@@ -441,6 +573,10 @@
       margin-top: 48px;
     }
 
+    .upload-card {
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
     .recent-uploads h3 {
       font-size: 1.3rem;
       font-weight: 600;
@@ -449,18 +585,37 @@
     }
 
     .upload-card {
-      background: linear-gradient(135deg, rgba(248, 250, 252, 0.8) 0%, rgba(241, 245, 249, 0.8) 100%);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 20px;
-      margin-bottom: 12px;
-      transition: all 0.3s ease;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.9) 100%);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(102, 126, 234, 0.1);
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 16px;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .upload-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--accent-gradient);
+      transform: scaleX(0);
+      transition: transform 0.4s ease;
     }
 
     .upload-card:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-medium);
-      border-color: rgba(102, 126, 234, 0.3);
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: var(--shadow-colorful);
+      border-color: rgba(79, 172, 254, 0.3);
+    }
+    
+    .upload-card:hover::before {
+      transform: scaleX(1);
     }
 
     .upload-card-title {
@@ -544,12 +699,177 @@
       color: var(--text-primary);
     }
 
+    /* Forum Styles */
+    .topic-item {
+      padding: 16px;
+      margin-bottom: 8px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(102, 126, 234, 0.1);
+      background: rgba(255, 255, 255, 0.7);
+    }
+
+    .topic-item:hover {
+      background: rgba(102, 126, 234, 0.1);
+      transform: translateX(4px);
+      border-color: rgba(102, 126, 234, 0.2);
+    }
+
+    .topic-item.active {
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(79, 172, 254, 0.15) 100%);
+      border-color: #667eea;
+      transform: translateX(4px);
+    }
+
+    .topic-title {
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+      font-size: 0.95rem;
+      line-height: 1.3;
+    }
+
+    .topic-meta {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .message-card {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 16px;
+      border: 1px solid rgba(102, 126, 234, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .message-card:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      transform: translateY(-2px);
+    }
+
+    .message-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 12px;
+      gap: 12px;
+    }
+
+    .teacher-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+      font-size: 1.1em;
+    }
+
+    .teacher-info {
+      flex: 1;
+    }
+
+    .teacher-name {
+      font-weight: 600;
+      color: var(--text-primary);
+      font-size: 0.95rem;
+    }
+
+    .teacher-location {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .message-content {
+      margin-bottom: 12px;
+      line-height: 1.5;
+      color: var(--text-primary);
+    }
+
+    .message-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .action-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      color: var(--text-secondary);
+    }
+
+    .action-btn:hover {
+      background: rgba(102, 126, 234, 0.1);
+      color: var(--text-primary);
+    }
+
+    .action-btn.liked {
+      color: #e74c3c;
+      background: rgba(231, 76, 60, 0.1);
+    }
+
+    .new-topic-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(79, 172, 254, 0.3);
+    }
+
+    .country-flag {
+      font-size: 1.2em;
+    }
+
+    #replyInput:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 15px rgba(102, 126, 234, 0.2);
+    }
+
+    .forum-container {
+      max-height: calc(100vh - 200px);
+      min-height: 700px;
+      overflow: hidden;
+    }
+
     /* Responsive Design */
+    @media (max-width: 1200px) {
+      .teacher-main {
+        max-width: 1200px;
+        padding: 20px;
+      }
+
+      .teacher-sidebar {
+        width: 280px;
+      }
+
+      .form-container {
+        max-width: 700px;
+      }
+    }
+
     @media (max-width: 768px) {
       .teacher-main {
         flex-direction: column;
         gap: 16px;
         padding: 16px;
+        max-width: none;
       }
 
       .teacher-sidebar {
@@ -574,6 +894,14 @@
         font-size: 1.8rem;
       }
 
+      .upload-section {
+        padding: 24px;
+      }
+
+      .form-container {
+        max-width: none;
+      }
+
       .category-group {
         gap: 8px;
       }
@@ -582,14 +910,32 @@
         font-size: 0.9rem;
         padding: 8px 12px;
       }
+
+      .forum-container {
+        flex-direction: column;
+        height: auto;
+        min-height: auto;
+        gap: 20px;
+      }
+
+      .forum-sidebar {
+        width: 100%;
+        height: 350px;
+        padding: 24px 20px;
+      }
+
+      .forum-main {
+        min-height: 500px;
+        padding: 24px !important;
+      }
     }
   </style>
 </head>
 <body>
   <div class="teacher-header">
     <div class="teacher-title">
-      <div class="teacher-logo">📚</div>
-      <span>STEMShare Teacher</span>
+      <div class="teacher-logo"><img src="logo baru.jpg" alt="STEMSHARE Logo"></div>
+      <span>STEMSHARE TEACHER</span>
     </div>
     <button class="logout-btn" onclick="window.location.href='index.html'">Log Out</button>
   </div>
@@ -607,6 +953,7 @@
       <div class="teacher-tabs">
         <button class="teacher-tab active" id="uploadNotesTab">Upload Resources</button>
         <button class="teacher-tab" id="uploadGamesTab">Upload Games</button>
+        <button class="teacher-tab" id="forumTab">Global Forum 🌍</button>
       </div>
 
       <!-- Welcome Section -->
@@ -863,6 +1210,70 @@
         </div>
       </div>
 
+      <!-- Global Forum Section -->
+      <div id="forumContent" class="upload-section" style="display:none;">
+        <div class="forum-container" style="display: flex; gap: 32px; height: calc(100vh - 200px); min-height: 700px;">
+          <!-- Discussion List (Left Panel) -->
+          <div class="forum-sidebar" style="width: 420px; background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.85)); backdrop-filter: blur(20px); border-radius: 20px; padding: 32px 28px; box-shadow: var(--shadow-colorful); border: 1px solid rgba(255, 255, 255, 0.3); overflow-y: auto; flex-shrink: 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+              <h3 style="color: var(--text-primary); margin: 0; font-size: 1.3rem; font-weight: 700;">🌍 Global Discussions</h3>
+              <button class="new-topic-btn" style="background: var(--accent-gradient); color: white; border: none; border-radius: 8px; padding: 8px 12px; font-size: 0.8em; font-weight: 600; cursor: pointer; transition: all 0.3s ease;">+ New Topic</button>
+            </div>
+            
+            <!-- Topic Filters -->
+            <div style="margin-bottom: 20px;">
+              <select class="topic-filter" style="width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.9em; background: white;">
+                <option value="all">All Subjects</option>
+                <option value="mathematics">Mathematics</option>
+                <option value="science">Science</option>
+                <option value="physics">Physics</option>
+                <option value="chemistry">Chemistry</option>
+                <option value="biology">Biology</option>
+                <option value="technology">Technology</option>
+                <option value="general">General Education</option>
+              </select>
+            </div>
+
+            <!-- Discussion Topics -->
+            <div id="discussionTopics">
+              <!-- Topics will be populated here -->
+            </div>
+          </div>
+
+          <!-- Main Forum Content -->
+          <div class="forum-main" style="flex: 1; background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.85)); backdrop-filter: blur(20px); border-radius: 20px; padding: 32px; box-shadow: var(--shadow-colorful); border: 1px solid rgba(255, 255, 255, 0.3); display: flex; flex-direction: column; min-width: 0;">
+            <!-- Selected Conversation Header -->
+            <div id="conversationHeader" style="border-bottom: 2px solid rgba(102, 126, 234, 0.1); padding-bottom: 20px; margin-bottom: 24px;">
+              <h2 id="conversationTitle" style="color: var(--text-primary); margin: 0 0 12px 0; font-size: 1.6rem; font-weight: 700; line-height: 1.3;">Select a discussion to view</h2>
+              <p id="conversationMeta" style="color: var(--text-secondary); margin: 0; font-size: 1rem; line-height: 1.4;"></p>
+            </div>
+
+            <!-- Conversation Messages -->
+            <div id="conversationMessages" style="flex: 1; overflow-y: auto; margin-bottom: 24px; padding-right: 8px;">
+              <div style="text-align: center; color: var(--text-secondary); margin-top: 120px;">
+                <div style="font-size: 5em; margin-bottom: 24px;">💭</div>
+                <h3 style="font-size: 1.5rem; margin-bottom: 16px;">Welcome to the Global Teacher Forum</h3>
+                <p style="font-size: 1.1rem; line-height: 1.5; max-width: 500px; margin: 0 auto;">Select a discussion from the left panel to join the conversation with educators worldwide!</p>
+              </div>
+            </div>
+
+            <!-- Reply Section -->
+            <div id="replySection" style="display: none; border-top: 2px solid rgba(102, 126, 234, 0.1); padding-top: 20px;">
+              <textarea id="replyInput" placeholder="Join the discussion..." style="width: 100%; padding: 16px 20px; border: 2px solid var(--border); border-radius: 12px; font-family: inherit; font-size: 1rem; resize: vertical; min-height: 100px; transition: all 0.3s ease; line-height: 1.5;"></textarea>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
+                <div style="display: flex; gap: 12px;">
+                  <button onclick="insertEmoji('👍')" style="background: none; border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px; cursor: pointer; font-size: 1.2em;">👍</button>
+                  <button onclick="insertEmoji('❤️')" style="background: none; border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px; cursor: pointer; font-size: 1.2em;">❤️</button>
+                  <button onclick="insertEmoji('🎯')" style="background: none; border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px; cursor: pointer; font-size: 1.2em;">🎯</button>
+                  <button onclick="insertEmoji('💡')" style="background: none; border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px; cursor: pointer; font-size: 1.2em;">💡</button>
+                </div>
+                <button id="postReplyBtn" onclick="postReply()" style="background: var(--success-gradient); color: white; border: none; border-radius: 10px; padding: 10px 20px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;">Post Reply</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -875,5 +1286,561 @@
   </div>
 
   <script src="teacher.js"></script>
+
+  <!-- Forum JavaScript -->
+  <script>
+    // Forum Data
+    let forumTopics = [
+      {
+        id: 1,
+        title: "How we teach Photosynthesis in our country",
+        subject: "biology",
+        author: "Dr. Emily Chen",
+        country: "Canada",
+        flag: "🇨🇦",
+        avatar: "EC",
+        replies: 12,
+        lastActivity: "2 hours ago",
+        messages: [
+          {
+            id: 1,
+            author: "Dr. Emily Chen",
+            country: "Canada",
+            flag: "🇨🇦",
+            avatar: "EC",
+            timestamp: "3 hours ago",
+            content: "We use lab experiments with elodea plants to show oxygen bubbles. Students love seeing the actual process in action! We also combine this with pH indicators to show the chemical changes.",
+            likes: 8,
+            liked: false
+          },
+          {
+            id: 2,
+            author: "Prof. Ahmad Rahman",
+            country: "Malaysia",
+            flag: "🇲🇾",
+            avatar: "AR",
+            timestamp: "2 hours ago",
+            content: "Here in Malaysia, we combine diagrams with outdoor activities. Students go to our school garden and identify different parts of plants, then we connect theory with real life. Very effective! 🌱",
+            likes: 5,
+            liked: false
+          },
+          {
+            id: 3,
+            author: "Teacher Nomsa",
+            country: "South Africa",
+            flag: "🇿🇦",
+            avatar: "TN",
+            timestamp: "1 hour ago",
+            content: "We let students create colorful posters showing the process step by step. Then they present to younger classes. Teaching others really helps them understand better! 🎨",
+            likes: 12,
+            liked: false
+          }
+        ]
+      },
+      {
+        id: 2,
+        title: "Effective ways to introduce fractions to students",
+        subject: "mathematics",
+        author: "Ms. Sarah Johnson",
+        country: "United Kingdom",
+        flag: "🇬🇧",
+        avatar: "SJ",
+        replies: 18,
+        lastActivity: "4 hours ago",
+        messages: [
+          {
+            id: 1,
+            author: "Ms. Sarah Johnson",
+            country: "United Kingdom",
+            flag: "🇬🇧",
+            avatar: "SJ",
+            timestamp: "6 hours ago",
+            content: "I've found that using pizza slices and chocolate bars really helps students visualize fractions. They can physically see 1/4, 1/2, etc. What methods work best in your countries?",
+            likes: 15,
+            liked: false
+          },
+          {
+            id: 2,
+            author: "Mr. Hiroshi Tanaka",
+            country: "Japan",
+            flag: "🇯🇵",
+            avatar: "HT",
+            timestamp: "5 hours ago",
+            content: "In Japan, we use origami paper folding to teach fractions. Students fold paper into equal parts - very visual and hands-on. They create beautiful patterns while learning! 🎯",
+            likes: 22,
+            liked: false
+          },
+          {
+            id: 3,
+            author: "Mrs. Isabella Rodriguez",
+            country: "Mexico",
+            flag: "🇲🇽",
+            avatar: "IR",
+            timestamp: "4 hours ago",
+            content: "We use traditional Mexican recipes! Students measure ingredients and see fractions in action. 1/2 cup flour, 1/4 teaspoon salt. They love cooking and learning together! 👍",
+            likes: 18,
+            liked: false
+          }
+        ]
+      },
+      {
+        id: 3,
+        title: "Engaging experiments for middle school physics",
+        subject: "physics",
+        author: "Dr. James Wilson",
+        country: "Australia",
+        flag: "🇦🇺",
+        avatar: "JW",
+        replies: 25,
+        lastActivity: "6 hours ago",
+        messages: [
+          {
+            id: 1,
+            author: "Dr. James Wilson",
+            country: "Australia",
+            flag: "🇦🇺",
+            avatar: "JW",
+            timestamp: "8 hours ago",
+            content: "I'm looking for simple but engaging physics experiments for Year 7-8 students. What works well to demonstrate basic forces and motion concepts?",
+            likes: 3,
+            liked: false
+          },
+          {
+            id: 2,
+            author: "Prof. Maria Santos",
+            country: "Brazil",
+            flag: "🇧🇷",
+            avatar: "MS",
+            timestamp: "7 hours ago",
+            content: "We build simple catapults using popsicle sticks! Students adjust angles and test different projectiles. Perfect for learning about trajectory and force. Very popular! 💡",
+            likes: 31,
+            liked: false
+          },
+          {
+            id: 3,
+            author: "Mr. David Kim",
+            country: "South Korea",
+            flag: "🇰🇷",
+            avatar: "DK",
+            timestamp: "6 hours ago",
+            content: "Egg drop challenge is fantastic! Teams design protective containers, then test from different heights. Teaches impact, momentum, and problem-solving skills. ❤️",
+            likes: 28,
+            liked: false
+          }
+        ]
+      },
+      {
+        id: 4,
+        title: "Digital tools for remote STEM teaching",
+        subject: "technology",
+        author: "Dr. Anna Petrov",
+        country: "Russia",
+        flag: "🇷🇺",
+        avatar: "AP",
+        replies: 9,
+        lastActivity: "1 day ago",
+        messages: [
+          {
+            id: 1,
+            author: "Dr. Anna Petrov",
+            country: "Russia",
+            flag: "🇷🇺",
+            avatar: "AP",
+            timestamp: "1 day ago",
+            content: "With remote learning becoming more common, what digital tools do you find most effective for STEM education? I'm particularly interested in interactive simulations.",
+            likes: 7,
+            liked: false
+          },
+          {
+            id: 2,
+            author: "Prof. Chen Wei",
+            country: "Singapore",
+            flag: "🇸🇬",
+            avatar: "CW",
+            timestamp: "20 hours ago",
+            content: "PhET simulations from University of Colorado are excellent! Free, interactive, and cover physics, chemistry, and math topics. Students can experiment virtually. 🎯",
+            likes: 14,
+            liked: false
+          }
+        ]
+      },
+      {
+        id: 5,
+        title: "Making chemistry fun and safe in the classroom",
+        subject: "chemistry",
+        author: "Dr. François Dubois",
+        country: "France",
+        flag: "🇫🇷",
+        avatar: "FD",
+        replies: 15,
+        lastActivity: "12 hours ago",
+        messages: [
+          {
+            id: 1,
+            author: "Dr. François Dubois",
+            country: "France",
+            flag: "🇫🇷",
+            avatar: "FD",
+            timestamp: "16 hours ago",
+            content: "Safety is paramount in chemistry, but we also want students to be excited about the subject. What are your favorite safe but impressive demonstrations?",
+            likes: 11,
+            liked: false
+          },
+          {
+            id: 2,
+            author: "Ms. Priya Sharma",
+            country: "India",
+            flag: "🇮🇳",
+            avatar: "PS",
+            timestamp: "14 hours ago",
+            content: "Color-changing reactions are magical for students! We use natural pH indicators like red cabbage juice - completely safe but creates amazing color changes. ❤️",
+            likes: 19,
+            liked: false
+          },
+          {
+            id: 3,
+            author: "Mr. Thomas Mueller",
+            country: "Germany",
+            flag: "🇩🇪",
+            avatar: "TM",
+            timestamp: "12 hours ago",
+            content: "Elephant toothpaste (with mild peroxide) is always a hit! We do it outdoors and students learn about catalysts and reaction rates. Very impressive results! 💡",
+            likes: 16,
+            liked: false
+          }
+        ]
+      }
+    ];
+
+    let currentTopic = null;
+    let currentFilter = 'all';
+
+    // Initialize Forum
+    function initializeForum() {
+      renderTopicList();
+      setupEventListeners();
+    }
+
+    // Setup Event Listeners
+    function setupEventListeners() {
+      // Topic filter
+      const filterSelect = document.querySelector('.topic-filter');
+      if (filterSelect) {
+        filterSelect.addEventListener('change', function() {
+          currentFilter = this.value;
+          renderTopicList();
+        });
+      }
+
+      // New topic button
+      const newTopicBtn = document.querySelector('.new-topic-btn');
+      if (newTopicBtn) {
+        newTopicBtn.addEventListener('click', function() {
+          showNewTopicModal();
+        });
+      }
+    }
+
+
+
+    // Render Topic List
+    function renderTopicList() {
+      const container = document.getElementById('discussionTopics');
+      const filteredTopics = currentFilter === 'all' ? forumTopics : forumTopics.filter(topic => topic.subject === currentFilter);
+      
+      container.innerHTML = '';
+      
+      filteredTopics.forEach(topic => {
+        const topicElement = document.createElement('div');
+        topicElement.className = 'topic-item';
+        topicElement.onclick = () => selectTopic(topic.id);
+        
+        topicElement.innerHTML = `
+          <div class="topic-title">${topic.title}</div>
+          <div class="topic-meta">
+            <span>${topic.flag} ${topic.author}</span>
+            <span>${topic.replies} replies</span>
+          </div>
+          <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 4px;">
+            ${topic.lastActivity}
+          </div>
+        `;
+        
+        container.appendChild(topicElement);
+      });
+    }
+
+    // Select Topic
+    function selectTopic(topicId) {
+      currentTopic = forumTopics.find(topic => topic.id === topicId);
+      
+      // Update active topic styling
+      document.querySelectorAll('.topic-item').forEach(item => {
+        item.classList.remove('active');
+      });
+      event.target.closest('.topic-item').classList.add('active');
+      
+      // Update conversation view
+      renderConversation();
+      
+      // Show reply section
+      document.getElementById('replySection').style.display = 'block';
+    }
+
+    // Render Conversation
+    function renderConversation() {
+      if (!currentTopic) return;
+      
+      // Update header
+      document.getElementById('conversationTitle').textContent = currentTopic.title;
+      document.getElementById('conversationMeta').textContent = `${currentTopic.messages.length} messages • Started by ${currentTopic.author} from ${currentTopic.country}`;
+      
+      // Render messages
+      const messagesContainer = document.getElementById('conversationMessages');
+      messagesContainer.innerHTML = '';
+      
+      currentTopic.messages.forEach(message => {
+        const messageElement = document.createElement('div');
+        messageElement.className = 'message-card';
+        
+        messageElement.innerHTML = `
+          <div class="message-header">
+            <div class="teacher-avatar">${message.avatar}</div>
+            <div class="teacher-info">
+              <div class="teacher-name">${message.author}</div>
+              <div class="teacher-location">
+                <span class="country-flag">${message.flag}</span>
+                <span>${message.country} • ${message.timestamp}</span>
+              </div>
+            </div>
+          </div>
+          <div class="message-content">${message.content}</div>
+          <div class="message-actions">
+            <button class="action-btn ${message.liked ? 'liked' : ''}" onclick="toggleLike(${message.id})">
+              ❤️ <span>${message.likes}</span>
+            </button>
+            <button class="action-btn" onclick="replyToMessage(${message.id})">
+              💬 Reply
+            </button>
+            <button class="action-btn" onclick="shareMessage(${message.id})">
+              🔗 Share
+            </button>
+          </div>
+        `;
+        
+        messagesContainer.appendChild(messageElement);
+      });
+    }
+
+    // Toggle Like
+    function toggleLike(messageId) {
+      if (!currentTopic) return;
+      
+      const message = currentTopic.messages.find(msg => msg.id === messageId);
+      if (message) {
+        if (message.liked) {
+          message.likes--;
+          message.liked = false;
+        } else {
+          message.likes++;
+          message.liked = true;
+        }
+        renderConversation();
+      }
+    }
+
+    // Reply to Message
+    function replyToMessage(messageId) {
+      const replyInput = document.getElementById('replyInput');
+      const message = currentTopic.messages.find(msg => msg.id === messageId);
+      if (message) {
+        replyInput.value = `@${message.author} `;
+        replyInput.focus();
+      }
+    }
+
+    // Share Message
+    function shareMessage(messageId) {
+      alert('Message link copied to clipboard! 📋\n(This would copy a shareable link in a real implementation)');
+    }
+
+    // Insert Emoji
+    function insertEmoji(emoji) {
+      const replyInput = document.getElementById('replyInput');
+      const cursorPos = replyInput.selectionStart;
+      const textBefore = replyInput.value.substring(0, cursorPos);
+      const textAfter = replyInput.value.substring(cursorPos);
+      replyInput.value = textBefore + emoji + textAfter;
+      replyInput.focus();
+      replyInput.setSelectionRange(cursorPos + emoji.length, cursorPos + emoji.length);
+    }
+
+    // Post Reply
+    function postReply() {
+      const replyInput = document.getElementById('replyInput');
+      const content = replyInput.value.trim();
+      
+      if (!content || !currentTopic) {
+        alert('Please enter a message to post.');
+        return;
+      }
+      
+      // Create new message
+      const newMessage = {
+        id: Date.now(),
+        author: "You",
+        country: "Your Country",
+        flag: "🏳️",
+        avatar: "YU",
+        timestamp: "Just now",
+        content: content,
+        likes: 0,
+        liked: false
+      };
+      
+      // Add to current topic
+      currentTopic.messages.push(newMessage);
+      currentTopic.replies++;
+      currentTopic.lastActivity = "Just now";
+      
+      // Clear input
+      replyInput.value = '';
+      
+      // Re-render conversation and topic list
+      renderConversation();
+      renderTopicList();
+      
+      // Scroll to bottom
+      const messagesContainer = document.getElementById('conversationMessages');
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      
+      // Show success message
+      setTimeout(() => {
+        alert('✅ Your reply has been posted! Thanks for contributing to the global discussion.');
+      }, 100);
+    }
+
+    // Show New Topic Modal
+    function showNewTopicModal() {
+      const title = prompt('Enter discussion title:', '');
+      if (!title) return;
+      
+      const subjects = ['mathematics', 'science', 'physics', 'chemistry', 'biology', 'technology', 'general'];
+      const subject = prompt(`Enter subject (${subjects.join(', ')}):`, 'general');
+      if (!subject || !subjects.includes(subject.toLowerCase())) {
+        alert('Please enter a valid subject.');
+        return;
+      }
+      
+      const content = prompt('Enter your initial message:', '');
+      if (!content) return;
+      
+      // Create new topic
+      const newTopic = {
+        id: Date.now(),
+        title: title,
+        subject: subject.toLowerCase(),
+        author: "You",
+        country: "Your Country",
+        flag: "🏳️",
+        avatar: "YU",
+        replies: 0,
+        lastActivity: "Just now",
+        messages: [{
+          id: Date.now(),
+          author: "You",
+          country: "Your Country",
+          flag: "🏳️",
+          avatar: "YU",
+          timestamp: "Just now",
+          content: content,
+          likes: 0,
+          liked: false
+        }]
+      };
+      
+      // Add to topics
+      forumTopics.unshift(newTopic);
+      
+      // Re-render topic list
+      renderTopicList();
+      
+      // Select the new topic
+      selectTopic(newTopic.id);
+      
+      alert('🎉 Your new discussion has been created! Others can now join the conversation.');
+    }
+
+    // Initialize when document is ready
+    document.addEventListener('DOMContentLoaded', function() {
+      // Add click events to existing tabs
+      document.getElementById('uploadNotesTab').addEventListener('click', function() {
+        document.getElementById('uploadNotesContent').style.display = 'block';
+        document.getElementById('uploadGamesContent').style.display = 'none';
+        document.getElementById('forumContent').style.display = 'none';
+        document.getElementById('profileContent').style.display = 'none';
+        document.getElementById('achievementsContent').style.display = 'none';
+        
+        document.querySelectorAll('.teacher-tab').forEach(tab => tab.classList.remove('active'));
+        this.classList.add('active');
+      });
+
+      document.getElementById('uploadGamesTab').addEventListener('click', function() {
+        document.getElementById('uploadNotesContent').style.display = 'none';
+        document.getElementById('uploadGamesContent').style.display = 'block';
+        document.getElementById('forumContent').style.display = 'none';
+        document.getElementById('profileContent').style.display = 'none';
+        document.getElementById('achievementsContent').style.display = 'none';
+        
+        document.querySelectorAll('.teacher-tab').forEach(tab => tab.classList.remove('active'));
+        this.classList.add('active');
+      });
+
+      // Add forum tab event listener
+      document.getElementById('forumTab').addEventListener('click', function() {
+        document.getElementById('uploadNotesContent').style.display = 'none';
+        document.getElementById('uploadGamesContent').style.display = 'none';
+        document.getElementById('forumContent').style.display = 'block';
+        document.getElementById('profileContent').style.display = 'none';
+        document.getElementById('achievementsContent').style.display = 'none';
+        
+        document.querySelectorAll('.teacher-tab').forEach(tab => tab.classList.remove('active'));
+        this.classList.add('active');
+        
+        // Initialize forum when first opened
+        initializeForum();
+      });
+
+      // Initialize existing teacher profile and achievements functionality
+      const viewAchievementsTab = document.getElementById('viewAchievementsTab');
+      if (viewAchievementsTab) {
+        viewAchievementsTab.addEventListener('click', function(e) {
+          e.preventDefault();
+          document.getElementById('uploadNotesContent').style.display = 'none';
+          document.getElementById('uploadGamesContent').style.display = 'none';
+          document.getElementById('forumContent').style.display = 'none';
+          document.getElementById('profileContent').style.display = 'none';
+          document.getElementById('achievementsContent').style.display = 'block';
+          
+          document.querySelectorAll('.teacher-tab').forEach(tab => tab.classList.remove('active'));
+        });
+      }
+
+      // Teacher Profile functionality
+      const teacherProfileLink = document.querySelector('a[href="#"]');
+      if (teacherProfileLink && teacherProfileLink.textContent.includes('Teacher Profile')) {
+        teacherProfileLink.addEventListener('click', function(e) {
+          e.preventDefault();
+          document.getElementById('uploadNotesContent').style.display = 'none';
+          document.getElementById('uploadGamesContent').style.display = 'none';
+          document.getElementById('forumContent').style.display = 'none';
+          document.getElementById('profileContent').style.display = 'block';
+          document.getElementById('achievementsContent').style.display = 'none';
+          
+          document.querySelectorAll('.teacher-tab').forEach(tab => tab.classList.remove('active'));
+        });
+      }
+    });
+  </script>
 </body>
 </html>
