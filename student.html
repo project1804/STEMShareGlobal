@@ -1189,6 +1189,16 @@
                         <div class="resources-container" id="resourcesList">
                             <!-- Resource cards will be injected here -->
                         </div>
+
+                        <!-- Video Resources Section -->
+                        <div style="margin-top: 40px;">
+                            <h3 style="color: #2c3e50; margin-bottom: 15px; font-size: 1.4em;">🎥 Video Resources</h3>
+                            <p style="color: #636e72; margin-bottom: 20px; font-size: 0.95em;">Educational videos uploaded by teachers to enhance your learning experience.</p>
+                            
+                            <div class="resources-container" id="videoResourcesList">
+                                <!-- Video resource cards will be injected here -->
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Games Content -->
@@ -1969,7 +1979,7 @@
             const db = firebase.database();
 
             // Student level for demo - Change this to "PREMIUM" to unlock all resources
-            const studentLevel = "BASIC"; // Options: "BASIC", "PREMIUM"
+            const studentLevel = "BASIC"; // Options: "BASIC", "PREMIUM", "MAJESTIC"
 
             // Fetch resources from Firebase
             function fetchResources() {
@@ -2045,6 +2055,50 @@
                     comments: [
                         { user: "Student A", text: "Great video tutorial!" },
                         { user: "Student B", text: "Helped me understand fractions better." }
+                    ]
+                }
+            ];
+
+            // Video resources for the new section
+            const videoResources = [
+                {
+                    id: "video1",
+                    fileName: "Photosynthesis - Understanding Plant Growth",
+                    teacherName: "Ms. Emily Chen",
+                    uploadedAt: "2024-01-25",
+                    rating: 4.9,
+                    totalRaters: 32,
+                    locked: false,
+                    subject: "Biology",
+                    grade: "Primary Year 3",
+                    fileUrl: "Photosynthesis.mp4",
+                    fileType: "video",
+                    likes: 45,
+                    isLiked: false,
+                    comments: [
+                        { user: "David Kim", text: "Amazing video! The visual examples really helped me understand photosynthesis." },
+                        { user: "Lisa Wong", text: "Perfect explanation of how plants make their own food!" },
+                        { user: "Tommy Rodriguez", text: "The animation made it so clear. Great teaching resource!" }
+                    ]
+                },
+                {
+                    id: "video2",
+                    fileName: "Algebra Basics - Solving Linear Equations",
+                    teacherName: "Mr. James Wilson",
+                    uploadedAt: "2024-01-28",
+                    rating: 4.7,
+                    totalRaters: 28,
+                    locked: false,
+                    subject: "Mathematics",
+                    grade: "Primary Year 4",
+                    fileUrl: "Algebra.mp4",
+                    fileType: "video",
+                    likes: 38,
+                    isLiked: false,
+                    comments: [
+                        { user: "Sophie Anderson", text: "Finally understand algebra! The step-by-step approach is perfect." },
+                        { user: "Marcus Johnson", text: "Great examples and clear explanations. Very helpful!" },
+                        { user: "Emma Davis", text: "The visual representation of equations really clicked for me." }
                     ]
                 }
             ];
@@ -2133,6 +2187,183 @@
                     
                     resourcesList.appendChild(card);
                 });
+
+                // After rendering main resources, also render video resources
+                renderVideoResources();
+            }
+
+            function renderVideoResources() {
+                const videoResourcesList = document.getElementById('videoResourcesList');
+                if (!videoResourcesList) return;
+                
+                videoResourcesList.innerHTML = '';
+                
+                videoResources.forEach((resource, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'resource-card';
+                    card.style.position = 'relative';
+                    card.style.flexDirection = 'column';
+                    card.style.alignItems = 'stretch';
+                    card.style.padding = '24px';
+                    card.style.marginBottom = '24px';
+                    
+                    // Create video player
+                    const videoPlayer = `
+                        <div style="margin-bottom: 16px;">
+                            <video controls style="width:100%; max-height:300px; border-radius:12px; border:2px solid #e9ecef; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                                <source src="${resource.fileUrl}" type="video/mp4">
+                                <p>Your browser doesn't support HTML5 video. <a href="${resource.fileUrl}" target="_blank">Download the video</a> instead.</p>
+                            </video>
+                        </div>
+                    `;
+                    
+                    // Create resource info
+                    const resourceInfo = `
+                        <div style="display: flex; align-items: center; margin-bottom: 16px;">
+                            <div style="font-size:2em; margin-right: 16px;">🎥</div>
+                            <div style="flex:1;">
+                                <div style="font-weight:bold; font-size:1.2em; margin-bottom:4px; color:#2c3e50;">${resource.fileName}</div>
+                                <div style="font-size:0.95em; color:#666; margin-bottom:4px;">by ${resource.teacherName} • ${resource.uploadedAt ? new Date(resource.uploadedAt).toISOString().slice(0,10) : ''}</div>
+                                <div style="color:#f39c12; font-size:0.95em;">★★★★★ (${resource.totalRaters || 0} reviews)</div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    // Create like and comment section
+                    const likeCommentSection = `
+                        <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 16px; padding: 12px; background: #f8f9fa; border-radius: 12px;">
+                            <button id="likeBtn_${resource.id}" onclick="toggleLike('${resource.id}')" style="display: flex; align-items: center; gap: 8px; background: ${resource.isLiked ? '#e74c3c' : '#3498db'}; color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: all 0.3s ease;">
+                                ${resource.isLiked ? '❤️' : '🤍'} ${resource.likes} Likes
+                            </button>
+                            <div style="flex: 1; display: flex; gap: 8px;">
+                                <input type="text" id="commentInput_${resource.id}" placeholder="Add a comment..." style="flex: 1; padding: 8px 12px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 0.9em; outline: none;" onkeypress="if(event.key==='Enter') addComment('${resource.id}')">
+                                <button onclick="addComment('${resource.id}')" style="background: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: all 0.3s ease;">
+                                    💬 Comment
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    
+                    // Create comments section
+                    const commentsSection = `
+                        <div style="background:#f8f9fa; border-radius:12px; padding:16px; margin-top:16px;">
+                            <div style="font-weight:bold; color:#2c3e50; margin-bottom:12px; font-size:1.1em;">💬 Student Comments</div>
+                            <div id="commentsContainer_${resource.id}">
+                                ${resource.comments.map(comment => `
+                                    <div style="background:white; border-radius:8px; padding:12px; margin-bottom:8px; border-left:4px solid #3498db;">
+                                        <div style="font-weight:bold; color:#2c3e50; font-size:0.9em; margin-bottom:4px;">${comment.user}</div>
+                                        <div style="color:#555; font-size:0.9em;">${comment.text}</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                    
+                    card.innerHTML = videoPlayer + resourceInfo + likeCommentSection + commentsSection;
+                    videoResourcesList.appendChild(card);
+                });
+            }
+
+            // Like functionality
+            function toggleLike(videoId) {
+                const video = videoResources.find(v => v.id === videoId);
+                if (!video) return;
+                
+                video.isLiked = !video.isLiked;
+                video.likes += video.isLiked ? 1 : -1;
+                
+                const likeBtn = document.getElementById(`likeBtn_${videoId}`);
+                if (likeBtn) {
+                    likeBtn.innerHTML = `${video.isLiked ? '❤️' : '🤍'} ${video.likes} Likes`;
+                    likeBtn.style.background = video.isLiked ? '#e74c3c' : '#3498db';
+                }
+                
+                // Save to localStorage for persistence
+                localStorage.setItem('videoLikes', JSON.stringify(videoResources));
+            }
+
+            // Comment functionality
+            function addComment(videoId) {
+                const commentInput = document.getElementById(`commentInput_${videoId}`);
+                const commentText = commentInput.value.trim();
+                
+                if (!commentText) {
+                    alert('Please enter a comment!');
+                    return;
+                }
+                
+                const video = videoResources.find(v => v.id === videoId);
+                if (!video) return;
+                
+                // Generate a random student name for the comment
+                const studentNames = ['Alex Chen', 'Maria Santos', 'David Kim', 'Lisa Wong', 'Tommy Rodriguez', 'Sophie Anderson', 'Marcus Johnson', 'Emma Davis', 'James Wilson', 'Sarah Johnson'];
+                const randomName = studentNames[Math.floor(Math.random() * studentNames.length)];
+                
+                // Add new comment
+                const newComment = {
+                    user: randomName,
+                    text: commentText
+                };
+                
+                video.comments.push(newComment);
+                
+                // Update the comments container
+                const commentsContainer = document.getElementById(`commentsContainer_${videoId}`);
+                if (commentsContainer) {
+                    const commentElement = document.createElement('div');
+                    commentElement.style.cssText = 'background:white; border-radius:8px; padding:12px; margin-bottom:8px; border-left:4px solid #3498db;';
+                    commentElement.innerHTML = `
+                        <div style="font-weight:bold; color:#2c3e50; font-size:0.9em; margin-bottom:4px;">${newComment.user}</div>
+                        <div style="color:#555; font-size:0.9em;">${newComment.text}</div>
+                    `;
+                    commentsContainer.appendChild(commentElement);
+                }
+                
+                // Clear input
+                commentInput.value = '';
+                
+                // Save to localStorage for persistence
+                localStorage.setItem('videoComments', JSON.stringify(videoResources));
+                
+                // Show success message
+                alert('Comment added successfully!');
+            }
+
+            // Load saved video interactions from localStorage
+            function loadVideoInteractions() {
+                const savedLikes = localStorage.getItem('videoLikes');
+                const savedComments = localStorage.getItem('videoComments');
+                
+                if (savedLikes) {
+                    try {
+                        const savedData = JSON.parse(savedLikes);
+                        // Update likes and isLiked status
+                        savedData.forEach(savedVideo => {
+                            const video = videoResources.find(v => v.id === savedVideo.id);
+                            if (video) {
+                                video.likes = savedVideo.likes;
+                                video.isLiked = savedVideo.isLiked;
+                            }
+                        });
+                    } catch (e) {
+                        console.log('No saved likes data');
+                    }
+                }
+                
+                if (savedComments) {
+                    try {
+                        const savedData = JSON.parse(savedComments);
+                        // Update comments
+                        savedData.forEach(savedVideo => {
+                            const video = videoResources.find(v => v.id === savedVideo.id);
+                            if (video && savedVideo.comments) {
+                                video.comments = savedVideo.comments;
+                            }
+                        });
+                    } catch (e) {
+                        console.log('No saved comments data');
+                    }
+                }
             }
 
             function getFileTypeIcon(fileType) {
@@ -2636,6 +2867,9 @@
 
             // Initialize - fetch resources from Firebase
             fetchResources();
+            
+            // Load saved video interactions
+            loadVideoInteractions();
             
             // Gamification System
             let points = 0;
