@@ -1197,15 +1197,9 @@
             <iframe src="https://mgx-fkz5vooe4us.mgx.world/" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>
         </div>
 
-        <!-- Upload Game Form -->
-        <div style="margin-top:32px; margin-bottom:32px; background:linear-gradient(135deg,#f8f9fa 0%,#e9ecef 100%); border-radius:16px; padding:24px;">
-            <h3 style="margin-top:0;">�� Upload Your Game (Developer)</h3>
-            <form id="uploadGameForm" style="display:flex; gap:12px; flex-wrap:wrap; align-items:center;">
-                <input type="text" id="uploaderName" placeholder="Your Name" required style="padding:8px 12px; border-radius:8px; border:1px solid #ccc;">
-                <input type="text" id="gameTitle" placeholder="Game Title" required style="padding:8px 12px; border-radius:8px; border:1px solid #ccc;">
-                <input type="url" id="gameUrl" placeholder="Game URL (e.g. https://...)" required style="padding:8px 12px; border-radius:8px; border:1px solid #ccc; flex:1;">
-                <button type="submit" style="background:linear-gradient(135deg,#00b894 0%,#00cec9 100%); color:white; border:none; border-radius:8px; padding:8px 20px; font-weight:bold; cursor:pointer;">Upload</button>
-            </form>
+        <!-- Upload Game Form - Level Restricted -->
+        <div id="uploadGameSection" style="margin-top:32px; margin-bottom:32px; background:linear-gradient(135deg,#f8f9fa 0%,#e9ecef 100%); border-radius:16px; padding:24px;">
+            <!-- Content will be dynamically loaded based on student level -->
         </div>
         <div>
             <h3 style="margin-top:0;">🕹️ Community Games</h3>
@@ -1727,15 +1721,26 @@
                     card.appendChild(lockOverlay);
                 }
                 
+                // Determine display based on upload type
+                const isFileUpload = game.uploadType === 'file';
+                const gameTypeIcon = isFileUpload ? '📁' : '🌐';
+                const gameTypeText = isFileUpload ? `File: ${game.fileName || 'Unknown'}` : 'URL Game';
+                const fileSizeText = isFileUpload && game.fileSize ? ` (${game.fileSize})` : '';
+                
                 card.innerHTML = `
                     <div class="feature-title" style="margin-bottom:8px;">${game.title || 'Unknown Game'}</div>
-                    <div style="font-size:0.8em; color:#ddd; margin-bottom:4px;">💾 Local ${isLocked ? '🔒' : ''}</div>
+                    <div style="font-size:0.8em; color:#ddd; margin-bottom:4px;">${gameTypeIcon} ${gameTypeText}${fileSizeText} ${isLocked ? '🔒' : ''}</div>
                     <div style="font-size:0.97em; color:#ffeaa7; margin-bottom:4px;">
                         Uploaded by: <b>${game.uploader || "Unknown"}</b>
                     </div>
-                    <a href="${isLocked ? '#' : (game.url || '#')}" target="${isLocked ? '_self' : '_blank'}" style="display:inline-block; margin-bottom:12px; color:#fff; text-decoration:underline; cursor:${isLocked ? 'not-allowed' : 'pointer'};" onclick="${isLocked ? 'return false;' : 'addGamePoints()'}">
-                        ${isLocked ? '🔒 Locked' : 'Play Game'}
-                    </a>
+                    ${isFileUpload ? 
+                        `<button onclick="${isLocked ? '' : `viewFileGame('${game.fileName || 'game'}', '${game.title || 'Game'}')`}" style="display:inline-block; margin-bottom:12px; background:linear-gradient(135deg, #f39c12 0%, #e67e22 100%); color:#fff; border:none; border-radius:8px; padding:8px 16px; font-weight:bold; cursor:${isLocked ? 'not-allowed' : 'pointer'};">
+                            ${isLocked ? '🔒 Locked' : '📁 View File'}
+                        </button>` :
+                        `<a href="${isLocked ? '#' : (game.url || '#')}" target="${isLocked ? '_self' : '_blank'}" style="display:inline-block; margin-bottom:12px; color:#fff; text-decoration:underline; cursor:${isLocked ? 'not-allowed' : 'pointer'};" onclick="${isLocked ? 'return false;' : 'addGamePoints()'}">
+                            ${isLocked ? '🔒 Locked' : '🌐 Play Game'}
+                        </a>`
+                    }
                     <div style="margin-bottom:12px;">
                         <button onclick="${isLocked ? '' : `likeLocalGame(${localIdx})`}" style="background:#fff; color:#6c5ce7; border:none; border-radius:16px; padding:6px 16px; font-weight:bold; cursor:${isLocked ? 'not-allowed' : 'pointer'}; margin-right:8px;">👍 Like (${game.likes || 0})</button>
                         <button onclick="${isLocked ? '' : `shareLocalGame(${localIdx})`}" style="background:#fff; color:#00b894; border:none; border-radius:16px; padding:6px 16px; font-weight:bold; cursor:${isLocked ? 'not-allowed' : 'pointer'}; margin-right:8px;">🔗 Share</button>
@@ -1902,21 +1907,7 @@
             // Load games from localStorage
             loadGames();
             
-            const form = document.getElementById('uploadGameForm');
-            if (form) {
-                form.onsubmit = function(e) {
-                    e.preventDefault();
-                    const title = document.getElementById('gameTitle').value.trim();
-                    const url = document.getElementById('gameUrl').value.trim();
-                    const uploader = document.getElementById('uploaderName').value.trim();
-                    if (title && url && uploader) {
-                        games.push({ title, url, likes: 0, shares: 0, uploader });
-                        saveGames(); // Save to localStorage
-                        form.reset();
-                        renderGames();
-                    }
-                };
-            }
+            // Upload game form is now handled dynamically in updateUploadGameSection()
             renderGames();
         });
 
@@ -2386,6 +2377,134 @@
                 renderComments();
             };
 
+            // Switch upload method function
+            window.switchUploadMethod = function(method) {
+                const urlSection = document.getElementById('urlUploadSection');
+                const fileSection = document.getElementById('fileUploadSection');
+                const urlBtn = document.getElementById('urlMethodBtn');
+                const fileBtn = document.getElementById('fileMethodBtn');
+                const gameUrlInput = document.getElementById('gameUrl');
+                
+                if (method === 'url') {
+                    // Show URL section, hide file section
+                    urlSection.style.display = 'flex';
+                    fileSection.style.display = 'none';
+                    
+                    // Update button styles
+                    urlBtn.style.background = 'linear-gradient(135deg, #3498db 0%, #2980b9 100%)';
+                    fileBtn.style.background = '#95a5a6';
+                    
+                    // Make URL required, file not required
+                    gameUrlInput.required = true;
+                    const gameFileInput = document.getElementById('gameFile');
+                    if (gameFileInput) gameFileInput.required = false;
+                    
+                } else if (method === 'file') {
+                    // Show file section, hide URL section
+                    urlSection.style.display = 'none';
+                    fileSection.style.display = 'flex';
+                    
+                    // Update button styles
+                    fileBtn.style.background = 'linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%)';
+                    urlBtn.style.background = '#95a5a6';
+                    
+                    // Make file required, URL not required
+                    gameUrlInput.required = false;
+                    const gameFileInput = document.getElementById('gameFile');
+                    if (gameFileInput) gameFileInput.required = true;
+                }
+            };
+
+            // Function to handle file-based game viewing
+            window.viewFileGame = function(fileName, gameTitle) {
+                const modal = document.createElement('div');
+                modal.style.position = 'fixed';
+                modal.style.top = '0';
+                modal.style.left = '0';
+                modal.style.width = '100%';
+                modal.style.height = '100%';
+                modal.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+                modal.style.display = 'flex';
+                modal.style.justifyContent = 'center';
+                modal.style.alignItems = 'center';
+                modal.style.zIndex = '10000';
+                modal.style.padding = '20px';
+                
+                const fileExtension = fileName.split('.').pop().toLowerCase();
+                let fileTypeInfo = '';
+                let actionText = '';
+                
+                switch(fileExtension) {
+                    case 'zip':
+                    case 'rar':
+                        fileTypeInfo = '📦 Compressed Archive';
+                        actionText = 'Extract and run the game files on your computer.';
+                        break;
+                    case 'exe':
+                        fileTypeInfo = '⚙️ Executable Program';
+                        actionText = 'Run this program on a Windows computer.';
+                        break;
+                    case 'html':
+                    case 'htm':
+                        fileTypeInfo = '🌐 Web Game';
+                        actionText = 'Open this HTML file in your web browser.';
+                        break;
+                    case 'swf':
+                        fileTypeInfo = '🎮 Flash Game';
+                        actionText = 'Requires Adobe Flash Player to run.';
+                        break;
+                    case 'jar':
+                        fileTypeInfo = '☕ Java Application';
+                        actionText = 'Requires Java Runtime Environment to run.';
+                        break;
+                    case 'apk':
+                        fileTypeInfo = '📱 Android App';
+                        actionText = 'Install this APK file on an Android device.';
+                        break;
+                    default:
+                        fileTypeInfo = '📄 Game File';
+                        actionText = 'This file contains game data.';
+                }
+                
+                modal.innerHTML = `
+                    <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border-radius: 20px; padding: 30px; width: 90%; max-width: 500px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); text-align: center; position: relative;">
+                        <button onclick="document.body.removeChild(this.closest('.modal-backdrop'))" style="position: absolute; top: 15px; right: 15px; background: none; border: none; font-size: 24px; cursor: pointer; color: #7f8c8d;">&times;</button>
+                        
+                        <div style="font-size: 4em; margin-bottom: 20px;">📁</div>
+                        <h2 style="margin: 0 0 10px 0; color: #2c3e50;">${gameTitle}</h2>
+                        <div style="color: #7f8c8d; margin-bottom: 20px; font-size: 1.1em;">${fileTypeInfo}</div>
+                        <div style="background: linear-gradient(135deg, #3498db 0%, #2980b9 100%); color: white; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+                            <strong>📄 File:</strong> ${fileName}
+                        </div>
+                        <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 20px; border-left: 4px solid #f39c12;">
+                            <strong>ℹ️ How to use:</strong><br>
+                            ${actionText}
+                        </div>
+                        <div style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; padding: 12px; border-radius: 10px; font-size: 0.9em;">
+                            <strong>⚠️ Note:</strong> For security reasons, files cannot be directly downloaded or executed from the browser. In a real application, you would download this file and run it on your device.
+                        </div>
+                        <div style="margin-top: 20px;">
+                            <button onclick="addGamePoints(); document.body.removeChild(this.closest('.modal-backdrop'))" style="background: linear-gradient(135deg, #27ae60 0%, #219653 100%); color: white; border: none; border-radius: 10px; padding: 12px 24px; font-weight: bold; cursor: pointer; margin-right: 10px;">
+                                🎮 Mark as Played (+10 points)
+                            </button>
+                            <button onclick="document.body.removeChild(this.closest('.modal-backdrop'))" style="background: #95a5a6; color: white; border: none; border-radius: 10px; padding: 12px 24px; font-weight: bold; cursor: pointer;">
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                modal.classList.add('modal-backdrop');
+                document.body.appendChild(modal);
+                
+                // Close modal when clicking outside
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        document.body.removeChild(modal);
+                    }
+                });
+            };
+
             // Custom AI Chatbot functionality
             function sendCustomChatMessage() {
                 const input = document.getElementById('customChatInput');
@@ -2570,6 +2689,191 @@
                 
                 // Update studentLevel variable for resource access
                 window.studentLevel = level;
+                
+                // Update upload game section based on level
+                updateUploadGameSection();
+            }
+            
+            // Update upload game section based on student level
+            function updateUploadGameSection() {
+                const uploadGameSection = document.getElementById('uploadGameSection');
+                const currentLevel = level || 'BASIC';
+                
+                if (currentLevel === 'MAJESTIC') {
+                    // Show functional upload form for MAJESTIC users
+                    uploadGameSection.innerHTML = `
+                        <h3 style="margin-top:0;">🎮 Upload Your Game (Developer)</h3>
+                        <div style="background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%); color: white; padding: 12px; border-radius: 8px; margin-bottom: 16px; text-align: center;">
+                            <strong>🌟 MAJESTIC LEVEL UNLOCKED!</strong> You can now upload games to share with the community!
+                        </div>
+                        
+                        <!-- Upload Method Selector -->
+                        <div style="margin-bottom: 16px;">
+                            <label style="font-weight: bold; color: #2c3e50; margin-bottom: 8px; display: block;">Choose Upload Method:</label>
+                            <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+                                <button type="button" id="urlMethodBtn" class="upload-method-btn active" onclick="switchUploadMethod('url')" style="background: linear-gradient(135deg, #3498db 0%, #2980b9 100%); color: white; border: none; border-radius: 8px; padding: 8px 16px; font-weight: bold; cursor: pointer;">🔗 URL Link</button>
+                                <button type="button" id="fileMethodBtn" class="upload-method-btn" onclick="switchUploadMethod('file')" style="background: #95a5a6; color: white; border: none; border-radius: 8px; padding: 8px 16px; font-weight: bold; cursor: pointer;">📁 Upload File</button>
+                            </div>
+                        </div>
+                        
+                        <form id="uploadGameForm" style="display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end;">
+                            <div style="display: flex; flex-direction: column; gap: 4px;">
+                                <label style="font-size: 0.9em; color: #666;">Your Name</label>
+                                <input type="text" id="uploaderName" placeholder="Your Name" required style="padding:8px 12px; border-radius:8px; border:1px solid #ccc; min-width: 120px;">
+                            </div>
+                            <div style="display: flex; flex-direction: column; gap: 4px;">
+                                <label style="font-size: 0.9em; color: #666;">Game Title</label>
+                                <input type="text" id="gameTitle" placeholder="Game Title" required style="padding:8px 12px; border-radius:8px; border:1px solid #ccc; min-width: 150px;">
+                            </div>
+                            
+                            <!-- URL Upload Section -->
+                            <div id="urlUploadSection" style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
+                                <label style="font-size: 0.9em; color: #666;">Game URL</label>
+                                <input type="url" id="gameUrl" placeholder="Game URL (e.g. https://...)" style="padding:8px 12px; border-radius:8px; border:1px solid #ccc; flex:1;">
+                            </div>
+                            
+                            <!-- File Upload Section -->
+                            <div id="fileUploadSection" style="display: none; flex-direction: column; gap: 4px; flex: 1;">
+                                <label style="font-size: 0.9em; color: #666;">Game File</label>
+                                <div style="display: flex; gap: 8px; align-items: center;">
+                                    <input type="file" id="gameFile" accept=".zip,.rar,.exe,.html,.htm,.swf,.jar,.apk" style="padding:4px; border-radius:8px; border:1px solid #ccc; flex: 1;">
+                                    <div id="fileInfo" style="font-size: 0.8em; color: #666;"></div>
+                                </div>
+                                <div style="font-size: 0.75em; color: #999; margin-top: 2px;">Supported: ZIP, RAR, EXE, HTML, SWF, JAR, APK (Max: 50MB)</div>
+                            </div>
+                            
+                            <button type="submit" style="background:linear-gradient(135deg,#00b894 0%,#00cec9 100%); color:white; border:none; border-radius:8px; padding:8px 20px; font-weight:bold; cursor:pointer;">Upload Game</button>
+                        </form>
+                    `;
+                    
+                    // Add event listener to the dynamically created form
+                    const form = document.getElementById('uploadGameForm');
+                    if (form) {
+                        form.onsubmit = function(e) {
+                            e.preventDefault();
+                            const title = document.getElementById('gameTitle').value.trim();
+                            const uploader = document.getElementById('uploaderName').value.trim();
+                            const urlInput = document.getElementById('gameUrl');
+                            const fileInput = document.getElementById('gameFile');
+                            
+                            // Check which upload method is active
+                            const isFileUpload = document.getElementById('fileUploadSection').style.display !== 'none';
+                            
+                            if (isFileUpload) {
+                                // File upload method
+                                if (title && uploader && fileInput.files.length > 0) {
+                                    const file = fileInput.files[0];
+                                    
+                                    // Check file size (max 50MB)
+                                    if (file.size > 50 * 1024 * 1024) {
+                                        alert('File size exceeds 50MB limit. Please choose a smaller file.');
+                                        return;
+                                    }
+                                    
+                                    // Create a unique identifier for the file
+                                    const fileId = Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                                    const fileName = file.name;
+                                    
+                                    // In a real application, you would upload to a server
+                                    // For this demo, we'll create a local reference
+                                    const gameEntry = {
+                                        title: title,
+                                        url: '#file_' + fileId, // Placeholder URL for file-based games
+                                        fileName: fileName,
+                                        fileSize: (file.size / 1024 / 1024).toFixed(2) + ' MB',
+                                        uploadType: 'file',
+                                        likes: 0,
+                                        shares: 0,
+                                        uploader: uploader
+                                    };
+                                    
+                                    games.push(gameEntry);
+                                    saveGames();
+                                    form.reset();
+                                    renderGames();
+                                    
+                                    alert('🎮 Game file uploaded successfully!' + String.fromCharCode(10) + String.fromCharCode(10) + 'Note: In a production environment, this would be uploaded to a server. For now, it is stored locally for demonstration.');
+                                    
+                                    // Add points for uploading a game file (higher bonus)
+                                    addPoints(20);
+                                } else {
+                                    alert('Please fill in all fields and select a game file.');
+                                }
+                            } else {
+                                // URL upload method
+                                const url = urlInput.value.trim();
+                                if (title && url && uploader) {
+                                    const gameEntry = {
+                                        title: title,
+                                        url: url,
+                                        uploadType: 'url',
+                                        likes: 0,
+                                        shares: 0,
+                                        uploader: uploader
+                                    };
+                                    
+                                    games.push(gameEntry);
+                                    saveGames();
+                                    form.reset();
+                                    renderGames();
+                                    
+                                    alert('🎮 Game URL uploaded successfully!');
+                                    
+                                    // Add points for uploading a game
+                                    addPoints(15);
+                                } else {
+                                    alert('Please fill in all fields to upload your game.');
+                                }
+                            }
+                        };
+                        
+                        // Add file input change listener for file info display
+                        const fileInput = document.getElementById('gameFile');
+                        if (fileInput) {
+                            fileInput.addEventListener('change', function(e) {
+                                const fileInfo = document.getElementById('fileInfo');
+                                if (e.target.files.length > 0) {
+                                    const file = e.target.files[0];
+                                    const sizeMB = (file.size / 1024 / 1024).toFixed(2);
+                                    fileInfo.textContent = `${sizeMB} MB`;
+                                    fileInfo.style.color = file.size > 50 * 1024 * 1024 ? '#e74c3c' : '#27ae60';
+                                } else {
+                                    fileInfo.textContent = '';
+                                }
+                            });
+                        }
+                    }
+                } else {
+                    // Show locked version for BASIC and PREMIUM users
+                    const pointsNeeded = 100 - points;
+                    const nextLevel = currentLevel === 'BASIC' ? 'PREMIUM (50 points)' : 'MAJESTIC (100 points)';
+                    
+                    uploadGameSection.innerHTML = `
+                        <div style="position: relative; opacity: 0.6;">
+                            <h3 style="margin-top:0;">🎮 Upload Your Game (Developer)</h3>
+                            <div style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; padding: 12px; border-radius: 8px; margin-bottom: 16px; text-align: center;">
+                                <strong>🔒 MAJESTIC LEVEL REQUIRED</strong><br>
+                                <span style="font-size: 0.9em;">You need ${pointsNeeded} more points to unlock game uploading!</span>
+                            </div>
+                            <form style="display:flex; gap:12px; flex-wrap:wrap; align-items:center; pointer-events: none;">
+                                <input type="text" placeholder="Your Name" disabled style="padding:8px 12px; border-radius:8px; border:1px solid #ccc; background: #f5f5f5; color: #999;">
+                                <input type="text" placeholder="Game Title" disabled style="padding:8px 12px; border-radius:8px; border:1px solid #ccc; background: #f5f5f5; color: #999;">
+                                <input type="url" placeholder="Game URL (e.g. https://...)" disabled style="padding:8px 12px; border-radius:8px; border:1px solid #ccc; flex:1; background: #f5f5f5; color: #999;">
+                                <button type="button" disabled style="background:#95a5a6; color:white; border:none; border-radius:8px; padding:8px 20px; font-weight:bold; cursor:not-allowed;">🔒 Locked</button>
+                            </form>
+                            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(255,255,255,0.95); border-radius: 12px; padding: 20px; text-align: center; border: 2px solid #e74c3c;">
+                                <div style="font-size: 2em; margin-bottom: 10px;">🔒</div>
+                                <div style="font-weight: bold; color: #e74c3c; margin-bottom: 8px;">Game Upload Locked</div>
+                                <div style="color: #555; font-size: 0.9em; margin-bottom: 10px;">
+                                    Reach <strong>MAJESTIC level</strong> to unlock game uploading
+                                </div>
+                                <div style="background: linear-gradient(135deg, #3498db, #2980b9); color: white; padding: 8px 12px; border-radius: 6px; font-size: 0.85em;">
+                                    Current: <strong>${currentLevel} Level</strong> • Need: <strong>${pointsNeeded} more points</strong>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
             }
             
             // Add points to student
