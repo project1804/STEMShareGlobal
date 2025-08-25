@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STEMSHARE Developer Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Import Google Fonts */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-attachment: fixed;
+            color: #2c3e50;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Header */
+        .dashboard-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 80px;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        .header-logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .header-logo img {
+            width: 50px;
+            height: 50px;
+            margin-right: 12px;
+            border-radius: 8px;
+        }
+        
+        .header-actions {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .subscription-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .badge-free { background: #95a5a6; }
+        .badge-pro { background: linear-gradient(135deg, #3498db 0%, #2980b9 100%); }
+        .badge-advance { background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); }
+        
+        .logout-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .logout-btn:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.85));
+            backdrop-filter: blur(20px);
+            border-radius: 0 24px 24px 0;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 100px 0 24px 0;
+            position: fixed;
+            height: 100vh;
+            z-index: 999;
+            overflow-y: auto;
+        }
+        
+        .nav-item {
+            padding: 16px 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 500;
+            color: #7f8c8d;
+        }
+        
+        .nav-item:hover {
+            background: rgba(102, 126, 234, 0.1);
+            color: #2c3e50;
+            border-left-color: #667eea;
+            transform: translateX(4px);
+        }
+        
+        .nav-item.active {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(79, 172, 254, 0.15) 100%);
+            color: #2c3e50;
+            border-left-color: #667eea;
+            font-weight: 600;
+        }
+        
+        .nav-icon {
+            font-size: 1.2em;
+            width: 24px;
+            text-align: center;
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 100px 24px 24px 24px;
+            min-height: 100vh;
+        }
+        
+        .content-section {
+            display: none;
+        }
+        
+        .content-section.active {
+            display: block;
+        }
+        
+        .section-header {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.85));
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .section-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+        
+        .section-subtitle {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+        
+        /* Cards */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+        
+        .card {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.85));
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.4s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+        }
+        
+        /* Plan Cards */
+        .plan-card {
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .plan-card.recommended::before {
+            content: '⭐ RECOMMENDED';
+            position: absolute;
+            top: 16px;
+            right: -30px;
+            background: #f39c12;
+            color: white;
+            padding: 4px 40px;
+            font-size: 0.8em;
+            font-weight: 700;
+            transform: rotate(45deg);
+        }
+        
+        .plan-icon {
+            font-size: 3em;
+            margin-bottom: 16px;
+        }
+        
+        .plan-name {
+            font-size: 1.5em;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+        
+        .plan-price {
+            font-size: 2em;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+        
+        .plan-price .currency {
+            font-size: 0.6em;
+            color: #7f8c8d;
+        }
+        
+        .plan-price .period {
+            font-size: 0.4em;
+            color: #7f8c8d;
+        }
+        
+        .plan-features {
+            list-style: none;
+            margin-bottom: 24px;
+        }
+        
+        .plan-features li {
+            padding: 8px 0;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 8px;
+        }
+        
+        .plan-features li.included {
+            color: #27ae60;
+        }
+        
+        .plan-features li.limited {
+            color: #f39c12;
+        }
+        
+        .plan-features li.excluded {
+            color: #e74c3c;
+        }
+        
+        .subscribe-btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+        
+        .subscribe-btn.free {
+            background: #95a5a6;
+            color: white;
+        }
+        
+        .subscribe-btn.pro {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+        }
+        
+        .subscribe-btn.advance {
+            background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+            color: white;
+        }
+        
+        .subscribe-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+        
+        .subscribe-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        /* Forms */
+        .form-group {
+            margin-bottom: 24px;
+        }
+        
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+        
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid rgba(102, 126, 234, 0.1);
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+        }
+        
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .form-textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        
+        .upload-area {
+            border: 3px dashed rgba(102, 126, 234, 0.3);
+            border-radius: 16px;
+            padding: 40px 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background: rgba(102, 126, 234, 0.05);
+        }
+        
+        .upload-area:hover {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+        }
+        
+        .upload-icon {
+            font-size: 3em;
+            color: #667eea;
+            margin-bottom: 16px;
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, #27ae60 0%, #219653 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 16px 32px;
+            font-weight: 700;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(39, 174, 96, 0.3);
+        }
+        
+        .submit-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        /* Game Cards */
+        .game-card {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 16px;
+            margin-bottom: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .game-card:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: translateX(4px);
+        }
+        
+        .game-thumbnail {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            color: white;
+        }
+        
+        .game-info {
+            flex: 1;
+        }
+        
+        .game-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #2c3e50;
+        }
+        
+        .game-stats {
+            display: flex;
+            gap: 16px;
+            margin: 8px 0;
+            font-size: 0.9em;
+            color: #7f8c8d;
+        }
+        
+        .game-badges {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        
+        .badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .badge.recommended {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+            color: white;
+        }
+        
+        .badge.warning {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+        }
+        
+        .badge.trending {
+            background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+            color: white;
+        }
+        
+        /* Charts */
+        .chart-container {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            height: 400px;
+        }
+        
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        
+        .stat-icon {
+            font-size: 2.5em;
+            margin-bottom: 12px;
+        }
+        
+        .stat-value {
+            font-size: 2em;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 4px;
+        }
+        
+        .stat-label {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+        
+        /* Locked State */
+        .locked-content {
+            text-align: center;
+            padding: 60px 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            margin: 24px 0;
+        }
+        
+        .locked-icon {
+            font-size: 4em;
+            color: #e74c3c;
+            margin-bottom: 20px;
+        }
+        
+        .locked-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 12px;
+        }
+        
+        .locked-message {
+            color: #7f8c8d;
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+        
+        .upgrade-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 16px 32px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .upgrade-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                position: relative;
+                height: auto;
+                border-radius: 0;
+                padding: 20px 0;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+            
+            .dashboard-header {
+                position: relative;
+                height: auto;
+                padding: 16px;
+            }
+            
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="dashboard-header">
+        <div class="header-logo">
+            <img src="logo baru.jpg" alt="STEMSHARE" />
+            <span>STEMSHARE DEVELOPER</span>
+        </div>
+        <div class="header-actions">
+            <div class="subscription-badge badge-free" id="subscriptionBadge">FREE PLAN</div>
+            <button class="logout-btn" onclick="window.location.href='index.html'">Logout</button>
+        </div>
+    </header>
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="nav-item active" onclick="showSection('dashboard')">
+                <span class="nav-icon">📊</span>
+                <span>Dashboard</span>
+            </div>
+            <div class="nav-item" onclick="showSection('plans')">
+                <span class="nav-icon">💎</span>
+                <span>Subscription Plans</span>
+            </div>
+            <div class="nav-item" onclick="showSection('upload')">
+                <span class="nav-icon">⬆️</span>
+                <span>Upload Game</span>
+            </div>
+            <div class="nav-item" onclick="showSection('mygames')">
+                <span class="nav-icon">🎮</span>
+                <span>My Games</span>
+            </div>
+            <div class="nav-item" onclick="showSection('analytics')">
+                <span class="nav-icon">📈</span>
+                <span>Analytics</span>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="content-section active">
+                <div class="section-header">
+                    <h1 class="section-title">Welcome to Your Developer Dashboard</h1>
+                    <p class="section-subtitle">Create, manage, and track your educational games</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">🎮</div>
+                        <div class="stat-value" id="totalGames">0</div>
+                        <div class="stat-label">Total Games</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">👁️</div>
+                        <div class="stat-value" id="totalViews">0</div>
+                        <div class="stat-label">Total Views</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">👍</div>
+                        <div class="stat-value" id="totalLikes">0</div>
+                        <div class="stat-label">Total Likes</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">⭐</div>
+                        <div class="stat-value" id="avgRating">0.0</div>
+                        <div class="stat-label">Avg Rating</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Quick Actions</h3>
+                    <p style="color: #7f8c8d; margin: 16px 0;">Get started with your developer journey</p>
+                    <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+                        <button class="upgrade-btn" onclick="showSection('plans')">
+                            💎 View Plans
+                        </button>
+                        <button class="upgrade-btn" onclick="showSection('upload')" style="background: linear-gradient(135deg, #27ae60 0%, #219653 100%);">
+                            ⬆️ Upload Game
+                        </button>
+                        <button class="upgrade-btn" onclick="showSection('analytics')" style="background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);">
+                            📈 View Analytics
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Subscription Plans Section -->
+            <section id="plans" class="content-section">
+                <div class="section-header">
+                    <h1 class="section-title">Choose Your Plan</h1>
+                    <p class="section-subtitle">Unlock powerful features to grow your game development business</p>
+                </div>
+
+                <div class="cards-grid">
+                    <!-- Free Plan -->
+                    <div class="card plan-card">
+                        <div class="plan-icon">🆓</div>
+                        <div class="plan-name">Free</div>
+                        <div class="plan-price">
+                            <span class="currency">$</span>0<span class="period">/month</span>
+                        </div>
+                        <ul class="plan-features">
+                            <li class="limited">✓ Upload up to 2 games</li>
+                            <li class="limited">✓ Basic analytics</li>
+                            <li class="excluded">✗ No priority support</li>
+                            <li class="excluded">✗ No badges</li>
+                            <li class="excluded">✗ Limited file size (10MB)</li>
+                        </ul>
+                        <button class="subscribe-btn free" id="freeBtn" onclick="subscribeToPlan('free')" disabled>
+                            Current Plan
+                        </button>
+                    </div>
+
+                    <!-- Pro Plan -->
+                    <div class="card plan-card recommended">
+                        <div class="plan-icon">💼</div>
+                        <div class="plan-name">Pro</div>
+                        <div class="plan-price">
+                            <span class="currency">$</span>9<span class="period">/month</span>
+                        </div>
+                        <ul class="plan-features">
+                            <li class="included">✓ Upload up to 10 games</li>
+                            <li class="included">✓ Advanced analytics</li>
+                            <li class="included">✓ Priority support</li>
+                            <li class="included">✓ Achievement badges</li>
+                            <li class="included">✓ Up to 100MB per game</li>
+                            <li class="included">✓ Revenue tracking</li>
+                        </ul>
+                        <button class="subscribe-btn pro" onclick="subscribeToPlan('pro')">
+                            Subscribe Now
+                        </button>
+                    </div>
+
+                    <!-- Advance Plan -->
+                    <div class="card plan-card">
+                        <div class="plan-icon">👑</div>
+                        <div class="plan-name">Advance</div>
+                        <div class="plan-price">
+                            <span class="currency">$</span>19<span class="period">/month</span>
+                        </div>
+                        <ul class="plan-features">
+                            <li class="included">✓ Unlimited game uploads</li>
+                            <li class="included">✓ Premium analytics dashboard</li>
+                            <li class="included">✓ 24/7 dedicated support</li>
+                            <li class="included">✓ All achievement badges</li>
+                            <li class="included">✓ Up to 500MB per game</li>
+                            <li class="included">✓ Revenue tracking & insights</li>
+                            <li class="included">✓ Featured game placement</li>
+                            <li class="included">✓ API access</li>
+                        </ul>
+                        <button class="subscribe-btn advance" onclick="subscribeToPlan('advance')">
+                            Subscribe Now
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Upload Game Section -->
+            <section id="upload" class="content-section">
+                <div class="section-header">
+                    <h1 class="section-title">Upload New Game</h1>
+                    <p class="section-subtitle">Share your educational game with the STEMSHARE community</p>
+                </div>
+
+                <div id="uploadContent">
+                    <!-- Content will be dynamically loaded based on subscription -->
+                </div>
+            </section>
+
+            <!-- My Games Section -->
+            <section id="mygames" class="content-section">
+                <div class="section-header">
+                    <h1 class="section-title">My Games</h1>
+                    <p class="section-subtitle">Manage and track your uploaded games</p>
+                </div>
+
+                <div id="gamesContainer">
+                    <!-- Games will be dynamically loaded -->
+                </div>
+            </section>
+
+            <!-- Analytics Section -->
+            <section id="analytics" class="content-section">
+                <div class="section-header">
+                    <h1 class="section-title">Analytics Dashboard</h1>
+                    <p class="section-subtitle">Track your games' performance and engagement</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-value" id="analyticsViews">0</div>
+                        <div class="stat-label">This Month Views</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">💰</div>
+                        <div class="stat-value" id="analyticsRevenue">$0</div>
+                        <div class="stat-label">Est. Revenue</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🎯</div>
+                        <div class="stat-value" id="analyticsEngagement">0%</div>
+                        <div class="stat-label">Engagement Rate</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🏆</div>
+                        <div class="stat-value" id="analyticsRank">#∞</div>
+                        <div class="stat-label">Global Rank</div>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <canvas id="viewsChart"></canvas>
+                </div>
+
+                <div class="chart-container">
+                    <canvas id="likesChart"></canvas>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Global state
+        let currentPlan = 'free';
+        let developerGames = [];
+        let viewsChart = null;
+        let likesChart = null;
+
+        // Initialize the dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDeveloperData();
+            updateUI();
+            updateUploadSection();
+            loadGames();
+            updateAnalytics();
+        });
+
+        // Load developer data from localStorage
+        function loadDeveloperData() {
+            const savedPlan = localStorage.getItem('developerPlan');
+            if (savedPlan) {
+                currentPlan = savedPlan;
+            }
+
+            const savedGames = localStorage.getItem('developerGames');
+            if (savedGames) {
+                developerGames = JSON.parse(savedGames);
+            } else {
+                // Initialize with dummy data
+                developerGames = [
+                    {
+                        id: 1,
+                        title: "Math Adventures",
+                        description: "Interactive math puzzles for primary students",
+                        category: "Mathematics",
+                        thumbnail: "🧮",
+                        views: Math.floor(Math.random() * 1000) + 100,
+                        likes: Math.floor(Math.random() * 50) + 10,
+                        dislikes: Math.floor(Math.random() * 10) + 1,
+                        rating: (4 + Math.random()).toFixed(1),
+                        uploadDate: "2024-01-15",
+                        badges: []
+                    },
+                    {
+                        id: 2,
+                        title: "Science Explorer",
+                        description: "Explore the wonders of science through interactive experiments",
+                        category: "Science",
+                        thumbnail: "🔬",
+                        views: Math.floor(Math.random() * 800) + 50,
+                        likes: Math.floor(Math.random() * 40) + 5,
+                        dislikes: Math.floor(Math.random() * 15) + 2,
+                        rating: (3.5 + Math.random()).toFixed(1),
+                        uploadDate: "2024-01-20",
+                        badges: []
+                    }
+                ];
+                
+                // Add badges based on performance
+                developerGames.forEach(game => {
+                    game.badges = generateBadges(game);
+                });
+                
+                saveDeveloperData();
+            }
+        }
+
+        // Save developer data to localStorage
+        function saveDeveloperData() {
+            localStorage.setItem('developerPlan', currentPlan);
+            localStorage.setItem('developerGames', JSON.stringify(developerGames));
+        }
+
+        // Generate badges based on game performance
+        function generateBadges(game) {
+            const badges = [];
+            const likeRatio = game.likes / (game.likes + game.dislikes);
+            
+            if (likeRatio >= 0.8 && game.likes >= 20) {
+                badges.push({ type: 'recommended', label: 'Recommended' });
+            }
+            
+            if (game.views >= 500) {
+                badges.push({ type: 'trending', label: 'Trending' });
+            }
+            
+            // Random chance for warning (simulating flagged content)
+            if (Math.random() < 0.1) {
+                badges.push({ type: 'warning', label: 'Under Review' });
+            }
+            
+            return badges;
+        }
+
+        // Update UI elements
+        function updateUI() {
+            const badge = document.getElementById('subscriptionBadge');
+            badge.className = `subscription-badge badge-${currentPlan}`;
+            badge.textContent = `${currentPlan.toUpperCase()} PLAN`;
+
+            // Update plan buttons
+            document.querySelectorAll('.subscribe-btn').forEach(btn => {
+                btn.disabled = false;
+                btn.textContent = 'Subscribe Now';
+            });
+
+            const currentBtn = document.getElementById(`${currentPlan}Btn`) || 
+                              document.querySelector(`.subscribe-btn.${currentPlan}`);
+            if (currentBtn) {
+                currentBtn.disabled = true;
+                currentBtn.textContent = 'Current Plan';
+            }
+
+            // Update dashboard stats
+            updateDashboardStats();
+        }
+
+        // Update dashboard statistics
+        function updateDashboardStats() {
+            const totalGames = developerGames.length;
+            const totalViews = developerGames.reduce((sum, game) => sum + game.views, 0);
+            const totalLikes = developerGames.reduce((sum, game) => sum + game.likes, 0);
+            const avgRating = totalGames > 0 ? 
+                (developerGames.reduce((sum, game) => sum + parseFloat(game.rating), 0) / totalGames).toFixed(1) : 
+                '0.0';
+
+            document.getElementById('totalGames').textContent = totalGames;
+            document.getElementById('totalViews').textContent = totalViews.toLocaleString();
+            document.getElementById('totalLikes').textContent = totalLikes;
+            document.getElementById('avgRating').textContent = avgRating;
+        }
+
+        // Show section
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Remove active from nav items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+
+            // Add active to clicked nav item
+            event.target.closest('.nav-item').classList.add('active');
+
+            // Update section-specific content
+            if (sectionId === 'upload') {
+                updateUploadSection();
+            } else if (sectionId === 'mygames') {
+                loadGames();
+            } else if (sectionId === 'analytics') {
+                updateAnalytics();
+            }
+        }
+
+        // Subscribe to plan
+        function subscribeToPlan(plan) {
+            currentPlan = plan;
+            saveDeveloperData();
+            updateUI();
+            updateUploadSection();
+
+            // Show success message
+            alert(`🎉 Successfully subscribed to ${plan.toUpperCase()} plan! You now have access to enhanced features.`);
+        }
+
+        // Update upload section based on subscription
+        function updateUploadSection() {
+            const uploadContent = document.getElementById('uploadContent');
+            const planLimits = {
+                free: { maxGames: 2, maxFileSize: '10MB' },
+                pro: { maxGames: 10, maxFileSize: '100MB' },
+                advance: { maxGames: Infinity, maxFileSize: '500MB' }
+            };
+
+            const currentLimit = planLimits[currentPlan];
+            const canUpload = developerGames.length < currentLimit.maxGames;
+
+            if (currentPlan === 'free' && !canUpload) {
+                uploadContent.innerHTML = `
+                    <div class="locked-content">
+                        <div class="locked-icon">🔒</div>
+                        <h3 class="locked-title">Upload Limit Reached</h3>
+                        <p class="locked-message">
+                            You've reached the maximum number of games (${currentLimit.maxGames}) for the FREE plan.<br>
+                            Upgrade to upload more games and unlock advanced features.
+                        </p>
+                        <button class="upgrade-btn" onclick="showSection('plans')">
+                            💎 Upgrade Plan
+                        </button>
+                    </div>
+                `;
+            } else {
+                uploadContent.innerHTML = `
+                    <div class="card">
+                        <form id="uploadForm" onsubmit="uploadGame(event)">
+                            <div class="form-group">
+                                <label class="form-label">Game Title *</label>
+                                <input type="text" class="form-input" id="gameTitle" placeholder="Enter your game title" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Description *</label>
+                                <textarea class="form-textarea" id="gameDescription" placeholder="Describe your game and its educational value" required></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Category *</label>
+                                <select class="form-select" id="gameCategory" required>
+                                    <option value="">Select a category</option>
+                                    <option value="Mathematics">Mathematics</option>
+                                    <option value="Science">Science</option>
+                                    <option value="Technology">Technology</option>
+                                    <option value="Engineering">Engineering</option>
+                                    <option value="General">General Education</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Game Thumbnail</label>
+                                <select class="form-select" id="gameThumbnail">
+                                    <option value="🎮">🎮 Game Controller</option>
+                                    <option value="🧮">🧮 Calculator</option>
+                                    <option value="🔬">🔬 Microscope</option>
+                                    <option value="⚗️">⚗️ Chemistry</option>
+                                    <option value="🌟">🌟 Star</option>
+                                    <option value="🎯">🎯 Target</option>
+                                    <option value="🏆">🏆 Trophy</option>
+                                    <option value="🎨">🎨 Art</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Upload Game File (Max: ${currentLimit.maxFileSize})</label>
+                                <div class="upload-area" onclick="document.getElementById('gameFile').click()">
+                                    <div class="upload-icon">📁</div>
+                                    <p><strong>Click to upload</strong> or drag and drop</p>
+                                    <p style="font-size: 0.9em; color: #7f8c8d; margin-top: 8px;">
+                                        Supported formats: ZIP, RAR, HTML, EXE, JAR, APK
+                                    </p>
+                                </div>
+                                <input type="file" id="gameFile" style="display: none" accept=".zip,.rar,.html,.htm,.exe,.jar,.apk">
+                                <div id="fileInfo" style="margin-top: 12px; color: #7f8c8d;"></div>
+                            </div>
+
+                            <div style="text-align: center; margin-top: 24px;">
+                                <button type="submit" class="submit-btn">
+                                    🚀 Upload Game
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="card" style="margin-top: 24px; background: linear-gradient(135deg, rgba(39, 174, 96, 0.1) 0%, rgba(46, 204, 113, 0.1) 100%);">
+                        <h3 style="color: #27ae60; margin-bottom: 16px;">📊 Your Plan Limits</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+                            <div>
+                                <strong>Games Uploaded:</strong> ${developerGames.length}/${currentLimit.maxGames === Infinity ? '∞' : currentLimit.maxGames}
+                            </div>
+                            <div>
+                                <strong>Max File Size:</strong> ${currentLimit.maxFileSize}
+                            </div>
+                            <div>
+                                <strong>Plan:</strong> ${currentPlan.toUpperCase()}
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // Add file input listener
+                const fileInput = document.getElementById('gameFile');
+                if (fileInput) {
+                    fileInput.addEventListener('change', function(e) {
+                        const file = e.target.files[0];
+                        const fileInfo = document.getElementById('fileInfo');
+                        if (file) {
+                            const sizeMB = (file.size / 1024 / 1024).toFixed(2);
+                            fileInfo.textContent = `Selected: ${file.name} (${sizeMB} MB)`;
+                            fileInfo.style.color = '#27ae60';
+                        } else {
+                            fileInfo.textContent = '';
+                        }
+                    });
+                }
+            }
+        }
+
+        // Upload game
+        function uploadGame(event) {
+            event.preventDefault();
+
+            const title = document.getElementById('gameTitle').value;
+            const description = document.getElementById('gameDescription').value;
+            const category = document.getElementById('gameCategory').value;
+            const thumbnail = document.getElementById('gameThumbnail').value;
+            const fileInput = document.getElementById('gameFile');
+
+            if (!title || !description || !category) {
+                alert('Please fill in all required fields.');
+                return;
+            }
+
+            // Create new game object
+            const newGame = {
+                id: Date.now(),
+                title: title,
+                description: description,
+                category: category,
+                thumbnail: thumbnail,
+                views: Math.floor(Math.random() * 100) + 10,
+                likes: Math.floor(Math.random() * 20) + 1,
+                dislikes: Math.floor(Math.random() * 5) + 1,
+                rating: (3 + Math.random() * 2).toFixed(1),
+                uploadDate: new Date().toISOString().split('T')[0],
+                badges: [],
+                fileName: fileInput.files[0] ? fileInput.files[0].name : null
+            };
+
+            // Generate badges
+            newGame.badges = generateBadges(newGame);
+
+            // Add to games array
+            developerGames.push(newGame);
+            saveDeveloperData();
+
+            // Reset form
+            document.getElementById('uploadForm').reset();
+            document.getElementById('fileInfo').textContent = '';
+
+            // Update UI
+            updateUI();
+
+            // Show success message
+            alert('🎉 Game uploaded successfully! You can view it in "My Games" section.');
+
+            // Redirect to My Games
+            showSection('mygames');
+        }
+
+        // Load games
+        function loadGames() {
+            const container = document.getElementById('gamesContainer');
+
+            if (developerGames.length === 0) {
+                container.innerHTML = `
+                    <div class="card" style="text-align: center; padding: 60px 20px;">
+                        <div style="font-size: 4em; color: #bdc3c7; margin-bottom: 20px;">🎮</div>
+                        <h3 style="color: #7f8c8d; margin-bottom: 16px;">No Games Yet</h3>
+                        <p style="color: #95a5a6; margin-bottom: 24px;">Upload your first educational game to get started!</p>
+                        <button class="upgrade-btn" onclick="showSection('upload')">
+                            ⬆️ Upload Game
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            let gamesHTML = '';
+            developerGames.forEach(game => {
+                const badgesHTML = game.badges.map(badge => 
+                    `<span class="badge ${badge.type}">${badge.label}</span>`
+                ).join('');
+
+                gamesHTML += `
+                    <div class="game-card">
+                        <div class="game-thumbnail">${game.thumbnail}</div>
+                        <div class="game-info">
+                            <div class="game-title">${game.title}</div>
+                            <p style="color: #7f8c8d; font-size: 0.9em; margin: 4px 0;">${game.description}</p>
+                            <div class="game-stats">
+                                <span>👁️ ${game.views.toLocaleString()} views</span>
+                                <span>👍 ${game.likes} likes</span>
+                                <span>👎 ${game.dislikes} dislikes</span>
+                                <span>⭐ ${game.rating}/5.0</span>
+                                <span>📅 ${game.uploadDate}</span>
+                            </div>
+                            <div class="game-badges">
+                                ${badgesHTML}
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
+                            <button onclick="deleteGame(${game.id})" style="background: #e74c3c; color: white; border: none; border-radius: 8px; padding: 8px 16px; cursor: pointer; margin-bottom: 8px;">
+                                🗑️ Delete
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = gamesHTML;
+        }
+
+        // Delete game
+        function deleteGame(gameId) {
+            if (confirm('Are you sure you want to delete this game? This action cannot be undone.')) {
+                developerGames = developerGames.filter(game => game.id !== gameId);
+                saveDeveloperData();
+                updateUI();
+                loadGames();
+                updateAnalytics();
+            }
+        }
+
+        // Update analytics
+        function updateAnalytics() {
+            if (developerGames.length === 0) {
+                // Show empty state
+                document.getElementById('analyticsViews').textContent = '0';
+                document.getElementById('analyticsRevenue').textContent = '$0';
+                document.getElementById('analyticsEngagement').textContent = '0%';
+                document.getElementById('analyticsRank').textContent = '#∞';
+                return;
+            }
+
+            // Calculate analytics
+            const totalViews = developerGames.reduce((sum, game) => sum + game.views, 0);
+            const totalLikes = developerGames.reduce((sum, game) => sum + game.likes, 0);
+            const totalInteractions = developerGames.reduce((sum, game) => sum + game.likes + game.dislikes, 0);
+            const engagementRate = totalViews > 0 ? ((totalInteractions / totalViews) * 100).toFixed(1) : 0;
+            const estimatedRevenue = (totalViews * 0.01).toFixed(2); // $0.01 per view
+            const rank = Math.max(1, 1000 - Math.floor(totalViews / 10));
+
+            document.getElementById('analyticsViews').textContent = totalViews.toLocaleString();
+            document.getElementById('analyticsRevenue').textContent = `$${estimatedRevenue}`;
+            document.getElementById('analyticsEngagement').textContent = `${engagementRate}%`;
+            document.getElementById('analyticsRank').textContent = `#${rank}`;
+
+            // Update charts
+            updateCharts();
+        }
+
+        // Update charts
+        function updateCharts() {
+            const ctx1 = document.getElementById('viewsChart').getContext('2d');
+            const ctx2 = document.getElementById('likesChart').getContext('2d');
+
+            // Generate dummy data for views over time
+            const dates = [];
+            const views = [];
+            for (let i = 30; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+                dates.push(date.toLocaleDateString());
+                views.push(Math.floor(Math.random() * 100) + 10);
+            }
+
+            // Destroy existing charts
+            if (viewsChart) viewsChart.destroy();
+            if (likesChart) likesChart.destroy();
+
+            // Views chart
+            viewsChart = new Chart(ctx1, {
+                type: 'line',
+                data: {
+                    labels: dates,
+                    datasets: [{
+                        label: 'Daily Views',
+                        data: views,
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Views Over Time (Last 30 Days)'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Likes vs Dislikes chart
+            const gameNames = developerGames.map(game => game.title);
+            const likes = developerGames.map(game => game.likes);
+            const dislikes = developerGames.map(game => game.dislikes);
+
+            likesChart = new Chart(ctx2, {
+                type: 'bar',
+                data: {
+                    labels: gameNames,
+                    datasets: [{
+                        label: 'Likes',
+                        data: likes,
+                        backgroundColor: '#27ae60'
+                    }, {
+                        label: 'Dislikes',
+                        data: dislikes,
+                        backgroundColor: '#e74c3c'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Likes vs Dislikes by Game'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
