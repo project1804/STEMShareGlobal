@@ -1,373 +1,2790 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to STEMShare - Teacher Introduction</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+  <meta charset="UTF-8">
+  <title>STEMShare Teacher</title>
+  <script>
+      // Check if user has seen the teacher introduction
+      (function() {
+          const hasSeenTeacherIntroduction = localStorage.getItem('hasSeenTeacherIntroduction');
+          if (hasSeenTeacherIntroduction !== 'true') {
+              window.location.href = 'teacher-introduction.html';
+          }
+      })();
+      
+      // Function to reset teacher introduction for testing - available immediately
+      window.resetTeacherIntroduction = function() {
+          localStorage.removeItem('hasSeenTeacherIntroduction');
+          alert('Teacher introduction has been reset. You will see it again on next login.');
+      };
+  </script>
+  <link rel="stylesheet" href="style.css">
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <style>
+    /* Import Google Fonts */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    
+    :root {
+      --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      --accent-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      --success-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+      --warning-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+      --rainbow-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #43e97b 100%);
+      --background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      --surface: #ffffff;
+      --text-primary: #2d3748;
+      --text-secondary: #718096;
+      --border: rgba(102, 126, 234, 0.1);
+      --shadow-light: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+      --shadow-medium: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --shadow-large: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      --shadow-colorful: 0 10px 40px rgba(102, 126, 234, 0.2);
+    }
 
-        .introduction-container {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            padding: 20px;
-            max-width: 95%;
-            width: 95%;
-            text-align: center;
-            position: relative;
-            backdrop-filter: blur(10px);
-            height: 95vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            box-sizing: border-box;
-        }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        .introduction-image {
-            width: 100%;
-            max-width: 90%;
-            height: auto;
-            max-height: 50vh;
-            object-fit: contain;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            transition: transform 0.3s ease;
-        }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--background);
+      background-attachment: fixed;
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+      position: relative;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: 
+        radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 80%, rgba(120, 200, 255, 0.1) 0%, transparent 50%);
+      z-index: -1;
+      pointer-events: none;
+    }
 
-        .introduction-image:hover {
-            transform: scale(1.02);
-        }
+    .teacher-header {
+      background: var(--rainbow-gradient);
+      background-size: 400% 400%;
+      padding: 24px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: white;
+      box-shadow: var(--shadow-colorful);
+      position: relative;
+      overflow: hidden;
+      animation: gradientShift 8s ease-in-out infinite;
+    }
+    
+    @keyframes gradientShift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
 
-        .introduction-title {
-            font-size: 2em;
-            font-weight: 700;
-            color: #2c3e50;
-            margin-bottom: 15px;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
 
-        .introduction-subtitle {
-            font-size: 1.1em;
-            color: #7f8c8d;
-            margin-bottom: 20px;
-            line-height: 1.5;
-        }
 
-        .navigation-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-        }
+    .teacher-title {
+      display: flex;
+      align-items: center;
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      position: relative;
+      z-index: 1;
+      text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+      animation: titleGlow 3s ease-in-out infinite alternate;
+      background: transparent;
+    }
+    
+    @keyframes titleGlow {
+      0% { text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3); }
+      100% { text-shadow: 0 2px 30px rgba(255, 255, 255, 0.5); }
+    }
+    
+    .teacher-logo {
+      margin-right: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: logoFloat 4s ease-in-out infinite;
+      background: transparent;
+    }
+    
+    .teacher-logo img {
+      width: 120px;
+      height: 120px;
+      object-fit: contain;
+      filter: drop-shadow(0 4px 15px rgba(255,255,255,0.6));
+    }
+    
+    @keyframes logoFloat {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-5px) rotate(5deg); }
+    }
 
-        .nav-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 25px;
-            font-size: 1.1em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
-            min-width: 120px;
-        }
+    .logout-btn {
+      background: rgba(255, 255, 255, 0.2);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 12px;
+      padding: 12px 24px;
+      font-weight: 600;
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      position: relative;
+      z-index: 1;
+    }
 
-        .nav-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
-        }
+    .logout-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      border-color: rgba(255, 255, 255, 0.5);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
 
-        .nav-btn:disabled {
-            background: #bdc3c7;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
 
-        .lets-go-btn {
-            background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
-            font-size: 1.2em;
-            padding: 18px 40px;
-            min-width: 150px;
-        }
+    .teacher-main {
+      display: flex;
+      min-height: calc(100vh - 80px);
+      gap: 32px;
+      padding: 20px;
+      max-width: 1600px;
+      margin: 0 auto;
+      width: 100%;
+    }
 
-        .lets-go-btn:hover {
-            box-shadow: 0 8px 25px rgba(0, 184, 148, 0.4);
-        }
+    .teacher-sidebar {
+      width: 320px;
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.85));
+      backdrop-filter: blur(20px);
+      border-radius: 24px;
+      box-shadow: var(--shadow-colorful);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 32px 0;
+      height: fit-content;
+      position: sticky;
+      top: 24px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    
+    .teacher-sidebar::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: conic-gradient(from 0deg, transparent, rgba(102, 126, 234, 0.03), transparent, rgba(240, 147, 251, 0.03), transparent);
+      animation: rotate 20s linear infinite;
+      z-index: -1;
+    }
+    
+    @keyframes rotate {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
 
-        .progress-indicator {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
+    .teacher-sidebar ul {
+      list-style: none;
+    }
 
-        .content-wrapper {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-        }
+    .teacher-sidebar li {
+      margin-bottom: 8px;
+      padding: 0 4px;
+    }
 
-        .progress-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #e0e0e0;
-            transition: all 0.3s ease;
-        }
+    .teacher-sidebar a {
+      text-decoration: none;
+      color: var(--text-secondary);
+      font-weight: 500;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      border-radius: 16px;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      margin: 0 16px;
+      overflow: hidden;
+    }
 
-        .progress-dot.active {
-            background: #667eea;
-            transform: scale(1.2);
-        }
+    .teacher-sidebar a::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 5px;
+      height: 0;
+      background: var(--accent-gradient);
+      border-radius: 0 8px 8px 0;
+      transition: height 0.4s ease;
+    }
+    
+    .teacher-sidebar a::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(79, 172, 254, 0.15) 100%);
+      transition: left 0.4s ease;
+      z-index: -1;
+    }
 
-        .skip-intro {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(255, 255, 255, 0.2);
-            color: #7f8c8d;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.9em;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
+    .teacher-sidebar a:hover {
+      background: rgba(255, 255, 255, 0.8);
+      color: var(--text-primary);
+      transform: translateX(12px) scale(1.02);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+    }
 
-        .skip-intro:hover {
-            background: rgba(255, 255, 255, 0.3);
-            color: #2c3e50;
-        }
+    .teacher-sidebar a:hover::before {
+      height: 40px;
+    }
+    
+    .teacher-sidebar a:hover::after {
+      left: 0;
+    }
 
-        @media (max-width: 768px) {
-            .introduction-container {
-                padding: 20px 15px;
-                margin: 10px;
-                height: 95vh;
-                width: 98%;
-                max-width: 98%;
-            }
+    .teacher-content-card {
+      flex: 1;
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.9));
+      backdrop-filter: blur(20px);
+      border-radius: 28px;
+      box-shadow: var(--shadow-colorful);
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      position: relative;
+    }
+    
+    .teacher-content-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--rainbow-gradient);
+      background-size: 400% 400%;
+      animation: gradientShift 6s ease-in-out infinite;
+    }
 
-            .content-wrapper {
-                gap: 15px;
-            }
+    .teacher-tabs {
+      display: flex;
+      background: linear-gradient(135deg, rgba(248, 250, 252, 0.8) 0%, rgba(241, 245, 249, 0.8) 100%);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+      padding: 12px;
+      gap: 12px;
+    }
 
-            .introduction-image {
-                max-width: 95%;
-                max-height: 50vh;
-            }
+    .teacher-tab {
+      flex: 1;
+      padding: 18px 28px;
+      background: transparent;
+      border: 2px solid transparent;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      border-radius: 16px;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      color: var(--text-secondary);
+      position: relative;
+      overflow: hidden;
+    }
 
-            .introduction-title {
-                font-size: 1.8em;
-                margin-bottom: 0;
-            }
+    .teacher-tab::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: var(--secondary-gradient);
+      transition: left 0.4s ease;
+      z-index: -1;
+      border-radius: 14px;
+    }
 
-            .introduction-subtitle {
-                font-size: 1em;
-                margin-bottom: 0;
-            }
+    .teacher-tab.active {
+      background: var(--primary-gradient);
+      color: white;
+      box-shadow: var(--shadow-colorful);
+      transform: translateY(-2px);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
 
-            .navigation-buttons {
-                flex-direction: column;
-                align-items: center;
-                gap: 15px;
-            }
+    .teacher-tab.active::before {
+      left: 0;
+    }
 
-            .nav-btn {
-                width: 180px;
-                padding: 12px 24px;
-                font-size: 1em;
-            }
+    .teacher-tab:hover:not(.active) {
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(79, 172, 254, 0.15) 100%);
+      color: var(--text-primary);
+      transform: translateY(-2px) scale(1.02);
+      border-color: rgba(102, 126, 234, 0.2);
+    }
 
-            .progress-indicator {
-                margin-bottom: 20px;
-            }
-        }
+    /* Mobile Navigation Toggle */
+    .mobile-nav-toggle {
+      display: none;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
 
-        /* Large screens - maximize image size */
-        @media (min-width: 1200px) {
-            .introduction-container {
-                max-width: 90%;
-                padding: 25px;
-                height: 92vh;
-            }
+    .mobile-nav-toggle:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
 
-            .introduction-image {
-                max-width: 85%;
-                max-height: 45vh;
-            }
-        }
+    .welcome-section {
+      padding: 48px 60px;
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(240, 147, 251, 0.08) 50%, rgba(79, 172, 254, 0.08) 100%);
+      margin: 32px;
+      border-radius: 24px;
+      border: 1px solid rgba(102, 126, 234, 0.15);
+      position: relative;
+      overflow: hidden;
+    }
 
-        /* Medium screens - balanced layout */
-        @media (min-width: 769px) and (max-width: 1199px) {
-            .introduction-container {
-                max-width: 92%;
-                padding: 25px;
-                height: 93vh;
-            }
+    .welcome-section::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -30%;
+      width: 300px;
+      height: 300px;
+      background: 
+        radial-gradient(circle at 30% 70%, rgba(102, 126, 234, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 70% 30%, rgba(240, 147, 251, 0.15) 0%, transparent 50%);
+      border-radius: 50%;
+      animation: float 8s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      50% { transform: translate(-20px, -20px) rotate(180deg); }
+    }
 
-            .introduction-image {
-                max-width: 88%;
-                max-height: 48vh;
-            }
-        }
+    .welcome-title {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
 
-        .fade-in {
-            animation: fadeIn 0.5s ease-in;
-        }
+    .welcome-subtitle {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      font-weight: 400;
+    }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-    </style>
+    .upload-section {
+      padding: 48px;
+    }
+
+    .form-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .form-group {
+      margin-bottom: 24px;
+    }
+
+    .form-label {
+      display: block;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+    }
+
+    .form-input, .form-select {
+      width: 100%;
+      padding: 16px 20px;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      font-size: 1rem;
+      font-family: inherit;
+      transition: all 0.3s ease;
+      background: var(--surface);
+    }
+
+    .form-input:focus, .form-select:focus {
+      outline: none;
+      border-color: transparent;
+      background: linear-gradient(white, white) padding-box, var(--accent-gradient) border-box;
+      box-shadow: 0 0 20px rgba(79, 172, 254, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .drop-zone {
+      border: 3px dashed var(--border);
+      border-radius: 16px;
+      padding: 48px 32px;
+      text-align: center;
+      transition: all 0.3s ease;
+      background: linear-gradient(135deg, rgba(79, 172, 254, 0.02) 0%, rgba(0, 242, 254, 0.02) 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .drop-zone::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100px;
+      height: 100px;
+      background: radial-gradient(circle, rgba(79, 172, 254, 0.1) 0%, transparent 70%);
+      border-radius: 50%;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .drop-zone:hover {
+      border-color: #4facfe;
+      background: linear-gradient(135deg, rgba(79, 172, 254, 0.05) 0%, rgba(0, 242, 254, 0.05) 100%);
+    }
+
+    .drop-zone:hover::before {
+      opacity: 1;
+    }
+
+    .drop-zone-text {
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .drop-zone-subtext {
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .file-select-btn {
+      background: var(--accent-gradient);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      z-index: 1;
+    }
+
+    .file-select-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(79, 172, 254, 0.3);
+    }
+
+    .upload-btn {
+      width: 100%;
+      padding: 18px;
+      background: var(--success-gradient);
+      color: white;
+      border: none;
+      border-radius: 16px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: var(--shadow-colorful);
+      margin-top: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .upload-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: var(--warning-gradient);
+      transition: left 0.4s ease;
+      z-index: -1;
+    }
+
+    .upload-btn:hover {
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 20px 50px rgba(67, 233, 123, 0.4);
+    }
+    
+    .upload-btn:hover::before {
+      left: 0;
+    }
+
+    .category-group {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .category-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 500;
+      background: var(--surface);
+    }
+
+    .category-label:hover {
+      border-color: #667eea;
+      background: rgba(102, 126, 234, 0.05);
+    }
+
+    .category-label input[type="radio"] {
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--border);
+      border-radius: 50%;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .category-label input[type="radio"]:checked {
+      border-color: #667eea;
+      background: #667eea;
+    }
+
+    .category-label input[type="radio"]:checked::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 8px;
+      height: 8px;
+      background: white;
+      border-radius: 50%;
+    }
+
+    .recent-uploads {
+      margin-top: 48px;
+    }
+
+    .upload-card {
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .recent-uploads h3 {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 20px;
+    }
+
+    .upload-card {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.9) 100%);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(102, 126, 234, 0.1);
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 16px;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .upload-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--accent-gradient);
+      transform: scaleX(0);
+      transition: transform 0.4s ease;
+    }
+
+    .upload-card:hover {
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: var(--shadow-colorful);
+      border-color: rgba(79, 172, 254, 0.3);
+    }
+    
+    .upload-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .upload-card-title {
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .upload-card-meta {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    .loader {
+      border: 4px solid rgba(102, 126, 234, 0.1);
+      border-top: 4px solid #667eea;
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      100% { transform: rotate(360deg); }
+    }
+
+    .achievement-card {
+      background: linear-gradient(135deg, rgba(129, 255, 0, 0.1) 0%, rgba(50, 205, 50, 0.1) 100%);
+      border: 2px solid rgba(129, 255, 0, 0.3);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.3s ease;
+      font-weight: 500;
+    }
+
+    .achievement-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-medium);
+    }
+
+    .achievement-card.earned {
+      background: var(--success-gradient);
+      border-color: #32cd32;
+      color: white;
+      font-weight: 600;
+      box-shadow: 0 8px 25px rgba(50, 205, 50, 0.3);
+    }
+
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    .loading-content {
+      background: var(--surface);
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: var(--shadow-large);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      min-width: 200px;
+    }
+
+    .loading-text {
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    /* Forum Styles */
+    .topic-item {
+      padding: 16px;
+      margin-bottom: 8px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(102, 126, 234, 0.1);
+      background: rgba(255, 255, 255, 0.7);
+    }
+
+    .topic-item:hover {
+      background: rgba(102, 126, 234, 0.1);
+      transform: translateX(4px);
+      border-color: rgba(102, 126, 234, 0.2);
+    }
+
+    .topic-item.active {
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(79, 172, 254, 0.15) 100%);
+      border-color: #667eea;
+      transform: translateX(4px);
+    }
+
+    .topic-title {
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+      font-size: 0.95rem;
+      line-height: 1.3;
+    }
+
+    .topic-meta {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .message-card {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 16px;
+      border: 1px solid rgba(102, 126, 234, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .message-card:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      transform: translateY(-2px);
+    }
+
+    .message-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 12px;
+      gap: 12px;
+    }
+
+    .teacher-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+      font-size: 1.1em;
+    }
+
+    .teacher-info {
+      flex: 1;
+    }
+
+    .teacher-name {
+      font-weight: 600;
+      color: var(--text-primary);
+      font-size: 0.95rem;
+    }
+
+    .teacher-location {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .message-content {
+      margin-bottom: 12px;
+      line-height: 1.5;
+      color: var(--text-primary);
+    }
+
+    .message-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .action-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      color: var(--text-secondary);
+    }
+
+    .action-btn:hover {
+      background: rgba(102, 126, 234, 0.1);
+      color: var(--text-primary);
+    }
+
+    .action-btn.liked {
+      color: #e74c3c;
+      background: rgba(231, 76, 60, 0.1);
+    }
+
+    .new-topic-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(79, 172, 254, 0.3);
+    }
+
+    .country-flag {
+      font-size: 1.2em;
+    }
+
+    #replyInput:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 15px rgba(102, 126, 234, 0.2);
+    }
+
+    .forum-container {
+      max-height: calc(100vh - 200px);
+      min-height: 700px;
+      overflow: hidden;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1200px) {
+      .teacher-main {
+        max-width: 1200px;
+        padding: 20px;
+      }
+
+      .teacher-sidebar {
+        width: 280px;
+      }
+
+      .form-container {
+        max-width: 700px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      /* Disable animations and gradients for better mobile performance */
+      * {
+        animation: none !important;
+        transition: none !important;
+      }
+      
+      body::before {
+        display: none !important;
+      }
+      
+      .teacher-header {
+        background: #667eea !important;
+        background-size: auto !important;
+        animation: none !important;
+        padding: 16px 20px;
+        flex-direction: column;
+        gap: 16px;
+        text-align: center;
+      }
+      
+      .teacher-header::before {
+        display: none !important;
+      }
+      
+      .teacher-content-card::before {
+        display: none !important;
+      }
+      
+      .welcome-section::before {
+        display: none !important;
+      }
+      
+      .teacher-main {
+        flex-direction: column;
+        gap: 16px;
+        padding: 16px;
+        max-width: none;
+        background: #f5f7fa !important;
+      }
+
+      .teacher-sidebar {
+        width: 100%;
+        position: static;
+        padding: 16px;
+        display: none;
+        background: white !important;
+      }
+
+      .teacher-sidebar.mobile-open {
+        display: block;
+      }
+
+      .mobile-nav-toggle {
+        display: block;
+      }
+
+      .header-actions {
+        flex-direction: column;
+        gap: 12px;
+        width: 100%;
+      }
+
+      .teacher-title {
+        font-size: 1.4rem;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .teacher-logo img {
+        width: 40px;
+        height: 40px;
+      }
+
+      .welcome-section {
+        margin: 16px;
+        padding: 20px;
+        background: white !important;
+        border: 1px solid #e2e8f0;
+      }
+
+      .welcome-title {
+        font-size: 1.6rem;
+      }
+
+      .welcome-subtitle {
+        font-size: 1rem;
+      }
+
+      .upload-section {
+        padding: 20px;
+        background: white !important;
+      }
+
+      .form-container {
+        max-width: none;
+        padding: 20px;
+        background: white !important;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-label {
+        font-size: 0.95rem;
+        margin-bottom: 6px;
+      }
+
+      .form-input, .form-textarea, .form-select {
+        padding: 12px 16px;
+        font-size: 0.95rem;
+        background: white !important;
+        border: 1px solid #e2e8f0;
+      }
+
+      .category-group {
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .category-label {
+        font-size: 0.85rem;
+        padding: 8px 12px;
+        min-width: auto;
+        flex: 1;
+        min-width: calc(50% - 4px);
+        background: white !important;
+        border: 1px solid #e2e8f0;
+      }
+
+      .teacher-tabs {
+        flex-direction: column;
+        gap: 8px;
+        background: white !important;
+      }
+
+      .teacher-tab {
+        padding: 12px 16px;
+        font-size: 0.95rem;
+        text-align: center;
+        background: white !important;
+        border: 1px solid #e2e8f0;
+      }
+      
+      .teacher-tab.active {
+        background: #667eea !important;
+        color: white !important;
+        border-color: #667eea;
+      }
+
+      /* Fixed Global Discussion Mobile Layout */
+      .forum-container {
+        flex-direction: column;
+        height: auto;
+        min-height: auto;
+        gap: 20px;
+        background: white !important;
+      }
+
+      .forum-sidebar {
+        width: 100%;
+        height: auto;
+        max-height: 400px;
+        padding: 20px;
+        background: white !important;
+        border: 1px solid #e2e8f0;
+        overflow-y: auto;
+      }
+
+      .forum-main {
+        min-height: 500px;
+        padding: 20px !important;
+        background: white !important;
+        border: 1px solid #e2e8f0;
+        width: 100% !important;
+      }
+
+      /* Forum topic items mobile styling - Static colors */
+      .topic-item {
+        padding: 16px;
+        margin-bottom: 12px;
+        background: white !important;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        cursor: pointer;
+      }
+
+      .topic-item:hover {
+        background: #f8fafc !important;
+        transform: none;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+
+      .topic-item.active {
+        background: #667eea !important;
+        color: white !important;
+        border-color: #667eea;
+      }
+      
+      .topic-item.active .topic-title,
+      .topic-item.active .topic-meta {
+        color: white !important;
+      }
+
+      .topic-title {
+        font-weight: 600;
+        color: #2d3748;
+        margin-bottom: 8px;
+        font-size: 1rem;
+        line-height: 1.4;
+      }
+
+      .topic-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.85rem;
+        color: #718096;
+        margin-bottom: 4px;
+      }
+
+      /* Message cards mobile styling - Static colors */
+      .message-card {
+        background: white !important;
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 16px;
+        border: 1px solid #e2e8f0;
+      }
+
+      .message-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+
+      .teacher-avatar {
+        width: 40px;
+        height: 40px;
+        background: #667eea !important;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+        font-size: 0.9rem;
+      }
+
+      .teacher-info {
+        flex: 1;
+      }
+
+      .teacher-name {
+        font-weight: 600;
+        color: #2d3748;
+        margin-bottom: 2px;
+      }
+
+      .teacher-location {
+        font-size: 0.85rem;
+        color: #718096;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .country-flag {
+        font-size: 1rem;
+      }
+
+      .message-content {
+        color: #2d3748;
+        line-height: 1.6;
+        margin-bottom: 12px;
+        font-size: 0.95rem;
+      }
+
+      .message-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .action-btn {
+        background: white !important;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        padding: 6px 10px;
+        cursor: pointer;
+        font-size: 0.85rem;
+        color: #718096;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .action-btn:hover {
+        background: #f8fafc !important;
+        border-color: #667eea;
+      }
+
+      .action-btn.liked {
+        background: #fed7d7 !important;
+        border-color: #e74c3c;
+        color: #e74c3c;
+      }
+
+      .forum-post {
+        padding: 16px;
+        margin-bottom: 16px;
+      }
+
+      .forum-post-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+
+      .forum-post-meta {
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .forum-actions {
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .forum-action-btn {
+        width: 100%;
+        padding: 10px;
+        font-size: 0.9rem;
+        background: #667eea !important;
+        color: white !important;
+        border: none;
+      }
+
+      .card {
+        padding: 20px;
+        margin-bottom: 16px;
+        background: white !important;
+        border: 1px solid #e2e8f0;
+      }
+
+      .card h3 {
+        font-size: 1.2rem;
+        margin-bottom: 12px;
+        color: #2d3748;
+      }
+
+      .card p {
+        font-size: 0.95rem;
+        line-height: 1.5;
+        color: #718096;
+      }
+
+      .btn {
+        padding: 12px 20px;
+        font-size: 0.95rem;
+        width: 100%;
+        margin-bottom: 8px;
+      }
+
+      .btn-secondary {
+        margin-top: 8px;
+      }
+
+      .logout-btn {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+        width: 100%;
+        max-width: 200px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .teacher-main {
+        padding: 12px;
+      }
+
+      .teacher-header {
+        padding: 12px 16px;
+      }
+
+      .teacher-title {
+        font-size: 1.2rem;
+      }
+
+      .teacher-logo img {
+        width: 35px;
+        height: 35px;
+      }
+
+      .welcome-section {
+        margin: 12px;
+        padding: 16px;
+      }
+
+      .welcome-title {
+        font-size: 1.4rem;
+      }
+
+      .upload-section {
+        padding: 16px;
+      }
+
+      .form-container {
+        padding: 16px;
+      }
+
+      .form-input, .form-textarea, .form-select {
+        padding: 10px 14px;
+        font-size: 0.9rem;
+      }
+
+      .category-label {
+        font-size: 0.8rem;
+        padding: 6px 10px;
+        min-width: calc(50% - 4px);
+      }
+
+      .teacher-tab {
+        padding: 10px 14px;
+        font-size: 0.9rem;
+      }
+
+      .card {
+        padding: 16px;
+      }
+
+      .card h3 {
+        font-size: 1.1rem;
+      }
+
+      .card p {
+        font-size: 0.9rem;
+      }
+
+      .btn {
+        padding: 10px 16px;
+        font-size: 0.9rem;
+      }
+
+      .forum-sidebar {
+        padding: 16px;
+        height: 300px;
+      }
+
+      .forum-main {
+        padding: 16px !important;
+      }
+
+      .topic-item {
+        padding: 12px;
+        margin-bottom: 8px;
+      }
+
+      .topic-title {
+        font-size: 0.9rem;
+      }
+
+      .topic-meta {
+        font-size: 0.8rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2px;
+      }
+
+      .message-card {
+        padding: 12px;
+        margin-bottom: 12px;
+      }
+
+      .message-header {
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+
+      .teacher-avatar {
+        width: 35px;
+        height: 35px;
+        font-size: 0.8rem;
+      }
+
+      .teacher-name {
+        font-size: 0.9rem;
+      }
+
+      .teacher-location {
+        font-size: 0.8rem;
+      }
+
+      .message-content {
+        font-size: 0.9rem;
+        margin-bottom: 8px;
+      }
+
+      .message-actions {
+        gap: 6px;
+      }
+
+      .action-btn {
+        padding: 4px 8px;
+        font-size: 0.8rem;
+      }
+
+      .forum-post {
+        padding: 12px;
+      }
+
+      .forum-post-header {
+        gap: 6px;
+      }
+
+      .forum-action-btn {
+        padding: 8px;
+        font-size: 0.85rem;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="introduction-container fade-in">
-        <button class="skip-intro" onclick="skipIntroduction()">Skip Intro</button>
-        
-        <div class="progress-indicator">
-            <div class="progress-dot active" id="dot1"></div>
-            <div class="progress-dot" id="dot2"></div>
-            <div class="progress-dot" id="dot3"></div>
-            <div class="progress-dot" id="dot4"></div>
-        </div>
-
-        <div class="content-wrapper">
-            <img src="teacher1.png" alt="Teacher Introduction Image 1" class="introduction-image" id="introImage">
-            
-            <h1 class="introduction-title" id="introTitle">Welcome to STEMShare Teacher Portal!</h1>
-            <p class="introduction-subtitle" id="introSubtitle">Your comprehensive platform for creating and managing educational content</p>
-            
-            <div class="navigation-buttons">
-                <button class="nav-btn" id="prevBtn" onclick="previousImage()" disabled>Previous</button>
-                <button class="nav-btn" id="nextBtn" onclick="nextImage()">Next</button>
-                <button class="nav-btn lets-go-btn" id="letsGoBtn" onclick="goToMainPage()" style="display: none;">Let's Go!</button>
-            </div>
-        </div>
+  <div class="teacher-header">
+    <div class="teacher-title">
+      <div class="teacher-logo"><img src="logo baru.jpg" alt="STEMSHARE Logo"></div>
+      <span>STEMSHARE TEACHER</span>
     </div>
+    <div class="header-actions">
+      <button class="mobile-nav-toggle" onclick="toggleMobileNav()">☰</button>
+      <button class="logout-btn" onclick="window.location.href='index.html'">Log Out</button>
+    </div>
+  </div>
 
-    <script>
-        let currentImageIndex = 0;
-        const totalImages = 4;
+  <div class="teacher-main">
+    <nav class="teacher-sidebar">
+      <ul>
+        <li><a href="#">Teacher Profile</a></li>
+        <li><a href="#" id="viewAchievementsTab">View Achievements</a></li>
+        <li><a href="index.html">Back to Homepage</a></li>
+      </ul>
+    </nav>
+
+    <div class="teacher-content-card">
+             <div class="teacher-tabs">
+         <button class="teacher-tab active" id="uploadNotesTab">Upload Resources</button>
+         <button class="teacher-tab" id="uploadGamesTab">Upload Games</button>
+         <button class="teacher-tab" id="createGamesTab">Create Games 🎮</button>
+         <button class="teacher-tab" id="discoverTab">Discover Resources 🔍</button>
+         <button class="teacher-tab" id="transformNotesTab">Transform Notes ✨</button>
+         <button class="teacher-tab" id="forumTab">Global Forum 🌍</button>
+       </div>
+
+      <!-- Welcome Section -->
+      <div class="welcome-section">
+        <div class="welcome-title">
+          Welcome to the teacher's dashboard
+        </div>
+        <div class="welcome-subtitle">
+          Upload and manage your educational <strong>resources</strong> and interactive <strong>games</strong> to enhance student learning experiences.
+        </div>
+      </div>
+
+      <!-- Upload Notes -->
+      <div id="uploadNotesContent" class="upload-section">
+        <div class="form-container">
+          <div class="form-group">
+            <label for="noteYear" class="form-label">Select Year</label>
+            <select id="noteYear" class="form-select">
+              <option value="" disabled selected>- Select Year -</option>
+              <option value="primary1">Primary Year 1</option>
+              <option value="primary2">Primary Year 2</option>
+              <option value="primary3">Primary Year 3</option>
+              <option value="primary4">Primary Year 4</option>
+              <option value="primary5">Primary Year 5</option>
+              <option value="primary6">Primary Year 6</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="noteFileName" class="form-label">File Name</label>
+            <input type="text" id="noteFileName" class="form-input" placeholder="Enter a descriptive name for your resource">
+          </div>
+          
+          <div class="form-group">
+            <div id="dropZone" class="drop-zone">
+              <div class="drop-zone-text">📚 Drag & drop your resource file here</div>
+              <div class="drop-zone-subtext">or</div>
+              <label class="file-select-btn">
+                Select File <input type="file" id="fileInput" style="display:none;">
+              </label>
+              <div id="fileName" style="margin-top:14px; font-weight: 600; color: var(--text-primary);"></div>
+            </div>
+          </div>
+          
+          <button id="uploadBtn" class="upload-btn">Upload Resource</button>
+        </div>
         
-        const introductionData = [
-            {
-                image: 'teacher1.png',
-                title: 'Welcome to STEMShare Teacher Portal!',
-                subtitle: 'Your comprehensive platform for creating and managing educational content'
-            },
-            {
-                image: 'teacher2.png',
-                title: 'Create Engaging Content',
-                subtitle: 'Upload educational materials, create interactive lessons, and share resources with your students'
-            },
-            {
-                image: 'teacher3.png',
-                title: 'Transform Notes',
-                subtitle: 'Transform Notes into Visual Infographics and Comics'
-            },
-            {
-                image: 'teacher4.png',
-                title: 'Collaborate and Innovate',
-                subtitle: 'Connect with other educators, share best practices, and discover new teaching methods'
-            }
-        ];
+        <div class="recent-uploads">
+          <h3>Recent Resource Uploads</h3>
+          <div id="recentNotesList"></div>
+        </div>
+      </div>
 
-        function updateIntroduction() {
-            const data = introductionData[currentImageIndex];
+      <!-- Upload Games -->
+      <div id="uploadGamesContent" class="upload-section" style="display:none;">
+        <div class="form-container">
+          <div class="form-group">
+            <label for="gameName" class="form-label">Game Name</label>
+            <input type="text" id="gameName" class="form-input" placeholder="Enter an engaging game name">
+          </div>
+
+          <div class="form-group">
+            <label for="gameType" class="form-label">Game Type</label>
+            <select id="gameType" class="form-select">
+              <option value="" disabled selected>- Select Game Type -</option>
+              <option value="quiz">Quiz</option>
+              <option value="flashcard">Flashcard</option>
+              <option value="puzzle">Puzzle Game</option>
+              <option value="memory">Memory Card</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">STEM Category</label>
+            <div class="category-group">
+              <label class="category-label">
+                <input type="radio" name="stemCategory" value="Science"> Science
+              </label>
+              <label class="category-label">
+                <input type="radio" name="stemCategory" value="Technology"> Technology
+              </label>
+              <label class="category-label">
+                <input type="radio" name="stemCategory" value="Engineering"> Engineering
+              </label>
+              <label class="category-label">
+                <input type="radio" name="stemCategory" value="Mathematics"> Mathematics
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="gameLink" class="form-label">Game Link (optional)</label>
+            <input type="text" id="gameLink" class="form-input" placeholder="Paste link to online game or leave empty to upload file">
+          </div>
+
+          <div class="form-group">
+            <div id="gameFileUploadSection" class="drop-zone">
+              <div class="drop-zone-text">🎮 Drag & drop your game file here</div>
+              <div class="drop-zone-subtext">or</div>
+              <label class="file-select-btn">
+                Select File <input type="file" id="gameFileInput" style="display:none;">
+              </label>
+              <div id="gameFileName" style="margin-top:14px; font-weight: 600; color: var(--text-primary);"></div>
+            </div>
+          </div>
+
+          <button id="uploadGameBtn" class="upload-btn">Upload Game</button>
+        </div>
+        
+        <div class="recent-uploads">
+          <h3>Recent Game Uploads</h3>
+          <div id="recentGamesList"></div>
+        </div>
+      </div>
+
+      <!-- Teacher Profile Settings -->
+      <div id="profileContent" class="upload-section" style="display:none;">
+        <div class="form-container">
+          <h2 style="font-size: 1.8rem; font-weight: 700; color: var(--text-primary); margin-bottom: 32px; text-align: center;">👤 Teacher Profile Settings</h2>
+          
+          <!-- Profile Picture Section -->
+          <div class="form-group">
+            <label class="form-label">Profile Avatar</label>
+            <div style="display: flex; align-items: center; gap: 20px; margin-top: 12px;">
+              <div id="currentAvatar" style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; font-size: 2em; color: white; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);">👤</div>
+              <div style="flex: 1;">
+                <div style="margin-bottom: 12px; font-weight: 500; color: var(--text-secondary);">Choose your profile avatar:</div>
+                <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                  <button type="button" class="avatar-option" data-avatar="👤" style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--border); background: #f8fafc; cursor: pointer; font-size: 1.5em; transition: all 0.3s ease;">👤</button>
+                  <button type="button" class="avatar-option" data-avatar="👨‍🏫" style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--border); background: #f8fafc; cursor: pointer; font-size: 1.5em; transition: all 0.3s ease;">👨‍🏫</button>
+                  <button type="button" class="avatar-option" data-avatar="👩‍🏫" style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--border); background: #f8fafc; cursor: pointer; font-size: 1.5em; transition: all 0.3s ease;">👩‍🏫</button>
+                  <button type="button" class="avatar-option" data-avatar="🧑‍💻" style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--border); background: #f8fafc; cursor: pointer; font-size: 1.5em; transition: all 0.3s ease;">🧑‍💻</button>
+                  <button type="button" class="avatar-option" data-avatar="👨‍🔬" style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--border); background: #f8fafc; cursor: pointer; font-size: 1.5em; transition: all 0.3s ease;">👨‍🔬</button>
+                  <button type="button" class="avatar-option" data-avatar="👩‍🔬" style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--border); background: #f8fafc; cursor: pointer; font-size: 1.5em; transition: all 0.3s ease;">👩‍🔬</button>
+                  <button type="button" class="avatar-option" data-avatar="🎓" style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--border); background: #f8fafc; cursor: pointer; font-size: 1.5em; transition: all 0.3s ease;">🎓</button>
+                  <button type="button" class="avatar-option" data-avatar="📚" style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--border); background: #f8fafc; cursor: pointer; font-size: 1.5em; transition: all 0.3s ease;">📚</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Personal Information -->
+          <div class="form-group">
+            <label for="teacherName" class="form-label">Full Name</label>
+            <input type="text" id="teacherName" class="form-input" placeholder="Enter your full name" value="Dr. Sarah Johnson">
+          </div>
+
+          <div class="form-group">
+            <label for="teacherEmail" class="form-label">Email Address</label>
+            <input type="email" id="teacherEmail" class="form-input" placeholder="Enter your email address" value="sarah.johnson@school.edu">
+          </div>
+
+          <div class="form-group">
+            <label for="schoolName" class="form-label">School Name</label>
+            <input type="text" id="schoolName" class="form-input" placeholder="Enter your school name" value="SMK Kapit">
+          </div>
+
+          <div class="form-group">
+            <label for="subjectSpecialty" class="form-label">Subject Specialty</label>
+            <select id="subjectSpecialty" class="form-select">
+              <option value="" disabled>- Select Your Primary Subject -</option>
+              <option value="Mathematics" selected>Mathematics</option>
+              <option value="Science">Science</option>
+              <option value="Physics">Physics</option>
+              <option value="Chemistry">Chemistry</option>
+              <option value="Biology">Biology</option>
+              <option value="Technology">Technology</option>
+              <option value="Engineering">Engineering</option>
+              <option value="Computer Science">Computer Science</option>
+              <option value="General Education">General Education</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="teachingExperience" class="form-label">Years of Teaching Experience</label>
+            <select id="teachingExperience" class="form-select">
+              <option value="" disabled>- Select Experience Level -</option>
+              <option value="1-2 years">1-2 years</option>
+              <option value="3-5 years">3-5 years</option>
+              <option value="6-10 years" selected>6-10 years</option>
+              <option value="11-15 years">11-15 years</option>
+              <option value="16-20 years">16-20 years</option>
+              <option value="20+ years">20+ years</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="teacherBio" class="form-label">Bio / About Me</label>
+            <textarea id="teacherBio" class="form-input" rows="4" placeholder="Tell us about yourself, your teaching philosophy, or interests..." style="resize: vertical; min-height: 100px;">Passionate mathematics educator with over 8 years of experience in making complex concepts accessible and engaging for students. I believe in hands-on learning and integrating technology to enhance the educational experience.</textarea>
+          </div>
+
+          <!-- Contact Information -->
+          <div class="form-group">
+            <label for="phoneNumber" class="form-label">Phone Number (Optional)</label>
+            <input type="tel" id="phoneNumber" class="form-input" placeholder="Enter your phone number" value="+60 12-345-6789">
+          </div>
+
+          <div class="form-group">
+            <label for="officeLocation" class="form-label">Office Location (Optional)</label>
+            <input type="text" id="officeLocation" class="form-input" placeholder="e.g., Room 205, Science Building" value="Room 301, Mathematics Department">
+          </div>
+
+          <!-- Preferences -->
+          <div class="form-group">
+            <label class="form-label">Notification Preferences</label>
+            <div style="margin-top: 12px; display: flex; flex-direction: column; gap: 12px;">
+              <label style="display: flex; align-items: center; gap: 12px; cursor: pointer;">
+                <input type="checkbox" id="emailNotifications" checked style="width: 18px; height: 18px; accent-color: #667eea;">
+                <span>Email notifications for student interactions</span>
+              </label>
+              <label style="display: flex; align-items: center; gap: 12px; cursor: pointer;">
+                <input type="checkbox" id="uploadNotifications" checked style="width: 18px; height: 18px; accent-color: #667eea;">
+                <span>Notifications for successful uploads</span>
+              </label>
+              <label style="display: flex; align-items: center; gap: 12px; cursor: pointer;">
+                <input type="checkbox" id="weeklyReports" style="width: 18px; height: 18px; accent-color: #667eea;">
+                <span>Weekly activity reports</span>
+              </label>
+            </div>
+          </div>
+
+          <button id="saveProfileBtn" class="upload-btn" style="margin-top: 32px;">💾 Save Profile Settings</button>
+          
+          <!-- Profile Preview -->
+          <div id="profilePreview" style="margin-top: 32px; padding: 24px; background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border-radius: 16px; border: 1px solid var(--border);">
+            <h3 style="margin: 0 0 20px 0; color: var(--text-primary); display: flex; align-items: center; gap: 12px;">
+              <span>👀</span> Profile Preview
+            </h3>
+            <div style="display: flex; align-items: center; gap: 20px;">
+              <div id="previewAvatar" style="width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; font-size: 1.5em; color: white; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);">👤</div>
+              <div>
+                <div id="previewName" style="font-weight: 600; font-size: 1.2em; color: var(--text-primary); margin-bottom: 4px;">Dr. Sarah Johnson</div>
+                <div id="previewSchool" style="color: var(--text-secondary); margin-bottom: 2px;">SMK Kapit</div>
+                <div id="previewSubject" style="color: var(--text-secondary); font-size: 0.9em;">Mathematics • 6-10 years experience</div>
+              </div>
+            </div>
+            <div id="previewBio" style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); color: var(--text-secondary); font-style: italic; line-height: 1.5;">Passionate mathematics educator with over 8 years of experience in making complex concepts accessible and engaging for students. I believe in hands-on learning and integrating technology to enhance the educational experience.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Achievements -->
+      <div id="achievementsContent" class="upload-section" style="display:none;">
+        <div class="form-container">
+          <h2 style="font-size: 1.8rem; font-weight: 700; color: var(--text-primary); margin-bottom: 32px; text-align: center;">🏆 Your Achievements</h2>
+          <div id="achievementList">
+            <div class="achievement-card" id="ach1">🏅 First Upload</div>
+            <div class="achievement-card" id="ach5">🥈 5 Uploads</div>
+            <div class="achievement-card" id="ach10">🥇 10 Uploads</div>
+            <div class="achievement-card" id="ach20">🌟 20 Uploads</div>
+            <div class="achievement-card" id="ach50">💎 50 Uploads</div>
+            <div class="achievement-card" id="ach100">👑 100 Uploads</div>
+            <div class="achievement-card" id="achCollaborator">🤝 Global Collaborator</div>
+            <div class="achievement-card" id="achInnovator">💡 Innovation Leader</div>
+            <div class="achievement-card" id="achMentor">🎓 Mentor Teacher</div>
+            <div class="achievement-card" id="achInspirer">✨ Student Inspirer</div>
+            <div class="achievement-card" id="achCreator">🎨 Creative Educator</div>
+            <div class="achievement-card" id="achPioneer">🚀 STEM Pioneer</div>
+          </div>
+          
+          <div style="margin-top: 32px; padding: 24px; background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(79, 172, 254, 0.1) 100%); border-radius: 16px;">
+            <h3 style="color: var(--text-primary); margin-bottom: 16px;">🏅 Achievement Titles</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+              <div style="background: white; padding: 16px; border-radius: 12px; border: 1px solid var(--border);">
+                <h4 style="color: var(--text-primary); margin-bottom: 8px;">🥉 Bronze Educator</h4>
+                <p style="color: var(--text-secondary); font-size: 0.9em;">Complete 10 uploads</p>
+              </div>
+              <div style="background: white; padding: 16px; border-radius: 12px; border: 1px solid var(--border);">
+                <h4 style="color: var(--text-primary); margin-bottom: 8px;">🥈 Silver Innovator</h4>
+                <p style="color: var(--text-secondary); font-size: 0.9em;">Complete 25 uploads</p>
+              </div>
+              <div style="background: white; padding: 16px; border-radius: 12px; border: 1px solid var(--border);">
+                <h4 style="color: var(--text-primary); margin-bottom: 8px;">🥇 Gold Master</h4>
+                <p style="color: var(--text-secondary); font-size: 0.9em;">Complete 50 uploads</p>
+              </div>
+              <div style="background: white; padding: 16px; border-radius: 12px; border: 1px solid var(--border);">
+                <h4 style="color: var(--text-primary); margin-bottom: 8px;">💎 Diamond Expert</h4>
+                <p style="color: var(--text-secondary); font-size: 0.9em;">Complete 100 uploads</p>
+              </div>
+              <div style="background: white; padding: 16px; border-radius: 12px; border: 1px solid var(--border);">
+                <h4 style="color: var(--text-primary); margin-bottom: 8px;">👑 Legendary Teacher</h4>
+                <p style="color: var(--text-secondary); font-size: 0.9em;">Complete 200 uploads</p>
+              </div>
+              <div style="background: white; padding: 16px; border-radius: 12px; border: 1px solid var(--border);">
+                <h4 style="color: var(--text-primary); margin-bottom: 8px;">🌟 STEM Champion</h4>
+                <p style="color: var(--text-secondary); font-size: 0.9em;">Complete 500 uploads</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Transform Notes Section -->
+      <div id="transformNotesContent" class="upload-section" style="display:none;">
+        <div class="form-container">
+          <h2 style="font-size: 1.8rem; font-weight: 700; color: var(--text-primary); margin-bottom: 32px; text-align: center;">✨ Transform Notes to Infographic</h2>
+          
+          <div class="card" style="margin-bottom: 24px; background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(79, 172, 254, 0.1) 100%);">
+            <h3 style="color: var(--text-primary); margin-bottom: 16px;">🎨 AI-Powered Visual Transformation</h3>
+            <p style="color: var(--text-secondary); line-height: 1.6;">
+              Transform your lesson notes, study materials, and educational content into stunning visual infographics and comics. 
+              Our AI-powered tool helps you create engaging visual content that makes learning more accessible and memorable for your students.
+            </p>
+          </div>
+
+          <!-- Integrated AI Visual Generator -->
+          <div style="width: 100%; height: 80vh; border-radius: 15px; overflow: hidden; box-shadow: var(--shadow-large);">
+            <iframe
+              src="https://359690-5ecff51ef83547c495c1425ab7945e83-4-v4.app.mgx.dev"
+              style="width: 100%; height: 100%; border: none; border-radius: 15px;"
+              title="AI Visual Generator"
+              allowfullscreen>
+            </iframe>
+          </div>
+        </div>
+      </div>
+
+             <!-- Create Games Section -->
+       <div id="createGamesContent" class="upload-section" style="display:none;">
+         <div class="form-container">
+           <h2 style="font-size: 1.8rem; font-weight: 700; color: var(--text-primary); margin-bottom: 32px; text-align: center;">🎮 Create Interactive Games from Resources</h2>
+           
+           <div class="card" style="margin-bottom: 24px; background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(79, 172, 254, 0.1) 100%);">
+             <h3 style="color: var(--text-primary); margin-bottom: 16px;">✨ Transform Your Resources into Engaging Games</h3>
+             <p style="color: var(--text-secondary); line-height: 1.6;">
+               Select any of your uploaded resources and instantly convert them into interactive games. 
+               Choose from multiple game formats including quizzes, flashcards, memory games, and puzzles.
+             </p>
+           </div>
+
+           <div class="form-group">
+             <label class="form-label">Select Resource to Transform</label>
+             <select class="form-select" id="resourceSelect">
+               <option value="">Choose a resource to convert into a game...</option>
+               <option value="math_notes">Mathematics Notes - Primary Year 3</option>
+               <option value="science_lab">Science Lab Report - Photosynthesis</option>
+               <option value="physics_quiz">Physics Quiz - Forces and Motion</option>
+               <option value="chemistry_notes">Chemistry Notes - Chemical Reactions</option>
+             </select>
+           </div>
+
+           <div class="form-group">
+             <label class="form-label">Game Type</label>
+             <div class="category-group">
+               <label class="category-label">
+                 <input type="radio" name="gameType" value="quiz" checked> Quiz Game
+               </label>
+               <label class="category-label">
+                 <input type="radio" name="gameType" value="flashcard"> Flashcard Game
+               </label>
+               <label class="category-label">
+                 <input type="radio" name="gameType" value="memory"> Memory Match
+               </label>
+               <label class="category-label">
+                 <input type="radio" name="gameType" value="puzzle"> Puzzle Game
+               </label>
+               <label class="category-label">
+                 <input type="radio" name="gameType" value="wordsearch"> Word Search
+               </label>
+             </div>
+           </div>
+
+           <div class="form-group">
+             <label class="form-label">Game Settings</label>
+             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+               <div>
+                 <label style="font-weight: 500; color: var(--text-secondary);">Difficulty Level</label>
+                 <select class="form-select" style="margin-top: 8px;">
+                   <option value="easy">Easy</option>
+                   <option value="medium" selected>Medium</option>
+                   <option value="hard">Hard</option>
+                 </select>
+               </div>
+               <div>
+                 <label style="font-weight: 500; color: var(--text-secondary);">Time Limit (minutes)</label>
+                 <input type="number" class="form-input" value="10" min="1" max="60" style="margin-top: 8px;">
+               </div>
+               <div>
+                 <label style="font-weight: 500; color: var(--text-secondary);">Questions Count</label>
+                 <input type="number" class="form-input" value="15" min="5" max="50" style="margin-top: 8px;">
+               </div>
+             </div>
+           </div>
+
+           <div class="form-group">
+             <label class="form-label">Game Preview</label>
+             <div style="background: #f8fafc; border: 2px dashed var(--border); border-radius: 12px; padding: 24px; text-align: center;">
+               <div style="font-size: 3em; margin-bottom: 16px;">🎮</div>
+               <h4 style="color: var(--text-primary); margin-bottom: 8px;">Interactive Quiz Game</h4>
+               <p style="color: var(--text-secondary);">Based on: Mathematics Notes - Primary Year 3</p>
+               <div style="margin-top: 16px;">
+                 <span class="badge" style="background: #667eea; color: white; padding: 4px 12px; border-radius: 8px; font-size: 0.8em;">Medium Difficulty</span>
+                 <span class="badge" style="background: #27ae60; color: white; padding: 4px 12px; border-radius: 8px; font-size: 0.8em; margin-left: 8px;">15 Questions</span>
+                 <span class="badge" style="background: #f39c12; color: white; padding: 4px 12px; border-radius: 8px; font-size: 0.8em; margin-left: 8px;">10 min</span>
+               </div>
+             </div>
+           </div>
+
+           <button class="upload-btn" style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);">
+             🚀 Create & Publish Game
+           </button>
+         </div>
+       </div>
+
+       <!-- Discover Resources Section -->
+       <div id="discoverContent" class="upload-section" style="display:none;">
+         <div class="form-container">
+           <h2 style="font-size: 1.8rem; font-weight: 700; color: var(--text-primary); margin-bottom: 32px; text-align: center;">🔍 Discover Global Resources</h2>
+           
+           <div class="card" style="margin-bottom: 24px; background: linear-gradient(135deg, rgba(39, 174, 96, 0.1) 0%, rgba(46, 204, 113, 0.1) 100%);">
+             <h3 style="color: var(--text-primary); margin-bottom: 16px;">🌍 Access Resources from Teachers Worldwide</h3>
+             <p style="color: var(--text-secondary); line-height: 1.6;">
+               Browse, download, and use educational resources shared by teachers from around the globe. 
+               Rate and review resources to help the community find the best materials.
+             </p>
+           </div>
+
+           <!-- Search and Filter -->
+           <div class="form-group">
+             <div style="display: flex; gap: 16px; margin-bottom: 24px;">
+               <input type="text" class="form-input" placeholder="Search resources..." style="flex: 1;">
+               <select class="form-select" style="width: 200px;">
+                 <option value="">All Subjects</option>
+                 <option value="mathematics">Mathematics</option>
+                 <option value="science">Science</option>
+                 <option value="technology">Technology</option>
+                 <option value="engineering">Engineering</option>
+               </select>
+               <select class="form-select" style="width: 150px;">
+                 <option value="">All Years</option>
+                 <option value="primary1">Primary Year 1</option>
+                 <option value="primary2">Primary Year 2</option>
+                 <option value="primary3">Primary Year 3</option>
+                 <option value="primary4">Primary Year 4</option>
+                 <option value="primary5">Primary Year 5</option>
+                 <option value="primary6">Primary Year 6</option>
+               </select>
+             </div>
+           </div>
+
+           <!-- Featured Resources -->
+           <h3 style="color: var(--text-primary); margin-bottom: 20px;">⭐ Featured Resources</h3>
+           <div class="cards-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+             
+             <div class="card" style="position: relative;">
+               <div style="position: absolute; top: 12px; right: 12px; background: #f39c12; color: white; padding: 4px 8px; border-radius: 6px; font-size: 0.8em; font-weight: 600;">TRENDING</div>
+               <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 16px;">
+                 <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5em;">📚</div>
+                 <div>
+                   <h4 style="color: var(--text-primary); margin-bottom: 4px;">Interactive Math Puzzles</h4>
+                   <p style="color: var(--text-secondary); font-size: 0.9em; margin-bottom: 4px;">by Dr. Sarah Chen 🇨🇦</p>
+                   <div style="display: flex; align-items: center; gap: 8px;">
+                     <span style="color: #f39c12;">⭐⭐⭐⭐⭐</span>
+                     <span style="color: var(--text-secondary); font-size: 0.8em;">(127 reviews)</span>
+                   </div>
+                 </div>
+               </div>
+               <p style="color: var(--text-secondary); margin-bottom: 16px; line-height: 1.5;">
+                 Comprehensive collection of interactive math puzzles for Primary Year 4-6 students. 
+                 Includes geometry, fractions, and problem-solving activities.
+               </p>
+               <div style="display: flex; justify-content: space-between; align-items: center;">
+                 <div style="display: flex; gap: 8px;">
+                   <span class="badge" style="background: #667eea; color: white; padding: 2px 8px; border-radius: 6px; font-size: 0.7em;">Mathematics</span>
+                   <span class="badge" style="background: #27ae60; color: white; padding: 2px 8px; border-radius: 6px; font-size: 0.7em;">Primary 4-6</span>
+                 </div>
+                 <button class="upload-btn" style="padding: 8px 16px; font-size: 0.9em; background: linear-gradient(135deg, #27ae60 0%, #219653 100%);">
+                   📥 Download
+                 </button>
+               </div>
+             </div>
+
+             <div class="card" style="position: relative;">
+               <div style="position: absolute; top: 12px; right: 12px; background: #e74c3c; color: white; padding: 4px 8px; border-radius: 6px; font-size: 0.8em; font-weight: 600;">NEW</div>
+               <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 16px;">
+                 <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5em;">🔬</div>
+                 <div>
+                   <h4 style="color: var(--text-primary); margin-bottom: 4px;">Science Lab Experiments</h4>
+                   <p style="color: var(--text-secondary); font-size: 0.9em; margin-bottom: 4px;">by Prof. Maria Santos 🇧🇷</p>
+                   <div style="display: flex; align-items: center; gap: 8px;">
+                     <span style="color: #f39c12;">⭐⭐⭐⭐⭐</span>
+                     <span style="color: var(--text-secondary); font-size: 0.8em;">(89 reviews)</span>
+                   </div>
+                 </div>
+               </div>
+               <p style="color: var(--text-secondary); margin-bottom: 16px; line-height: 1.5;">
+                 Safe and engaging science experiments for classroom use. 
+                 Includes step-by-step instructions and safety guidelines.
+               </p>
+               <div style="display: flex; justify-content: space-between; align-items: center;">
+                 <div style="display: flex; gap: 8px;">
+                   <span class="badge" style="background: #e74c3c; color: white; padding: 2px 8px; border-radius: 6px; font-size: 0.7em;">Science</span>
+                   <span class="badge" style="background: #27ae60; color: white; padding: 2px 8px; border-radius: 6px; font-size: 0.7em;">Primary 3-6</span>
+                 </div>
+                 <button class="upload-btn" style="padding: 8px 16px; font-size: 0.9em; background: linear-gradient(135deg, #27ae60 0%, #219653 100%);">
+                   📥 Download
+                 </button>
+               </div>
+             </div>
+
+             <div class="card">
+               <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 16px;">
+                 <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5em;">💻</div>
+                 <div>
+                   <h4 style="color: var(--text-primary); margin-bottom: 4px;">Coding for Kids</h4>
+                   <p style="color: var(--text-secondary); font-size: 0.9em; margin-bottom: 4px;">by Mr. David Kim 🇰🇷</p>
+                   <div style="display: flex; align-items: center; gap: 8px;">
+                     <span style="color: #f39c12;">⭐⭐⭐⭐</span>
+                     <span style="color: var(--text-secondary); font-size: 0.8em;">(156 reviews)</span>
+                   </div>
+                 </div>
+               </div>
+               <p style="color: var(--text-secondary); margin-bottom: 16px; line-height: 1.5;">
+                 Introduction to programming concepts using visual coding blocks. 
+                 Perfect for beginners with no prior coding experience.
+               </p>
+               <div style="display: flex; justify-content: space-between; align-items: center;">
+                 <div style="display: flex; gap: 8px;">
+                   <span class="badge" style="background: #9b59b6; color: white; padding: 2px 8px; border-radius: 6px; font-size: 0.7em;">Technology</span>
+                   <span class="badge" style="background: #27ae60; color: white; padding: 2px 8px; border-radius: 6px; font-size: 0.7em;">Primary 5-6</span>
+                 </div>
+                 <button class="upload-btn" style="padding: 8px 16px; font-size: 0.9em; background: linear-gradient(135deg, #27ae60 0%, #219653 100%);">
+                   📥 Download
+                 </button>
+               </div>
+             </div>
+
+           </div>
+
+           <!-- Community Stats -->
+           <div class="card" style="margin-top: 24px; background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(79, 172, 254, 0.1) 100%);">
+             <h3 style="color: var(--text-primary); margin-bottom: 20px; text-align: center;">🌍 Global Community Impact</h3>
+             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; text-align: center;">
+               <div>
+                 <div style="font-size: 2em; font-weight: 700; color: #667eea; margin-bottom: 8px;">2,847</div>
+                 <div style="color: var(--text-secondary); font-size: 0.9em;">Teachers Worldwide</div>
+               </div>
+               <div>
+                 <div style="font-size: 2em; font-weight: 700; color: #27ae60; margin-bottom: 8px;">15,392</div>
+                 <div style="color: var(--text-secondary); font-size: 0.9em;">Resources Shared</div>
+               </div>
+               <div>
+                 <div style="font-size: 2em; font-weight: 700; color: #f39c12; margin-bottom: 8px;">89,456</div>
+                 <div style="color: var(--text-secondary); font-size: 0.9em;">Downloads</div>
+               </div>
+               <div>
+                 <div style="font-size: 2em; font-weight: 700; color: #9b59b6; margin-bottom: 8px;">127</div>
+                 <div style="color: var(--text-secondary); font-size: 0.9em;">Countries</div>
+               </div>
+             </div>
+           </div>
+         </div>
+       </div>
+
+       <!-- Global Forum Section -->
+       <div id="forumContent" class="upload-section" style="display:none;">
+        <div class="forum-container" style="display: flex; gap: 32px; height: calc(100vh - 200px); min-height: 700px;">
+          <!-- Discussion List (Left Panel) -->
+          <div class="forum-sidebar" style="width: 420px; background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.85)); backdrop-filter: blur(20px); border-radius: 20px; padding: 32px 28px; box-shadow: var(--shadow-colorful); border: 1px solid rgba(255, 255, 255, 0.3); overflow-y: auto; flex-shrink: 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+              <h3 style="color: var(--text-primary); margin: 0; font-size: 1.3rem; font-weight: 700;">🌍 Global Discussions</h3>
+              <button class="new-topic-btn" style="background: var(--accent-gradient); color: white; border: none; border-radius: 8px; padding: 8px 12px; font-size: 0.8em; font-weight: 600; cursor: pointer; transition: all 0.3s ease;">+ New Topic</button>
+            </div>
             
-            // Update image
-            document.getElementById('introImage').src = data.image;
-            document.getElementById('introTitle').textContent = data.title;
-            document.getElementById('introSubtitle').textContent = data.subtitle;
-            
-            // Update progress dots
-            document.querySelectorAll('.progress-dot').forEach((dot, index) => {
-                dot.classList.toggle('active', index === currentImageIndex);
-            });
-            
-            // Update navigation buttons
-            document.getElementById('prevBtn').disabled = currentImageIndex === 0;
-            document.getElementById('nextBtn').style.display = currentImageIndex === totalImages - 1 ? 'none' : 'inline-block';
-            document.getElementById('letsGoBtn').style.display = currentImageIndex === totalImages - 1 ? 'inline-block' : 'none';
-            
-            // Add fade-in animation
-            const container = document.querySelector('.introduction-container');
-            container.classList.remove('fade-in');
-            void container.offsetWidth; // Trigger reflow
-            container.classList.add('fade-in');
-        }
+            <!-- Topic Filters -->
+            <div style="margin-bottom: 20px;">
+              <select class="topic-filter" style="width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.9em; background: white;">
+                <option value="all">All Subjects</option>
+                <option value="mathematics">Mathematics</option>
+                <option value="science">Science</option>
+                <option value="physics">Physics</option>
+                <option value="chemistry">Chemistry</option>
+                <option value="biology">Biology</option>
+                <option value="technology">Technology</option>
+                <option value="general">General Education</option>
+              </select>
+            </div>
 
-        function nextImage() {
-            if (currentImageIndex < totalImages - 1) {
-                currentImageIndex++;
-                updateIntroduction();
-            }
-        }
+            <!-- Discussion Topics -->
+            <div id="discussionTopics">
+              <!-- Topics will be populated here -->
+            </div>
+          </div>
 
-        function previousImage() {
-            if (currentImageIndex > 0) {
-                currentImageIndex--;
-                updateIntroduction();
-            }
-        }
+          <!-- Main Forum Content -->
+          <div class="forum-main" style="flex: 1; background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.85)); backdrop-filter: blur(20px); border-radius: 20px; padding: 32px; box-shadow: var(--shadow-colorful); border: 1px solid rgba(255, 255, 255, 0.3); display: flex; flex-direction: column; min-width: 0;">
+            <!-- Selected Conversation Header -->
+            <div id="conversationHeader" style="border-bottom: 2px solid rgba(102, 126, 234, 0.1); padding-bottom: 20px; margin-bottom: 24px;">
+              <h2 id="conversationTitle" style="color: var(--text-primary); margin: 0 0 12px 0; font-size: 1.6rem; font-weight: 700; line-height: 1.3;">Select a discussion to view</h2>
+              <p id="conversationMeta" style="color: var(--text-secondary); margin: 0; font-size: 1rem; line-height: 1.4;"></p>
+            </div>
 
-        function goToMainPage() {
-            // Store that the user has seen the introduction
-            localStorage.setItem('hasSeenTeacherIntroduction', 'true');
-            // Redirect to the main teacher page
-            window.location.href = 'teacher.html';
-        }
+            <!-- Conversation Messages -->
+            <div id="conversationMessages" style="flex: 1; overflow-y: auto; margin-bottom: 24px; padding-right: 8px;">
+              <div style="text-align: center; color: var(--text-secondary); margin-top: 120px;">
+                <div style="font-size: 5em; margin-bottom: 24px;">💭</div>
+                <h3 style="font-size: 1.5rem; margin-bottom: 16px;">Welcome to the Global Teacher Forum</h3>
+                <p style="font-size: 1.1rem; line-height: 1.5; max-width: 500px; margin: 0 auto;">Select a discussion from the left panel to join the conversation with educators worldwide!</p>
+              </div>
+            </div>
 
-        function skipIntroduction() {
-            // Store that the user has seen the introduction
-            localStorage.setItem('hasSeenTeacherIntroduction', 'true');
-            // Redirect to the main teacher page
-            window.location.href = 'teacher.html';
-        }
+            <!-- Reply Section -->
+            <div id="replySection" style="display: none; border-top: 2px solid rgba(102, 126, 234, 0.1); padding-top: 20px;">
+              <textarea id="replyInput" placeholder="Join the discussion..." style="width: 100%; padding: 16px 20px; border: 2px solid var(--border); border-radius: 12px; font-family: inherit; font-size: 1rem; resize: vertical; min-height: 100px; transition: all 0.3s ease; line-height: 1.5;"></textarea>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
+                <div style="display: flex; gap: 12px;">
+                  <button onclick="insertEmoji('👍')" style="background: none; border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px; cursor: pointer; font-size: 1.2em;">👍</button>
+                  <button onclick="insertEmoji('❤️')" style="background: none; border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px; cursor: pointer; font-size: 1.2em;">❤️</button>
+                  <button onclick="insertEmoji('🎯')" style="background: none; border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px; cursor: pointer; font-size: 1.2em;">🎯</button>
+                  <button onclick="insertEmoji('💡')" style="background: none; border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px; cursor: pointer; font-size: 1.2em;">💡</button>
+                </div>
+                <button id="postReplyBtn" onclick="postReply()" style="background: var(--success-gradient); color: white; border: none; border-radius: 10px; padding: 10px 20px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;">Post Reply</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-        // Keyboard navigation
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'ArrowRight' || event.key === ' ') {
-                event.preventDefault();
-                if (currentImageIndex < totalImages - 1) {
-                    nextImage();
-                } else {
-                    goToMainPage();
-                }
-            } else if (event.key === 'ArrowLeft') {
-                event.preventDefault();
-                previousImage();
-            } else if (event.key === 'Escape') {
-                event.preventDefault();
-                skipIntroduction();
-            }
+    </div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay" class="loading-overlay" style="display:none;">
+    <div class="loading-content">
+      <div class="loader"></div>
+      <div class="loading-text">Uploading, please wait...</div>
+    </div>
+  </div>
+
+  <script src="teacher.js"></script>
+
+  <!-- Forum JavaScript -->
+  <script>
+    // Forum Data
+    let forumTopics = [
+      {
+        id: 1,
+        title: "How we teach Photosynthesis in our country",
+        subject: "biology",
+        author: "Dr. Emily Chen",
+        country: "Canada",
+        flag: "🇨🇦",
+        avatar: "EC",
+        replies: 12,
+        lastActivity: "2 hours ago",
+        messages: [
+          {
+            id: 1,
+            author: "Dr. Emily Chen",
+            country: "Canada",
+            flag: "🇨🇦",
+            avatar: "EC",
+            timestamp: "3 hours ago",
+            content: "We use lab experiments with elodea plants to show oxygen bubbles. Students love seeing the actual process in action! We also combine this with pH indicators to show the chemical changes.",
+            likes: 8,
+            liked: false
+          },
+          {
+            id: 2,
+            author: "Prof. Ahmad Rahman",
+            country: "Malaysia",
+            flag: "🇲🇾",
+            avatar: "AR",
+            timestamp: "2 hours ago",
+            content: "Here in Malaysia, we combine diagrams with outdoor activities. Students go to our school garden and identify different parts of plants, then we connect theory with real life. Very effective! 🌱",
+            likes: 5,
+            liked: false
+          },
+          {
+            id: 3,
+            author: "Teacher Nomsa",
+            country: "South Africa",
+            flag: "🇿🇦",
+            avatar: "TN",
+            timestamp: "1 hour ago",
+            content: "We let students create colorful posters showing the process step by step. Then they present to younger classes. Teaching others really helps them understand better! 🎨",
+            likes: 12,
+            liked: false
+          }
+        ]
+      },
+      {
+        id: 2,
+        title: "Effective ways to introduce fractions to students",
+        subject: "mathematics",
+        author: "Ms. Sarah Johnson",
+        country: "United Kingdom",
+        flag: "🇬🇧",
+        avatar: "SJ",
+        replies: 18,
+        lastActivity: "4 hours ago",
+        messages: [
+          {
+            id: 1,
+            author: "Ms. Sarah Johnson",
+            country: "United Kingdom",
+            flag: "🇬🇧",
+            avatar: "SJ",
+            timestamp: "6 hours ago",
+            content: "I've found that using pizza slices and chocolate bars really helps students visualize fractions. They can physically see 1/4, 1/2, etc. What methods work best in your countries?",
+            likes: 15,
+            liked: false
+          },
+          {
+            id: 2,
+            author: "Mr. Hiroshi Tanaka",
+            country: "Japan",
+            flag: "🇯🇵",
+            avatar: "HT",
+            timestamp: "5 hours ago",
+            content: "In Japan, we use origami paper folding to teach fractions. Students fold paper into equal parts - very visual and hands-on. They create beautiful patterns while learning! 🎯",
+            likes: 22,
+            liked: false
+          },
+          {
+            id: 3,
+            author: "Mrs. Isabella Rodriguez",
+            country: "Mexico",
+            flag: "🇲🇽",
+            avatar: "IR",
+            timestamp: "4 hours ago",
+            content: "We use traditional Mexican recipes! Students measure ingredients and see fractions in action. 1/2 cup flour, 1/4 teaspoon salt. They love cooking and learning together! 👍",
+            likes: 18,
+            liked: false
+          }
+        ]
+      },
+      {
+        id: 3,
+        title: "Engaging experiments for middle school physics",
+        subject: "physics",
+        author: "Dr. James Wilson",
+        country: "Australia",
+        flag: "🇦🇺",
+        avatar: "JW",
+        replies: 25,
+        lastActivity: "6 hours ago",
+        messages: [
+          {
+            id: 1,
+            author: "Dr. James Wilson",
+            country: "Australia",
+            flag: "🇦🇺",
+            avatar: "JW",
+            timestamp: "8 hours ago",
+            content: "I'm looking for simple but engaging physics experiments for Year 7-8 students. What works well to demonstrate basic forces and motion concepts?",
+            likes: 3,
+            liked: false
+          },
+          {
+            id: 2,
+            author: "Prof. Maria Santos",
+            country: "Brazil",
+            flag: "🇧🇷",
+            avatar: "MS",
+            timestamp: "7 hours ago",
+            content: "We build simple catapults using popsicle sticks! Students adjust angles and test different projectiles. Perfect for learning about trajectory and force. Very popular! 💡",
+            likes: 31,
+            liked: false
+          },
+          {
+            id: 3,
+            author: "Mr. David Kim",
+            country: "South Korea",
+            flag: "🇰🇷",
+            avatar: "DK",
+            timestamp: "6 hours ago",
+            content: "Egg drop challenge is fantastic! Teams design protective containers, then test from different heights. Teaches impact, momentum, and problem-solving skills. ❤️",
+            likes: 28,
+            liked: false
+          }
+        ]
+      },
+      {
+        id: 4,
+        title: "Digital tools for remote STEM teaching",
+        subject: "technology",
+        author: "Dr. Anna Petrov",
+        country: "Russia",
+        flag: "🇷🇺",
+        avatar: "AP",
+        replies: 9,
+        lastActivity: "1 day ago",
+        messages: [
+          {
+            id: 1,
+            author: "Dr. Anna Petrov",
+            country: "Russia",
+            flag: "🇷🇺",
+            avatar: "AP",
+            timestamp: "1 day ago",
+            content: "With remote learning becoming more common, what digital tools do you find most effective for STEM education? I'm particularly interested in interactive simulations.",
+            likes: 7,
+            liked: false
+          },
+          {
+            id: 2,
+            author: "Prof. Chen Wei",
+            country: "Singapore",
+            flag: "🇸🇬",
+            avatar: "CW",
+            timestamp: "20 hours ago",
+            content: "PhET simulations from University of Colorado are excellent! Free, interactive, and cover physics, chemistry, and math topics. Students can experiment virtually. 🎯",
+            likes: 14,
+            liked: false
+          }
+        ]
+      },
+      {
+        id: 5,
+        title: "Making chemistry fun and safe in the classroom",
+        subject: "chemistry",
+        author: "Dr. François Dubois",
+        country: "France",
+        flag: "🇫🇷",
+        avatar: "FD",
+        replies: 15,
+        lastActivity: "12 hours ago",
+        messages: [
+          {
+            id: 1,
+            author: "Dr. François Dubois",
+            country: "France",
+            flag: "🇫🇷",
+            avatar: "FD",
+            timestamp: "16 hours ago",
+            content: "Safety is paramount in chemistry, but we also want students to be excited about the subject. What are your favorite safe but impressive demonstrations?",
+            likes: 11,
+            liked: false
+          },
+          {
+            id: 2,
+            author: "Ms. Priya Sharma",
+            country: "India",
+            flag: "🇮🇳",
+            avatar: "PS",
+            timestamp: "14 hours ago",
+            content: "Color-changing reactions are magical for students! We use natural pH indicators like red cabbage juice - completely safe but creates amazing color changes. ❤️",
+            likes: 19,
+            liked: false
+          },
+          {
+            id: 3,
+            author: "Mr. Thomas Mueller",
+            country: "Germany",
+            flag: "🇩🇪",
+            avatar: "TM",
+            timestamp: "12 hours ago",
+            content: "Elephant toothpaste (with mild peroxide) is always a hit! We do it outdoors and students learn about catalysts and reaction rates. Very impressive results! 💡",
+            likes: 16,
+            liked: false
+          }
+        ]
+      }
+    ];
+
+    let currentTopic = null;
+    let currentFilter = 'all';
+
+    // Initialize Forum
+    function initializeForum() {
+      renderTopicList();
+      setupEventListeners();
+    }
+
+    // Setup Event Listeners
+    function setupEventListeners() {
+      // Topic filter
+      const filterSelect = document.querySelector('.topic-filter');
+      if (filterSelect) {
+        filterSelect.addEventListener('change', function() {
+          currentFilter = this.value;
+          renderTopicList();
         });
+      }
 
-        // Initialize the introduction
-        updateIntroduction();
-    </script>
+      // New topic button
+      const newTopicBtn = document.querySelector('.new-topic-btn');
+      if (newTopicBtn) {
+        newTopicBtn.addEventListener('click', function() {
+          showNewTopicModal();
+        });
+      }
+    }
+
+
+
+    // Render Topic List
+    function renderTopicList() {
+      const container = document.getElementById('discussionTopics');
+      const filteredTopics = currentFilter === 'all' ? forumTopics : forumTopics.filter(topic => topic.subject === currentFilter);
+      
+      container.innerHTML = '';
+      
+      filteredTopics.forEach(topic => {
+        const topicElement = document.createElement('div');
+        topicElement.className = 'topic-item';
+        topicElement.onclick = () => selectTopic(topic.id);
+        
+        topicElement.innerHTML = `
+          <div class="topic-title">${topic.title}</div>
+          <div class="topic-meta">
+            <span>${topic.flag} ${topic.author}</span>
+            <span>${topic.replies} replies</span>
+          </div>
+          <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 4px;">
+            ${topic.lastActivity}
+          </div>
+        `;
+        
+        container.appendChild(topicElement);
+      });
+    }
+
+    // Select Topic
+    function selectTopic(topicId) {
+      currentTopic = forumTopics.find(topic => topic.id === topicId);
+      
+      // Update active topic styling
+      document.querySelectorAll('.topic-item').forEach(item => {
+        item.classList.remove('active');
+      });
+      event.target.closest('.topic-item').classList.add('active');
+      
+      // Update conversation view
+      renderConversation();
+      
+      // Show reply section
+      document.getElementById('replySection').style.display = 'block';
+    }
+
+    // Render Conversation
+    function renderConversation() {
+      if (!currentTopic) return;
+      
+      // Update header
+      document.getElementById('conversationTitle').textContent = currentTopic.title;
+      document.getElementById('conversationMeta').textContent = `${currentTopic.messages.length} messages • Started by ${currentTopic.author} from ${currentTopic.country}`;
+      
+      // Render messages
+      const messagesContainer = document.getElementById('conversationMessages');
+      messagesContainer.innerHTML = '';
+      
+      currentTopic.messages.forEach(message => {
+        const messageElement = document.createElement('div');
+        messageElement.className = 'message-card';
+        
+        messageElement.innerHTML = `
+          <div class="message-header">
+            <div class="teacher-avatar">${message.avatar}</div>
+            <div class="teacher-info">
+              <div class="teacher-name">${message.author}</div>
+              <div class="teacher-location">
+                <span class="country-flag">${message.flag}</span>
+                <span>${message.country} • ${message.timestamp}</span>
+              </div>
+            </div>
+          </div>
+          <div class="message-content">${message.content}</div>
+          <div class="message-actions">
+            <button class="action-btn ${message.liked ? 'liked' : ''}" onclick="toggleLike(${message.id})">
+              ❤️ <span>${message.likes}</span>
+            </button>
+            <button class="action-btn" onclick="replyToMessage(${message.id})">
+              💬 Reply
+            </button>
+            <button class="action-btn" onclick="shareMessage(${message.id})">
+              🔗 Share
+            </button>
+          </div>
+        `;
+        
+        messagesContainer.appendChild(messageElement);
+      });
+    }
+
+    // Toggle Like
+    function toggleLike(messageId) {
+      if (!currentTopic) return;
+      
+      const message = currentTopic.messages.find(msg => msg.id === messageId);
+      if (message) {
+        if (message.liked) {
+          message.likes--;
+          message.liked = false;
+        } else {
+          message.likes++;
+          message.liked = true;
+        }
+        renderConversation();
+      }
+    }
+
+    // Reply to Message
+    function replyToMessage(messageId) {
+      const replyInput = document.getElementById('replyInput');
+      const message = currentTopic.messages.find(msg => msg.id === messageId);
+      if (message) {
+        replyInput.value = `@${message.author} `;
+        replyInput.focus();
+      }
+    }
+
+    // Share Message
+    function shareMessage(messageId) {
+      alert('Message link copied to clipboard! 📋\n(This would copy a shareable link in a real implementation)');
+    }
+
+    // Insert Emoji
+    function insertEmoji(emoji) {
+      const replyInput = document.getElementById('replyInput');
+      const cursorPos = replyInput.selectionStart;
+      const textBefore = replyInput.value.substring(0, cursorPos);
+      const textAfter = replyInput.value.substring(cursorPos);
+      replyInput.value = textBefore + emoji + textAfter;
+      replyInput.focus();
+      replyInput.setSelectionRange(cursorPos + emoji.length, cursorPos + emoji.length);
+    }
+
+    // Post Reply
+    function postReply() {
+      const replyInput = document.getElementById('replyInput');
+      const content = replyInput.value.trim();
+      
+      if (!content || !currentTopic) {
+        alert('Please enter a message to post.');
+        return;
+      }
+      
+      // Create new message
+      const newMessage = {
+        id: Date.now(),
+        author: "You",
+        country: "Your Country",
+        flag: "🏳️",
+        avatar: "YU",
+        timestamp: "Just now",
+        content: content,
+        likes: 0,
+        liked: false
+      };
+      
+      // Add to current topic
+      currentTopic.messages.push(newMessage);
+      currentTopic.replies++;
+      currentTopic.lastActivity = "Just now";
+      
+      // Clear input
+      replyInput.value = '';
+      
+      // Re-render conversation and topic list
+      renderConversation();
+      renderTopicList();
+      
+      // Scroll to bottom
+      const messagesContainer = document.getElementById('conversationMessages');
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      
+      // Show success message
+      setTimeout(() => {
+        alert('✅ Your reply has been posted! Thanks for contributing to the global discussion.');
+      }, 100);
+    }
+
+    // Show New Topic Modal
+    function showNewTopicModal() {
+      const title = prompt('Enter discussion title:', '');
+      if (!title) return;
+      
+      const subjects = ['mathematics', 'science', 'physics', 'chemistry', 'biology', 'technology', 'general'];
+      const subject = prompt(`Enter subject (${subjects.join(', ')}):`, 'general');
+      if (!subject || !subjects.includes(subject.toLowerCase())) {
+        alert('Please enter a valid subject.');
+        return;
+      }
+      
+      const content = prompt('Enter your initial message:', '');
+      if (!content) return;
+      
+      // Create new topic
+      const newTopic = {
+        id: Date.now(),
+        title: title,
+        subject: subject.toLowerCase(),
+        author: "You",
+        country: "Your Country",
+        flag: "🏳️",
+        avatar: "YU",
+        replies: 0,
+        lastActivity: "Just now",
+        messages: [{
+          id: Date.now(),
+          author: "You",
+          country: "Your Country",
+          flag: "🏳️",
+          avatar: "YU",
+          timestamp: "Just now",
+          content: content,
+          likes: 0,
+          liked: false
+        }]
+      };
+      
+      // Add to topics
+      forumTopics.unshift(newTopic);
+      
+      // Re-render topic list
+      renderTopicList();
+      
+      // Select the new topic
+      selectTopic(newTopic.id);
+      
+      alert('🎉 Your new discussion has been created! Others can now join the conversation.');
+    }
+
+    // Initialize when document is ready
+    document.addEventListener('DOMContentLoaded', function() {
+      // Add click events to existing tabs
+      document.getElementById('uploadNotesTab').addEventListener('click', function() {
+        document.getElementById('uploadNotesContent').style.display = 'block';
+        document.getElementById('uploadGamesContent').style.display = 'none';
+        document.getElementById('createGamesContent').style.display = 'none';
+        document.getElementById('discoverContent').style.display = 'none';
+        document.getElementById('transformNotesContent').style.display = 'none';
+        document.getElementById('forumContent').style.display = 'none';
+        document.getElementById('profileContent').style.display = 'none';
+        document.getElementById('achievementsContent').style.display = 'none';
+        
+        document.querySelectorAll('.teacher-tab').forEach(tab => tab.classList.remove('active'));
+        this.classList.add('active');
+      });
+
+      document.getElementById('uploadGamesTab').addEventListener('click', function() {
+        document.getElementById('uploadNotesContent').style.display = 'none';
+        document.getElementById('uploadGamesContent').style.display = 'block';
+        document.getElementById('createGamesContent').style.display = 'none';
+        document.getElementById('discoverContent').style.display = 'none';
+        document.getElementById('transformNotesContent').style.display = 'none';
+        document.getElementById('forumContent').style.display = 'none';
+        document.getElementById('profileContent').style.display = 'none';
+        document.getElementById('achievementsContent').style.display = 'none';
+        
+        document.querySelectorAll('.teacher-tab').forEach(tab => tab.classList.remove('active'));
+        this.classList.add('active');
+      });
+
+             // Add create games tab event listener
+       document.getElementById('createGamesTab').addEventListener('click', function() {
+         document.getElementById('uploadNotesContent').style.display = 'none';
+         document.getElementById('uploadGamesContent').style.display = 'none';
+         document.getElementById('createGamesContent').style.display = 'block';
+         document.getElementById('discoverContent').style.display = 'none';
+         document.getElementById('transformNotesContent').style.display = 'none';
+         document.getElementById('forumContent').style.display = 'none';
+         document.getElementById('profileContent').style.display = 'none';
+         document.getElementById('achievementsContent').style.display = 'none';
+         
+         document.querySelectorAll('.teacher-tab').forEach(tab => tab.classList.remove('active'));
+         this.classList.add('active');
+       });
+
+       // Add discover resources tab event listener
+       document.getElementById('discoverTab').addEventListener('click', function() {
+         document.getElementById('uploadNotesContent').style.display = 'none';
+         document.getElementById('uploadGamesContent').style.display = 'none';
+         document.getElementById('createGamesContent').style.display = 'none';
+         document.getElementById('discoverContent').style.display = 'block';
+         document.getElementById('transformNotesContent').style.display = 'none';
+         document.getElementById('forumContent').style.display = 'none';
+         document.getElementById('profileContent').style.display = 'none';
+         document.getElementById('achievementsContent').style.display = 'none';
+         
+         document.querySelectorAll('.teacher-tab').forEach(tab => tab.classList.remove('active'));
+         this.classList.add('active');
+       });
+
+       // Add transform notes tab event listener
+       document.getElementById('transformNotesTab').addEventListener('click', function() {
+         document.getElementById('uploadNotesContent').style.display = 'none';
+         document.getElementById('uploadGamesContent').style.display = 'none';
+         document.getElementById('createGamesContent').style.display = 'none';
+         document.getElementById('discoverContent').style.display = 'none';
+         document.getElementById('transformNotesContent').style.display = 'block';
+         document.getElementById('forumContent').style.display = 'none';
+         document.getElementById('profileContent').style.display = 'none';
+         document.getElementById('achievementsContent').style.display = 'none';
+         
+         document.querySelectorAll('.teacher-tab').forEach(tab => tab.classList.remove('active'));
+         this.classList.add('active');
+       });
+
+       // Add forum tab event listener
+       document.getElementById('forumTab').addEventListener('click', function() {
+         document.getElementById('uploadNotesContent').style.display = 'none';
+         document.getElementById('uploadGamesContent').style.display = 'none';
+         document.getElementById('createGamesContent').style.display = 'none';
+         document.getElementById('discoverContent').style.display = 'none';
+         document.getElementById('transformNotesContent').style.display = 'none';
+         document.getElementById('forumContent').style.display = 'block';
+         document.getElementById('profileContent').style.display = 'none';
+         document.getElementById('achievementsContent').style.display = 'none';
+         
+         document.querySelectorAll('.teacher-tab').forEach(tab => tab.classList.remove('active'));
+         this.classList.add('active');
+         
+         // Initialize forum when first opened
+         initializeForum();
+       });
+
+      // Initialize existing teacher profile and achievements functionality
+      const viewAchievementsTab = document.getElementById('viewAchievementsTab');
+      if (viewAchievementsTab) {
+        viewAchievementsTab.addEventListener('click', function(e) {
+          e.preventDefault();
+          document.getElementById('uploadNotesContent').style.display = 'none';
+          document.getElementById('uploadGamesContent').style.display = 'none';
+          document.getElementById('createGamesContent').style.display = 'none';
+          document.getElementById('discoverContent').style.display = 'none';
+          document.getElementById('forumContent').style.display = 'none';
+          document.getElementById('profileContent').style.display = 'none';
+          document.getElementById('achievementsContent').style.display = 'block';
+          
+          document.querySelectorAll('.teacher-tab').forEach(tab => tab.classList.remove('active'));
+        });
+      }
+
+      // Teacher Profile functionality
+      const teacherProfileLink = document.querySelector('a[href="#"]');
+      if (teacherProfileLink && teacherProfileLink.textContent.includes('Teacher Profile')) {
+        teacherProfileLink.addEventListener('click', function(e) {
+          e.preventDefault();
+          document.getElementById('uploadNotesContent').style.display = 'none';
+          document.getElementById('uploadGamesContent').style.display = 'none';
+          document.getElementById('createGamesContent').style.display = 'none';
+          document.getElementById('discoverContent').style.display = 'none';
+          document.getElementById('forumContent').style.display = 'none';
+          document.getElementById('profileContent').style.display = 'block';
+          document.getElementById('achievementsContent').style.display = 'none';
+          
+          document.querySelectorAll('.teacher-tab').forEach(tab => tab.classList.remove('active'));
+        });
+      }
+
+      // Mobile navigation functions
+      function toggleMobileNav() {
+        const sidebar = document.querySelector('.teacher-sidebar');
+        sidebar.classList.toggle('mobile-open');
+      }
+
+      function closeMobileNav() {
+        const sidebar = document.querySelector('.teacher-sidebar');
+        sidebar.classList.remove('mobile-open');
+      }
+
+      // Close mobile nav when clicking outside
+      document.addEventListener('click', function(event) {
+        const sidebar = document.querySelector('.teacher-sidebar');
+        const mobileToggle = document.querySelector('.mobile-nav-toggle');
+        
+        if (window.innerWidth <= 768 && 
+            !sidebar.contains(event.target) && 
+            !mobileToggle.contains(event.target)) {
+          closeMobileNav();
+        }
+      });
+
+      // Transform Notes to Infographic Function
+      function launchTransformNotes() {
+        console.log('Transform Notes function called!'); // Debug log
+        alert('Transform Notes function is working!'); // Test alert
+        // Create modal with iframe to the AI Visual Generator
+        const modal = document.createElement('div');
+        modal.id = 'transformNotesModal';
+        modal.style.position = 'fixed';
+        modal.style.top = '0';
+        modal.style.left = '0';
+        modal.style.width = '100%';
+        modal.style.height = '100%';
+        modal.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+        modal.style.display = 'flex';
+        modal.style.justifyContent = 'center';
+        modal.style.alignItems = 'center';
+        modal.style.zIndex = '10000';
+        modal.style.overflow = 'auto';
+        modal.style.padding = '20px';
+        
+        modal.innerHTML = `
+          <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border-radius: 20px; width: 95%; max-width: 1200px; height: 90vh; box-shadow: 0 10px 30px rgba(0,0,0,0.3); margin: auto; display: flex; flex-direction: column;" id="transformNotesModalContent">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px 30px; border-bottom: 1px solid #e0e0e0;">
+              <div>
+                <h2 style="margin: 0; color: #2c3e50; font-size: 1.5em;">✨ AI Visual Generator</h2>
+                <p style="margin: 5px 0 0; color: #7f8c8d; font-size: 0.9em;">Transform your notes into stunning visual infographics and comics</p>
+              </div>
+              <button id="closeTransformNotesModal" style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%); color: white; border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 1.4em; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(238, 90, 36, 0.4); display: flex; align-items: center; justify-content: center; font-weight: bold;">&times;</button>
+            </div>
+            <div style="flex: 1; padding: 0; position: relative;">
+              <iframe 
+                src="https://mgx-ar7xjqu324.mgx.world/" 
+                style="width: 100%; height: 100%; border: none; border-radius: 0 0 20px 20px;"
+                title="AI Visual Generator"
+                allowfullscreen>
+              </iframe>
+            </div>
+          </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        // Add event listeners
+        document.getElementById('closeTransformNotesModal').addEventListener('click', function() {
+          document.body.removeChild(modal);
+        });
+        
+        // Close modal when clicking outside
+        modal.addEventListener('click', function(e) {
+          if (e.target === modal) {
+            document.body.removeChild(modal);
+          }
+        });
+        
+        // Add keyboard support (ESC key to close)
+        document.addEventListener('keydown', function(e) {
+          if (e.key === 'Escape' && document.getElementById('transformNotesModal')) {
+            document.body.removeChild(modal);
+          }
+        });
+      }
+    });
+  </script>
 </body>
 </html>
