@@ -1034,6 +1034,9 @@
                             <script>
                                 // Wait for DOM to be fully loaded
                                 window.onload = function() {
+                                    // Initialize progress data if not exists
+                                    initializeProgressData();
+                                    
                                     // Get current points from localStorage or start at 0
                                     let currentPoints = parseInt(localStorage.getItem('studentPoints')) || 0;
                                     const pointsValue = document.getElementById('pointsValue');
@@ -1100,34 +1103,37 @@
                 const progressPercentage = (currentPoints / 100) * 100;
                 if (progressBar) progressBar.style.width = progressPercentage + '%';
                 
-                // Update avatar based on new points
-                updateAvatarBasedOnPoints();
-                
-                // Track game plays
-                let gamesPlayed = parseInt(localStorage.getItem('gamesPlayed')) || 0;
-                gamesPlayed += 1;
-                localStorage.setItem('gamesPlayed', gamesPlayed.toString());
-                
-                // Update the main gamification system variables
-                if (typeof points !== 'undefined') {
-                    points = currentPoints;
-                }
-                if (typeof level !== 'undefined') {
-                    // Check for level progression
-                    if (currentPoints >= 100) {
-                        level = "MAJESTIC";
-                        localStorage.setItem('studentLevel', level);
-                    } else if (currentPoints >= 50) {
-                        level = "PREMIUM";
-                        localStorage.setItem('studentLevel', level);
-                    } else {
-                        level = "BASIC";
-                        localStorage.setItem('studentLevel', level);
-                    }
-                }
-                
-                // Show a small notification
-                alert('You earned 10 points for playing a game!');
+                                                    // Update avatar based on new points
+                                    updateAvatarBasedOnPoints();
+                                    
+                                    // Track game plays
+                                    let gamesPlayed = parseInt(localStorage.getItem('gamesPlayed')) || 0;
+                                    gamesPlayed += 1;
+                                    localStorage.setItem('gamesPlayed', gamesPlayed.toString());
+                                    
+                                    // Update the main gamification system variables
+                                    if (typeof points !== 'undefined') {
+                                        points = currentPoints;
+                                    }
+                                    if (typeof level !== 'undefined') {
+                                        // Check for level progression
+                                        if (currentPoints >= 100) {
+                                            level = "MAJESTIC";
+                                            localStorage.setItem('studentLevel', level);
+                                        } else if (currentPoints >= 50) {
+                                            level = "PREMIUM";
+                                            localStorage.setItem('studentLevel', level);
+                                        } else {
+                                            level = "BASIC";
+                                            localStorage.setItem('studentLevel', level);
+                                        }
+                                    }
+                                    
+                                    // Update progress data immediately
+                                    updateProgressData();
+                                    
+                                    // Show a small notification
+                                    alert('You earned 10 points for playing a game!');
                 
                 return true; // Allow the link to continue
             };
@@ -1146,6 +1152,9 @@
                 
                 const resourcesExplored = parseInt(localStorage.getItem('resourcesExplored')) || 0;
                 localStorage.setItem('resourcesExplored', (resourcesExplored + 1).toString());
+                
+                // Update progress data immediately
+                updateProgressData();
             };
 
             // Function to add points for sharing content
@@ -1162,6 +1171,9 @@
                 
                 const contentShared = parseInt(localStorage.getItem('contentShared')) || 0;
                 localStorage.setItem('contentShared', (contentShared + 1).toString());
+                
+                // Update progress data immediately
+                updateProgressData();
             };
 
             // Function to add points for giving feedback
@@ -1178,6 +1190,9 @@
                 
                 const feedbackGiven = parseInt(localStorage.getItem('feedbackGiven')) || 0;
                 localStorage.setItem('feedbackGiven', (feedbackGiven + 1).toString());
+                
+                // Update progress data immediately
+                updateProgressData();
             };
 
             // Function to add points for rating resources
@@ -1194,6 +1209,9 @@
                 
                 const ratingsGiven = parseInt(localStorage.getItem('ratingsGiven')) || 0;
                 localStorage.setItem('ratingsGiven', (ratingsGiven + 1).toString());
+                
+                // Update progress data immediately
+                updateProgressData();
             };
 
             // Function to add points for sharing resources
@@ -1210,6 +1228,9 @@
                 
                 const sharesGiven = parseInt(localStorage.getItem('sharesGiven')) || 0;
                 localStorage.setItem('sharesGiven', (sharesGiven + 1).toString());
+                
+                // Update progress data immediately
+                updateProgressData();
             };
 
             // Function to update progress data
@@ -1231,6 +1252,8 @@
                 const resourcesExploredCount = document.getElementById('resourcesExploredCount');
                 const contentSharedCount = document.getElementById('contentSharedCount');
                 const feedbackGivenCount = document.getElementById('feedbackGivenCount');
+                const ratingsGivenCount = document.getElementById('ratingsGivenCount');
+                const sharesGivenCount = document.getElementById('sharesGivenCount');
 
                 // Update level and milestone
                 let currentLevel = 'BASIC';
@@ -1260,16 +1283,52 @@
                 if (resourcesExploredCount) resourcesExploredCount.textContent = resourcesExplored;
                 if (contentSharedCount) contentSharedCount.textContent = contentShared;
                 if (feedbackGivenCount) feedbackGivenCount.textContent = feedbackGiven;
-                
-                const ratingsGivenCount = document.getElementById('ratingsGivenCount');
-                const sharesGivenCount = document.getElementById('sharesGivenCount');
                 if (ratingsGivenCount) ratingsGivenCount.textContent = ratingsGiven;
                 if (sharesGivenCount) sharesGivenCount.textContent = sharesGiven;
 
                 // Update achievement badges
                 updateAchievementBadges();
+                
+                // Also update the main progress bar in the header
+                const mainProgressBar = document.getElementById('progressBar');
+                const mainPointsValue = document.getElementById('pointsValue');
+                if (mainProgressBar) {
+                    const mainProgressPercentage = (currentPoints / 100) * 100;
+                    mainProgressBar.style.width = mainProgressPercentage + '%';
+                }
+                if (mainPointsValue) mainPointsValue.textContent = currentPoints;
+                
+                console.log('Progress data updated:', {
+                    points: currentPoints,
+                    level: currentLevel,
+                    gamesPlayed,
+                    resourcesExplored,
+                    contentShared,
+                    feedbackGiven,
+                    ratingsGiven,
+                    sharesGiven
+                });
             }
 
+            // Function to initialize progress data with sample data for testing
+            function initializeProgressData() {
+                // Only initialize if no data exists
+                if (!localStorage.getItem('studentPoints')) {
+                    // Set initial points
+                    localStorage.setItem('studentPoints', '25');
+                    
+                    // Set sample activity data
+                    localStorage.setItem('gamesPlayed', '3');
+                    localStorage.setItem('resourcesExplored', '7');
+                    localStorage.setItem('contentShared', '2');
+                    localStorage.setItem('feedbackGiven', '4');
+                    localStorage.setItem('ratingsGiven', '6');
+                    localStorage.setItem('sharesGiven', '3');
+                    
+                    console.log('Progress data initialized with sample data');
+                }
+            }
+            
             // Function to update achievement badges
             function updateAchievementBadges() {
                 const currentPoints = parseInt(localStorage.getItem('studentPoints')) || 0;
@@ -1709,6 +1768,17 @@
                                     <div style="font-size: 0.9em; opacity: 0.9;">+5 points per share</div>
                                 </div>
                             </div>
+                            
+                            <!-- Testing Controls -->
+                            <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.3);">
+                                <h4 style="margin: 0 0 16px 0; font-size: 1.2em;">🧪 Testing Controls</h4>
+                                <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                                    <button onclick="addTestPoints(10)" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.5); border-radius: 8px; padding: 8px 16px; cursor: pointer; font-size: 0.9em;">+10 Points</button>
+                                    <button onclick="addTestPoints(25)" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.5); border-radius: 8px; padding: 8px 16px; cursor: pointer; font-size: 0.9em;">+25 Points</button>
+                                    <button onclick="addTestPoints(50)" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.5); border-radius: 8px; padding: 8px 16px; cursor: pointer; font-size: 0.9em;">+50 Points</button>
+                                    <button onclick="resetProgressData()" style="background: rgba(231, 76, 60, 0.8); color: white; border: 1px solid rgba(255,255,255,0.5); border-radius: 8px; padding: 8px 16px; cursor: pointer; font-size: 0.9em;">Reset Progress</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -1944,6 +2014,9 @@
             // Show profile content
             if (profileContent) profileContent.style.display = 'block';
             
+            // Stop progress updates when leaving progress section
+            stopProgressUpdates();
+            
             // Get current points from localStorage to ensure accuracy
             const currentPointsFromStorage = parseInt(localStorage.getItem('studentPoints')) || 0;
             const currentLevelFromStorage = localStorage.getItem('studentLevel') || 'BASIC';
@@ -1988,7 +2061,111 @@
             
             // Update progress data
             updateProgressData();
+            
+            // Set up real-time updates for progress section
+            startProgressUpdates();
         };
+        
+        // Function to start real-time progress updates
+        function startProgressUpdates() {
+            // Clear any existing interval
+            if (window.progressUpdateInterval) {
+                clearInterval(window.progressUpdateInterval);
+            }
+            
+            // Update progress every 2 seconds when progress section is visible
+            window.progressUpdateInterval = setInterval(() => {
+                const progressContent = document.getElementById('progressContent');
+                if (progressContent && progressContent.style.display !== 'none') {
+                    updateProgressData();
+                }
+            }, 2000);
+        }
+        
+        // Function to stop progress updates
+        function stopProgressUpdates() {
+            if (window.progressUpdateInterval) {
+                clearInterval(window.progressUpdateInterval);
+                window.progressUpdateInterval = null;
+            }
+        }
+        
+        // Function to add test points
+        window.addTestPoints = function(points) {
+            const currentPoints = parseInt(localStorage.getItem('studentPoints')) || 0;
+            const newPoints = currentPoints + points;
+            localStorage.setItem('studentPoints', newPoints.toString());
+            
+            // Update progress data immediately
+            updateProgressData();
+            
+            // Show notification
+            showNotification(`+${points} points added! Total: ${newPoints}`, 'success');
+        };
+        
+        // Function to reset progress data
+        window.resetProgressData = function() {
+            if (confirm('Are you sure you want to reset all progress data? This cannot be undone.')) {
+                // Clear all progress data
+                localStorage.removeItem('studentPoints');
+                localStorage.removeItem('gamesPlayed');
+                localStorage.removeItem('resourcesExplored');
+                localStorage.removeItem('contentShared');
+                localStorage.removeItem('feedbackGiven');
+                localStorage.removeItem('ratingsGiven');
+                localStorage.removeItem('sharesGiven');
+                localStorage.removeItem('studentLevel');
+                
+                // Reinitialize with sample data
+                initializeProgressData();
+                
+                // Update progress data
+                updateProgressData();
+                
+                showNotification('Progress data reset successfully!', 'success');
+            }
+        };
+        
+        // Function to show notifications
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.position = 'fixed';
+            notification.style.top = '20px';
+            notification.style.right = '20px';
+            notification.style.padding = '12px 20px';
+            notification.style.borderRadius = '8px';
+            notification.style.color = 'white';
+            notification.style.fontWeight = 'bold';
+            notification.style.zIndex = '10000';
+            notification.style.transition = 'all 0.3s ease';
+            notification.style.transform = 'translateX(100%)';
+            
+            if (type === 'success') {
+                notification.style.background = 'linear-gradient(135deg, #27ae60, #2ecc71)';
+            } else if (type === 'error') {
+                notification.style.background = 'linear-gradient(135deg, #e74c3c, #c0392b)';
+            } else {
+                notification.style.background = 'linear-gradient(135deg, #3498db, #2980b9)';
+            }
+            
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
+        }
 
         // Global function for rewards modal - defined at the top
         window.showRewardsModal = function(event) {
