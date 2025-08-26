@@ -965,11 +965,13 @@
     </nav>
 
     <div class="teacher-content-card">
-      <div class="teacher-tabs">
-        <button class="teacher-tab active" id="uploadNotesTab">Upload Resources</button>
-        <button class="teacher-tab" id="uploadGamesTab">Upload Games</button>
-        <button class="teacher-tab" id="forumTab">Global Forum 🌍</button>
-      </div>
+             <div class="teacher-tabs">
+         <button class="teacher-tab active" id="uploadNotesTab">Upload Resources</button>
+         <button class="teacher-tab" id="uploadGamesTab">Upload Games</button>
+         <button class="teacher-tab" id="createGamesTab">Create Games 🎮</button>
+         <button class="teacher-tab" id="discoverTab">Discover Resources 🔍</button>
+         <button class="teacher-tab" id="forumTab">Global Forum 🌍</button>
+       </div>
 
       <!-- Welcome Section -->
       <div class="welcome-section">
@@ -1225,8 +1227,245 @@
         </div>
       </div>
 
-      <!-- Global Forum Section -->
-      <div id="forumContent" class="upload-section" style="display:none;">
+             <!-- Create Games Section -->
+       <div id="createGamesContent" class="upload-section" style="display:none;">
+         <div class="form-container">
+           <h2 style="font-size: 1.8rem; font-weight: 700; color: var(--text-primary); margin-bottom: 32px; text-align: center;">🎮 Create Interactive Games from Resources</h2>
+           
+           <div class="card" style="margin-bottom: 24px; background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(79, 172, 254, 0.1) 100%);">
+             <h3 style="color: var(--text-primary); margin-bottom: 16px;">✨ Transform Your Resources into Engaging Games</h3>
+             <p style="color: var(--text-secondary); line-height: 1.6;">
+               Select any of your uploaded resources and instantly convert them into interactive games. 
+               Choose from multiple game formats including quizzes, flashcards, memory games, and puzzles.
+             </p>
+           </div>
+
+           <div class="form-group">
+             <label class="form-label">Select Resource to Transform</label>
+             <select class="form-select" id="resourceSelect">
+               <option value="">Choose a resource to convert into a game...</option>
+               <option value="math_notes">Mathematics Notes - Primary Year 3</option>
+               <option value="science_lab">Science Lab Report - Photosynthesis</option>
+               <option value="physics_quiz">Physics Quiz - Forces and Motion</option>
+               <option value="chemistry_notes">Chemistry Notes - Chemical Reactions</option>
+             </select>
+           </div>
+
+           <div class="form-group">
+             <label class="form-label">Game Type</label>
+             <div class="category-group">
+               <label class="category-label">
+                 <input type="radio" name="gameType" value="quiz" checked> Quiz Game
+               </label>
+               <label class="category-label">
+                 <input type="radio" name="gameType" value="flashcard"> Flashcard Game
+               </label>
+               <label class="category-label">
+                 <input type="radio" name="gameType" value="memory"> Memory Match
+               </label>
+               <label class="category-label">
+                 <input type="radio" name="gameType" value="puzzle"> Puzzle Game
+               </label>
+               <label class="category-label">
+                 <input type="radio" name="gameType" value="wordsearch"> Word Search
+               </label>
+             </div>
+           </div>
+
+           <div class="form-group">
+             <label class="form-label">Game Settings</label>
+             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+               <div>
+                 <label style="font-weight: 500; color: var(--text-secondary);">Difficulty Level</label>
+                 <select class="form-select" style="margin-top: 8px;">
+                   <option value="easy">Easy</option>
+                   <option value="medium" selected>Medium</option>
+                   <option value="hard">Hard</option>
+                 </select>
+               </div>
+               <div>
+                 <label style="font-weight: 500; color: var(--text-secondary);">Time Limit (minutes)</label>
+                 <input type="number" class="form-input" value="10" min="1" max="60" style="margin-top: 8px;">
+               </div>
+               <div>
+                 <label style="font-weight: 500; color: var(--text-secondary);">Questions Count</label>
+                 <input type="number" class="form-input" value="15" min="5" max="50" style="margin-top: 8px;">
+               </div>
+             </div>
+           </div>
+
+           <div class="form-group">
+             <label class="form-label">Game Preview</label>
+             <div style="background: #f8fafc; border: 2px dashed var(--border); border-radius: 12px; padding: 24px; text-align: center;">
+               <div style="font-size: 3em; margin-bottom: 16px;">🎮</div>
+               <h4 style="color: var(--text-primary); margin-bottom: 8px;">Interactive Quiz Game</h4>
+               <p style="color: var(--text-secondary);">Based on: Mathematics Notes - Primary Year 3</p>
+               <div style="margin-top: 16px;">
+                 <span class="badge" style="background: #667eea; color: white; padding: 4px 12px; border-radius: 8px; font-size: 0.8em;">Medium Difficulty</span>
+                 <span class="badge" style="background: #27ae60; color: white; padding: 4px 12px; border-radius: 8px; font-size: 0.8em; margin-left: 8px;">15 Questions</span>
+                 <span class="badge" style="background: #f39c12; color: white; padding: 4px 12px; border-radius: 8px; font-size: 0.8em; margin-left: 8px;">10 min</span>
+               </div>
+             </div>
+           </div>
+
+           <button class="upload-btn" style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);">
+             🚀 Create & Publish Game
+           </button>
+         </div>
+       </div>
+
+       <!-- Discover Resources Section -->
+       <div id="discoverContent" class="upload-section" style="display:none;">
+         <div class="form-container">
+           <h2 style="font-size: 1.8rem; font-weight: 700; color: var(--text-primary); margin-bottom: 32px; text-align: center;">🔍 Discover Global Resources</h2>
+           
+           <div class="card" style="margin-bottom: 24px; background: linear-gradient(135deg, rgba(39, 174, 96, 0.1) 0%, rgba(46, 204, 113, 0.1) 100%);">
+             <h3 style="color: var(--text-primary); margin-bottom: 16px;">🌍 Access Resources from Teachers Worldwide</h3>
+             <p style="color: var(--text-secondary); line-height: 1.6;">
+               Browse, download, and use educational resources shared by teachers from around the globe. 
+               Rate and review resources to help the community find the best materials.
+             </p>
+           </div>
+
+           <!-- Search and Filter -->
+           <div class="form-group">
+             <div style="display: flex; gap: 16px; margin-bottom: 24px;">
+               <input type="text" class="form-input" placeholder="Search resources..." style="flex: 1;">
+               <select class="form-select" style="width: 200px;">
+                 <option value="">All Subjects</option>
+                 <option value="mathematics">Mathematics</option>
+                 <option value="science">Science</option>
+                 <option value="technology">Technology</option>
+                 <option value="engineering">Engineering</option>
+               </select>
+               <select class="form-select" style="width: 150px;">
+                 <option value="">All Years</option>
+                 <option value="primary1">Primary Year 1</option>
+                 <option value="primary2">Primary Year 2</option>
+                 <option value="primary3">Primary Year 3</option>
+                 <option value="primary4">Primary Year 4</option>
+                 <option value="primary5">Primary Year 5</option>
+                 <option value="primary6">Primary Year 6</option>
+               </select>
+             </div>
+           </div>
+
+           <!-- Featured Resources -->
+           <h3 style="color: var(--text-primary); margin-bottom: 20px;">⭐ Featured Resources</h3>
+           <div class="cards-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+             
+             <div class="card" style="position: relative;">
+               <div style="position: absolute; top: 12px; right: 12px; background: #f39c12; color: white; padding: 4px 8px; border-radius: 6px; font-size: 0.8em; font-weight: 600;">TRENDING</div>
+               <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 16px;">
+                 <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5em;">📚</div>
+                 <div>
+                   <h4 style="color: var(--text-primary); margin-bottom: 4px;">Interactive Math Puzzles</h4>
+                   <p style="color: var(--text-secondary); font-size: 0.9em; margin-bottom: 4px;">by Dr. Sarah Chen 🇨🇦</p>
+                   <div style="display: flex; align-items: center; gap: 8px;">
+                     <span style="color: #f39c12;">⭐⭐⭐⭐⭐</span>
+                     <span style="color: var(--text-secondary); font-size: 0.8em;">(127 reviews)</span>
+                   </div>
+                 </div>
+               </div>
+               <p style="color: var(--text-secondary); margin-bottom: 16px; line-height: 1.5;">
+                 Comprehensive collection of interactive math puzzles for Primary Year 4-6 students. 
+                 Includes geometry, fractions, and problem-solving activities.
+               </p>
+               <div style="display: flex; justify-content: space-between; align-items: center;">
+                 <div style="display: flex; gap: 8px;">
+                   <span class="badge" style="background: #667eea; color: white; padding: 2px 8px; border-radius: 6px; font-size: 0.7em;">Mathematics</span>
+                   <span class="badge" style="background: #27ae60; color: white; padding: 2px 8px; border-radius: 6px; font-size: 0.7em;">Primary 4-6</span>
+                 </div>
+                 <button class="upload-btn" style="padding: 8px 16px; font-size: 0.9em; background: linear-gradient(135deg, #27ae60 0%, #219653 100%);">
+                   📥 Download
+                 </button>
+               </div>
+             </div>
+
+             <div class="card" style="position: relative;">
+               <div style="position: absolute; top: 12px; right: 12px; background: #e74c3c; color: white; padding: 4px 8px; border-radius: 6px; font-size: 0.8em; font-weight: 600;">NEW</div>
+               <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 16px;">
+                 <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5em;">🔬</div>
+                 <div>
+                   <h4 style="color: var(--text-primary); margin-bottom: 4px;">Science Lab Experiments</h4>
+                   <p style="color: var(--text-secondary); font-size: 0.9em; margin-bottom: 4px;">by Prof. Maria Santos 🇧🇷</p>
+                   <div style="display: flex; align-items: center; gap: 8px;">
+                     <span style="color: #f39c12;">⭐⭐⭐⭐⭐</span>
+                     <span style="color: var(--text-secondary); font-size: 0.8em;">(89 reviews)</span>
+                   </div>
+                 </div>
+               </div>
+               <p style="color: var(--text-secondary); margin-bottom: 16px; line-height: 1.5;">
+                 Safe and engaging science experiments for classroom use. 
+                 Includes step-by-step instructions and safety guidelines.
+               </p>
+               <div style="display: flex; justify-content: space-between; align-items: center;">
+                 <div style="display: flex; gap: 8px;">
+                   <span class="badge" style="background: #e74c3c; color: white; padding: 2px 8px; border-radius: 6px; font-size: 0.7em;">Science</span>
+                   <span class="badge" style="background: #27ae60; color: white; padding: 2px 8px; border-radius: 6px; font-size: 0.7em;">Primary 3-6</span>
+                 </div>
+                 <button class="upload-btn" style="padding: 8px 16px; font-size: 0.9em; background: linear-gradient(135deg, #27ae60 0%, #219653 100%);">
+                   📥 Download
+                 </button>
+               </div>
+             </div>
+
+             <div class="card">
+               <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 16px;">
+                 <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5em;">💻</div>
+                 <div>
+                   <h4 style="color: var(--text-primary); margin-bottom: 4px;">Coding for Kids</h4>
+                   <p style="color: var(--text-secondary); font-size: 0.9em; margin-bottom: 4px;">by Mr. David Kim 🇰🇷</p>
+                   <div style="display: flex; align-items: center; gap: 8px;">
+                     <span style="color: #f39c12;">⭐⭐⭐⭐</span>
+                     <span style="color: var(--text-secondary); font-size: 0.8em;">(156 reviews)</span>
+                   </div>
+                 </div>
+               </div>
+               <p style="color: var(--text-secondary); margin-bottom: 16px; line-height: 1.5;">
+                 Introduction to programming concepts using visual coding blocks. 
+                 Perfect for beginners with no prior coding experience.
+               </p>
+               <div style="display: flex; justify-content: space-between; align-items: center;">
+                 <div style="display: flex; gap: 8px;">
+                   <span class="badge" style="background: #9b59b6; color: white; padding: 2px 8px; border-radius: 6px; font-size: 0.7em;">Technology</span>
+                   <span class="badge" style="background: #27ae60; color: white; padding: 2px 8px; border-radius: 6px; font-size: 0.7em;">Primary 5-6</span>
+                 </div>
+                 <button class="upload-btn" style="padding: 8px 16px; font-size: 0.9em; background: linear-gradient(135deg, #27ae60 0%, #219653 100%);">
+                   📥 Download
+                 </button>
+               </div>
+             </div>
+
+           </div>
+
+           <!-- Community Stats -->
+           <div class="card" style="margin-top: 24px; background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(79, 172, 254, 0.1) 100%);">
+             <h3 style="color: var(--text-primary); margin-bottom: 20px; text-align: center;">🌍 Global Community Impact</h3>
+             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; text-align: center;">
+               <div>
+                 <div style="font-size: 2em; font-weight: 700; color: #667eea; margin-bottom: 8px;">2,847</div>
+                 <div style="color: var(--text-secondary); font-size: 0.9em;">Teachers Worldwide</div>
+               </div>
+               <div>
+                 <div style="font-size: 2em; font-weight: 700; color: #27ae60; margin-bottom: 8px;">15,392</div>
+                 <div style="color: var(--text-secondary); font-size: 0.9em;">Resources Shared</div>
+               </div>
+               <div>
+                 <div style="font-size: 2em; font-weight: 700; color: #f39c12; margin-bottom: 8px;">89,456</div>
+                 <div style="color: var(--text-secondary); font-size: 0.9em;">Downloads</div>
+               </div>
+               <div>
+                 <div style="font-size: 2em; font-weight: 700; color: #9b59b6; margin-bottom: 8px;">127</div>
+                 <div style="color: var(--text-secondary); font-size: 0.9em;">Countries</div>
+               </div>
+             </div>
+           </div>
+         </div>
+       </div>
+
+       <!-- Global Forum Section -->
+       <div id="forumContent" class="upload-section" style="display:none;">
         <div class="forum-container" style="display: flex; gap: 32px; height: calc(100vh - 200px); min-height: 700px;">
           <!-- Discussion List (Left Panel) -->
           <div class="forum-sidebar" style="width: 420px; background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.85)); backdrop-filter: blur(20px); border-radius: 20px; padding: 32px 28px; box-shadow: var(--shadow-colorful); border: 1px solid rgba(255, 255, 255, 0.3); overflow-y: auto; flex-shrink: 0;">
@@ -1792,6 +2031,8 @@
       document.getElementById('uploadNotesTab').addEventListener('click', function() {
         document.getElementById('uploadNotesContent').style.display = 'block';
         document.getElementById('uploadGamesContent').style.display = 'none';
+        document.getElementById('createGamesContent').style.display = 'none';
+        document.getElementById('discoverContent').style.display = 'none';
         document.getElementById('forumContent').style.display = 'none';
         document.getElementById('profileContent').style.display = 'none';
         document.getElementById('achievementsContent').style.display = 'none';
@@ -1803,6 +2044,8 @@
       document.getElementById('uploadGamesTab').addEventListener('click', function() {
         document.getElementById('uploadNotesContent').style.display = 'none';
         document.getElementById('uploadGamesContent').style.display = 'block';
+        document.getElementById('createGamesContent').style.display = 'none';
+        document.getElementById('discoverContent').style.display = 'none';
         document.getElementById('forumContent').style.display = 'none';
         document.getElementById('profileContent').style.display = 'none';
         document.getElementById('achievementsContent').style.display = 'none';
@@ -1811,20 +2054,50 @@
         this.classList.add('active');
       });
 
-      // Add forum tab event listener
-      document.getElementById('forumTab').addEventListener('click', function() {
-        document.getElementById('uploadNotesContent').style.display = 'none';
-        document.getElementById('uploadGamesContent').style.display = 'none';
-        document.getElementById('forumContent').style.display = 'block';
-        document.getElementById('profileContent').style.display = 'none';
-        document.getElementById('achievementsContent').style.display = 'none';
-        
-        document.querySelectorAll('.teacher-tab').forEach(tab => tab.classList.remove('active'));
-        this.classList.add('active');
-        
-        // Initialize forum when first opened
-        initializeForum();
-      });
+             // Add create games tab event listener
+       document.getElementById('createGamesTab').addEventListener('click', function() {
+         document.getElementById('uploadNotesContent').style.display = 'none';
+         document.getElementById('uploadGamesContent').style.display = 'none';
+         document.getElementById('createGamesContent').style.display = 'block';
+         document.getElementById('discoverContent').style.display = 'none';
+         document.getElementById('forumContent').style.display = 'none';
+         document.getElementById('profileContent').style.display = 'none';
+         document.getElementById('achievementsContent').style.display = 'none';
+         
+         document.querySelectorAll('.teacher-tab').forEach(tab => tab.classList.remove('active'));
+         this.classList.add('active');
+       });
+
+       // Add discover resources tab event listener
+       document.getElementById('discoverTab').addEventListener('click', function() {
+         document.getElementById('uploadNotesContent').style.display = 'none';
+         document.getElementById('uploadGamesContent').style.display = 'none';
+         document.getElementById('createGamesContent').style.display = 'none';
+         document.getElementById('discoverContent').style.display = 'block';
+         document.getElementById('forumContent').style.display = 'none';
+         document.getElementById('profileContent').style.display = 'none';
+         document.getElementById('achievementsContent').style.display = 'none';
+         
+         document.querySelectorAll('.teacher-tab').forEach(tab => tab.classList.remove('active'));
+         this.classList.add('active');
+       });
+
+       // Add forum tab event listener
+       document.getElementById('forumTab').addEventListener('click', function() {
+         document.getElementById('uploadNotesContent').style.display = 'none';
+         document.getElementById('uploadGamesContent').style.display = 'none';
+         document.getElementById('createGamesContent').style.display = 'none';
+         document.getElementById('discoverContent').style.display = 'none';
+         document.getElementById('forumContent').style.display = 'block';
+         document.getElementById('profileContent').style.display = 'none';
+         document.getElementById('achievementsContent').style.display = 'none';
+         
+         document.querySelectorAll('.teacher-tab').forEach(tab => tab.classList.remove('active'));
+         this.classList.add('active');
+         
+         // Initialize forum when first opened
+         initializeForum();
+       });
 
       // Initialize existing teacher profile and achievements functionality
       const viewAchievementsTab = document.getElementById('viewAchievementsTab');
@@ -1833,6 +2106,8 @@
           e.preventDefault();
           document.getElementById('uploadNotesContent').style.display = 'none';
           document.getElementById('uploadGamesContent').style.display = 'none';
+          document.getElementById('createGamesContent').style.display = 'none';
+          document.getElementById('discoverContent').style.display = 'none';
           document.getElementById('forumContent').style.display = 'none';
           document.getElementById('profileContent').style.display = 'none';
           document.getElementById('achievementsContent').style.display = 'block';
@@ -1848,6 +2123,8 @@
           e.preventDefault();
           document.getElementById('uploadNotesContent').style.display = 'none';
           document.getElementById('uploadGamesContent').style.display = 'none';
+          document.getElementById('createGamesContent').style.display = 'none';
+          document.getElementById('discoverContent').style.display = 'none';
           document.getElementById('forumContent').style.display = 'none';
           document.getElementById('profileContent').style.display = 'block';
           document.getElementById('achievementsContent').style.display = 'none';
