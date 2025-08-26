@@ -3,6 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <title>STEMShare</title>
+    <script>
+        // Check if user has seen the introduction
+        (function() {
+            const hasSeenIntroduction = localStorage.getItem('hasSeenIntroduction');
+            if (hasSeenIntroduction !== 'true') {
+                window.location.href = 'introduction.html';
+            }
+        })();
+        
+        // Function to reset introduction for testing - available immediately
+        window.resetIntroduction = function() {
+            localStorage.removeItem('hasSeenIntroduction');
+            alert('Introduction has been reset. You will see it again on next login.');
+        };
+    </script>
     <!-- Removed external CSS to prevent conflicts -->
     <style>
         body {
@@ -823,6 +838,7 @@
             <span>STEMSHARE</span>
         </div>
         <button class="logout-btn" onclick="window.location.href='index.html'">Log Out</button>
+        <button class="logout-btn" onclick="resetIntroduction()" style="margin-left: 10px; background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);">Reset Intro</button>
     </div>
 
     <!-- Progress bar will be updated by the main gamification system -->
@@ -3624,7 +3640,6 @@
                         alert('You do not have enough points to redeem this reward.');
                     }
                 };
-                
 
             });
         </script>
