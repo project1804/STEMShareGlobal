@@ -99,7 +99,13 @@ body {
       e.preventDefault();
       var email = document.getElementById('email').value.trim().toLowerCase();
       if (email.endsWith('@student.com')) {
-          window.location.href = 'student.html';
+          // Check if user has seen the introduction
+          const hasSeenIntroduction = localStorage.getItem('hasSeenIntroduction');
+          if (hasSeenIntroduction === 'true') {
+              window.location.href = 'student.html';
+          } else {
+              window.location.href = 'introduction.html';
+          }
       } else if (email.endsWith('@teacher.com')) {
           window.location.href = 'teacher.html';
       } else if (email.endsWith('@developer.com')) {
