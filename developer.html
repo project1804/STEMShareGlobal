@@ -637,15 +637,23 @@
             </div>
             <div class="nav-item" onclick="showSection('upload')">
                 <span class="nav-icon">⬆️</span>
-                <span>Upload Game</span>
+                <span>Upload Content</span>
             </div>
             <div class="nav-item" onclick="showSection('mygames')">
                 <span class="nav-icon">🎮</span>
-                <span>My Games</span>
+                <span>My Content</span>
             </div>
             <div class="nav-item" onclick="showSection('analytics')">
                 <span class="nav-icon">📈</span>
                 <span>Analytics</span>
+            </div>
+            <div class="nav-item" onclick="showSection('revenue')">
+                <span class="nav-icon">💰</span>
+                <span>Revenue</span>
+            </div>
+            <div class="nav-item" onclick="showSection('community')">
+                <span class="nav-icon">🌍</span>
+                <span>Community</span>
             </div>
         </nav>
 
@@ -769,11 +777,11 @@
                 </div>
             </section>
 
-            <!-- Upload Game Section -->
+            <!-- Upload Content Section -->
             <section id="upload" class="content-section">
                 <div class="section-header">
-                    <h1 class="section-title">Upload New Game</h1>
-                    <p class="section-subtitle">Share your educational game with the STEMSHARE community</p>
+                    <h1 class="section-title">Upload New Content</h1>
+                    <p class="section-subtitle">Share your educational content with the global STEMSHARE community</p>
                 </div>
 
                 <div id="uploadContent">
@@ -781,11 +789,11 @@
                 </div>
             </section>
 
-            <!-- My Games Section -->
+            <!-- My Content Section -->
             <section id="mygames" class="content-section">
                 <div class="section-header">
-                    <h1 class="section-title">My Games</h1>
-                    <p class="section-subtitle">Manage and track your uploaded games</p>
+                    <h1 class="section-title">My Content</h1>
+                    <p class="section-subtitle">Manage and track your uploaded content</p>
                 </div>
 
                 <div id="gamesContainer">
@@ -829,6 +837,112 @@
 
                 <div class="chart-container">
                     <canvas id="likesChart"></canvas>
+                </div>
+            </section>
+
+            <!-- Revenue Section -->
+            <section id="revenue" class="content-section">
+                <div class="section-header">
+                    <h1 class="section-title">Revenue Dashboard</h1>
+                    <p class="section-subtitle">Track your earnings based on content popularity and usage</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">💰</div>
+                        <div class="stat-value" id="totalRevenue">$0</div>
+                        <div class="stat-label">Total Revenue</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📈</div>
+                        <div class="stat-value" id="monthlyRevenue">$0</div>
+                        <div class="stat-label">This Month</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🎯</div>
+                        <div class="stat-value" id="avgPerContent">$0</div>
+                        <div class="stat-label">Avg per Content</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🏆</div>
+                        <div class="stat-value" id="topEarner">$0</div>
+                        <div class="stat-label">Top Earner</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 style="color: #2c3e50; margin-bottom: 16px;">💰 Revenue Breakdown</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin-bottom: 24px;">
+                        <div style="background: linear-gradient(135deg, rgba(39, 174, 96, 0.1) 0%, rgba(46, 204, 113, 0.1) 100%); padding: 16px; border-radius: 12px;">
+                            <div style="font-weight: bold; color: #27ae60; margin-bottom: 8px;">🎮 Games</div>
+                            <div style="font-size: 1.2em; font-weight: bold;">$0.00</div>
+                            <div style="font-size: 0.9em; color: #7f8c8d;">0 downloads</div>
+                        </div>
+                        <div style="background: linear-gradient(135deg, rgba(52, 152, 219, 0.1) 0%, rgba(41, 128, 185, 0.1) 100%); padding: 16px; border-radius: 12px;">
+                            <div style="font-weight: bold; color: #3498db; margin-bottom: 8px;">🥽 AR/VR</div>
+                            <div style="font-size: 1.2em; font-weight: bold;">$0.00</div>
+                            <div style="font-size: 0.9em; color: #7f8c8d;">0 experiences</div>
+                        </div>
+                        <div style="background: linear-gradient(135deg, rgba(155, 89, 182, 0.1) 0%, rgba(142, 68, 173, 0.1) 100%); padding: 16px; border-radius: 12px;">
+                            <div style="font-weight: bold; color: #9b59b6; margin-bottom: 8px;">📹 Videos</div>
+                            <div style="font-size: 1.2em; font-weight: bold;">$0.00</div>
+                            <div style="font-size: 0.9em; color: #7f8c8d;">0 views</div>
+                        </div>
+                        <div style="background: linear-gradient(135deg, rgba(243, 156, 18, 0.1) 0%, rgba(230, 126, 34, 0.1) 100%); padding: 16px; border-radius: 12px;">
+                            <div style="font-weight: bold; color: #f39c12; margin-bottom: 8px;">📊 Infographics</div>
+                            <div style="font-size: 1.2em; font-weight: bold;">$0.00</div>
+                            <div style="font-size: 0.9em; color: #7f8c8d;">0 shares</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </section>
+
+            <!-- Community Section -->
+            <section id="community" class="content-section">
+                <div class="section-header">
+                    <h1 class="section-title">Global STEM Community</h1>
+                    <p class="section-subtitle">Connect with educators and students worldwide</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-value" id="totalUsers">50K+</div>
+                        <div class="stat-label">Active Users</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🌍</div>
+                        <div class="stat-value" id="countries">120+</div>
+                        <div class="stat-label">Countries</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📚</div>
+                        <div class="stat-value" id="totalContent">10K+</div>
+                        <div class="stat-label">Content Items</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">⭐</div>
+                        <div class="stat-value" id="avgRating">4.8</div>
+                        <div class="stat-label">Avg Rating</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 style="color: #2c3e50; margin-bottom: 16px;">🏆 Top Performing Content</h3>
+                    <div id="topContentList">
+                        <!-- Top content will be dynamically loaded -->
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 style="color: #2c3e50; margin-bottom: 16px;">💬 Community Feedback</h3>
+                    <div id="communityFeedback">
+                        <!-- Community feedback will be dynamically loaded -->
+                    </div>
                 </div>
             </section>
         </main>
@@ -1033,20 +1147,32 @@
             } else {
                 uploadContent.innerHTML = `
                     <div class="card">
-                        <form id="uploadForm" onsubmit="uploadGame(event)">
+                        <form id="uploadForm" onsubmit="uploadContent(event)">
                             <div class="form-group">
-                                <label class="form-label">Game Title *</label>
-                                <input type="text" class="form-input" id="gameTitle" placeholder="Enter your game title" required>
+                                <label class="form-label">Content Type *</label>
+                                <select class="form-select" id="contentType" onchange="updateUploadForm()" required>
+                                    <option value="">Select content type</option>
+                                    <option value="game">🎮 Educational Game</option>
+                                    <option value="arvr">🥽 AR/VR Experience</option>
+                                    <option value="video">📹 Interactive Video</option>
+                                    <option value="infographic">📊 Infographic</option>
+                                    <option value="quiz">❓ Interactive Quiz</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Content Title *</label>
+                                <input type="text" class="form-input" id="contentTitle" placeholder="Enter your content title" required>
                             </div>
 
                             <div class="form-group">
                                 <label class="form-label">Description *</label>
-                                <textarea class="form-textarea" id="gameDescription" placeholder="Describe your game and its educational value" required></textarea>
+                                <textarea class="form-textarea" id="contentDescription" placeholder="Describe your content and its educational value" required></textarea>
                             </div>
 
                             <div class="form-group">
                                 <label class="form-label">Category *</label>
-                                <select class="form-select" id="gameCategory" required>
+                                <select class="form-select" id="contentCategory" required>
                                     <option value="">Select a category</option>
                                     <option value="Mathematics">Mathematics</option>
                                     <option value="Science">Science</option>
@@ -1057,8 +1183,8 @@
                             </div>
 
                             <div class="form-group">
-                                <label class="form-label">Game Thumbnail</label>
-                                <select class="form-select" id="gameThumbnail">
+                                <label class="form-label">Content Thumbnail</label>
+                                <select class="form-select" id="contentThumbnail">
                                     <option value="🎮">🎮 Game Controller</option>
                                     <option value="🧮">🧮 Calculator</option>
                                     <option value="🔬">🔬 Microscope</option>
@@ -1067,25 +1193,29 @@
                                     <option value="🎯">🎯 Target</option>
                                     <option value="🏆">🏆 Trophy</option>
                                     <option value="🎨">🎨 Art</option>
+                                    <option value="🥽">🥽 VR Headset</option>
+                                    <option value="📹">📹 Video Camera</option>
+                                    <option value="📊">📊 Chart</option>
+                                    <option value="❓">❓ Question Mark</option>
                                 </select>
                             </div>
 
                             <div class="form-group">
-                                <label class="form-label">Upload Game File (Max: ${currentLimit.maxFileSize})</label>
-                                <div class="upload-area" onclick="document.getElementById('gameFile').click()">
+                                <label class="form-label">Upload Content File (Max: ${currentLimit.maxFileSize})</label>
+                                <div class="upload-area" onclick="document.getElementById('contentFile').click()">
                                     <div class="upload-icon">📁</div>
                                     <p><strong>Click to upload</strong> or drag and drop</p>
-                                    <p style="font-size: 0.9em; color: #7f8c8d; margin-top: 8px;">
+                                    <p style="font-size: 0.9em; color: #7f8c8d; margin-top: 8px;" id="supportedFormats">
                                         Supported formats: ZIP, RAR, HTML, EXE, JAR, APK
                                     </p>
                                 </div>
-                                <input type="file" id="gameFile" style="display: none" accept=".zip,.rar,.html,.htm,.exe,.jar,.apk">
+                                <input type="file" id="contentFile" style="display: none" accept=".zip,.rar,.html,.htm,.exe,.jar,.apk,.mp4,.avi,.mov,.pdf,.png,.jpg,.jpeg,.gif">
                                 <div id="fileInfo" style="margin-top: 12px; color: #7f8c8d;"></div>
                             </div>
 
                             <div style="text-align: center; margin-top: 24px;">
                                 <button type="submit" class="submit-btn">
-                                    🚀 Upload Game
+                                    🚀 Upload Content
                                 </button>
                             </div>
                         </form>
@@ -1177,6 +1307,115 @@
             showSection('mygames');
         }
 
+        // Update upload form based on content type
+        window.updateUploadForm = function() {
+            const contentType = document.getElementById('contentType').value;
+            const supportedFormats = document.getElementById('supportedFormats');
+            const contentFile = document.getElementById('contentFile');
+            
+            if (!contentType) return;
+            
+            const formatMap = {
+                'game': 'ZIP, RAR, HTML, EXE, JAR, APK',
+                'arvr': 'ZIP, RAR, HTML, GLB, GLTF, OBJ, FBX',
+                'video': 'MP4, AVI, MOV, WEBM, MPEG',
+                'infographic': 'PDF, PNG, JPG, JPEG, GIF, SVG',
+                'quiz': 'ZIP, RAR, HTML, JSON, CSV'
+            };
+            
+            const acceptMap = {
+                'game': '.zip,.rar,.html,.htm,.exe,.jar,.apk',
+                'arvr': '.zip,.rar,.html,.htm,.glb,.gltf,.obj,.fbx',
+                'video': '.mp4,.avi,.mov,.webm,.mpeg',
+                'infographic': '.pdf,.png,.jpg,.jpeg,.gif,.svg',
+                'quiz': '.zip,.rar,.html,.htm,.json,.csv'
+            };
+            
+            if (formatMap[contentType]) {
+                supportedFormats.textContent = `Supported formats: ${formatMap[contentType]}`;
+                contentFile.accept = acceptMap[contentType];
+            }
+        };
+
+        // Upload content (enhanced version)
+        function uploadContent(event) {
+            event.preventDefault();
+
+            const contentType = document.getElementById('contentType').value;
+            const title = document.getElementById('contentTitle').value;
+            const description = document.getElementById('contentDescription').value;
+            const category = document.getElementById('contentCategory').value;
+            const thumbnail = document.getElementById('contentThumbnail').value;
+            const fileInput = document.getElementById('contentFile');
+
+            if (!contentType || !title || !description || !category) {
+                alert('Please fill in all required fields.');
+                return;
+            }
+
+            // Create new content object
+            const newContent = {
+                id: Date.now(),
+                type: contentType,
+                title: title,
+                description: description,
+                category: category,
+                thumbnail: thumbnail,
+                views: Math.floor(Math.random() * 100) + 10,
+                likes: Math.floor(Math.random() * 20) + 1,
+                dislikes: Math.floor(Math.random() * 5) + 1,
+                rating: (3 + Math.random() * 2).toFixed(1),
+                uploadDate: new Date().toISOString().split('T')[0],
+                badges: [],
+                fileName: fileInput.files[0] ? fileInput.files[0].name : null,
+                downloads: Math.floor(Math.random() * 50) + 5,
+                revenue: 0
+            };
+
+            // Calculate initial revenue based on content type
+            const revenueMultipliers = {
+                'game': 0.50,
+                'arvr': 0.75,
+                'video': 0.30,
+                'infographic': 0.25,
+                'quiz': 0.40
+            };
+            
+            newContent.revenue = (newContent.views * revenueMultipliers[contentType] * 0.01).toFixed(2);
+
+            // Generate badges
+            newContent.badges = generateBadges(newContent);
+
+            // Add to content array
+            developerGames.push(newContent);
+            saveDeveloperData();
+
+            // Reset form
+            document.getElementById('uploadForm').reset();
+            document.getElementById('fileInfo').textContent = '';
+
+            // Update UI
+            updateUI();
+
+            // Show success message
+            alert(`🎉 ${getContentTypeName(contentType)} uploaded successfully! You can view it in "My Content" section.`);
+
+            // Redirect to My Content
+            showSection('mygames');
+        }
+
+        // Get content type display name
+        function getContentTypeName(type) {
+            const typeNames = {
+                'game': 'Educational Game',
+                'arvr': 'AR/VR Experience',
+                'video': 'Interactive Video',
+                'infographic': 'Infographic',
+                'quiz': 'Interactive Quiz'
+            };
+            return typeNames[type] || 'Content';
+        }
+
         // Load games
         function loadGames() {
             const container = document.getElementById('gamesContainer');
@@ -1184,11 +1423,11 @@
             if (developerGames.length === 0) {
                 container.innerHTML = `
                     <div class="card" style="text-align: center; padding: 60px 20px;">
-                        <div style="font-size: 4em; color: #bdc3c7; margin-bottom: 20px;">🎮</div>
-                        <h3 style="color: #7f8c8d; margin-bottom: 16px;">No Games Yet</h3>
-                        <p style="color: #95a5a6; margin-bottom: 24px;">Upload your first educational game to get started!</p>
+                        <div style="font-size: 4em; color: #bdc3c7; margin-bottom: 20px;">📚</div>
+                        <h3 style="color: #7f8c8d; margin-bottom: 16px;">No Content Yet</h3>
+                        <p style="color: #95a5a6; margin-bottom: 24px;">Upload your first educational content to get started!</p>
                         <button class="upgrade-btn" onclick="showSection('upload')">
-                            ⬆️ Upload Game
+                            ⬆️ Upload Content
                         </button>
                     </div>
                 `;
@@ -1201,6 +1440,9 @@
                     `<span class="badge ${badge.type}">${badge.label}</span>`
                 ).join('');
 
+                const contentTypeBadge = game.type ? `<span class="badge trending">${getContentTypeName(game.type)}</span>` : '';
+                const revenueDisplay = game.revenue ? `💰 $${game.revenue}` : '';
+                
                 gamesHTML += `
                     <div class="game-card">
                         <div class="game-thumbnail">${game.thumbnail}</div>
@@ -1213,8 +1455,11 @@
                                 <span>👎 ${game.dislikes} dislikes</span>
                                 <span>⭐ ${game.rating}/5.0</span>
                                 <span>📅 ${game.uploadDate}</span>
+                                ${game.downloads ? `<span>📥 ${game.downloads} downloads</span>` : ''}
+                                ${revenueDisplay ? `<span style="color: #27ae60; font-weight: bold;">${revenueDisplay}</span>` : ''}
                             </div>
                             <div class="game-badges">
+                                ${contentTypeBadge}
                                 ${badgesHTML}
                             </div>
                         </div>
@@ -1354,6 +1599,145 @@
                     }
                 }
             });
+        }
+
+        // Update revenue dashboard
+        function updateRevenue() {
+            const totalRevenue = developerGames.reduce((sum, content) => sum + parseFloat(content.revenue || 0), 0);
+            const monthlyRevenue = totalRevenue * 0.3; // 30% of total as monthly
+            const avgPerContent = developerGames.length > 0 ? totalRevenue / developerGames.length : 0;
+            const topEarner = Math.max(...developerGames.map(content => parseFloat(content.revenue || 0)));
+
+            document.getElementById('totalRevenue').textContent = '$' + totalRevenue.toFixed(2);
+            document.getElementById('monthlyRevenue').textContent = '$' + monthlyRevenue.toFixed(2);
+            document.getElementById('avgPerContent').textContent = '$' + avgPerContent.toFixed(2);
+            document.getElementById('topEarner').textContent = '$' + topEarner.toFixed(2);
+
+            // Create revenue chart
+            createRevenueChart();
+        }
+
+        // Create revenue chart
+        function createRevenueChart() {
+            const ctx = document.getElementById('revenueChart');
+            if (!ctx) return;
+
+            const revenueData = developerGames.map(content => ({
+                name: content.title,
+                revenue: parseFloat(content.revenue || 0)
+            })).sort((a, b) => b.revenue - a.revenue);
+
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: revenueData.map(item => item.name),
+                    datasets: [{
+                        data: revenueData.map(item => item.revenue),
+                        backgroundColor: [
+                            '#667eea', '#764ba2', '#f093fb', '#f5576c',
+                            '#4facfe', '#00f2fe', '#43e97b', '#38f9d7'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Revenue by Content'
+                        }
+                    }
+                }
+            });
+        }
+
+        // Update community section
+        function updateCommunity() {
+            // Load top performing content
+            const topContent = developerGames
+                .sort((a, b) => (b.views + b.likes) - (a.views + a.likes))
+                .slice(0, 5);
+
+            const topContentList = document.getElementById('topContentList');
+            if (topContent.length > 0) {
+                let topContentHTML = '';
+                topContent.forEach((content, index) => {
+                    topContentHTML += `
+                        <div style="display: flex; align-items: center; gap: 16px; padding: 16px; background: rgba(255,255,255,0.5); border-radius: 12px; margin-bottom: 12px;">
+                            <div style="font-size: 1.5em; font-weight: bold; color: #f39c12;">#${index + 1}</div>
+                            <div style="font-size: 2em;">${content.thumbnail}</div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: bold; color: #2c3e50;">${content.title}</div>
+                                <div style="font-size: 0.9em; color: #7f8c8d;">${getContentTypeName(content.type)} • ${content.category}</div>
+                                <div style="font-size: 0.9em; color: #27ae60; font-weight: bold;">💰 $${content.revenue || 0}</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-weight: bold; color: #2c3e50;">${content.views.toLocaleString()}</div>
+                                <div style="font-size: 0.9em; color: #7f8c8d;">views</div>
+                            </div>
+                        </div>
+                    `;
+                });
+                topContentList.innerHTML = topContentHTML;
+            } else {
+                topContentList.innerHTML = '<p style="color: #7f8c8d; text-align: center;">No content uploaded yet.</p>';
+            }
+
+            // Load community feedback
+            const communityFeedback = document.getElementById('communityFeedback');
+            const feedbackData = [
+                { user: "Sarah Johnson", role: "Teacher", content: "Amazing AR experience for chemistry!", rating: 5 },
+                { user: "Mike Chen", role: "Student", content: "The math games are so fun!", rating: 4 },
+                { user: "Dr. Emily Davis", role: "Professor", content: "Excellent quality content for STEM education.", rating: 5 },
+                { user: "Alex Rodriguez", role: "Parent", content: "My kids love the interactive videos!", rating: 4 }
+            ];
+
+            let feedbackHTML = '';
+            feedbackData.forEach(feedback => {
+                const stars = '⭐'.repeat(feedback.rating) + '☆'.repeat(5 - feedback.rating);
+                feedbackHTML += `
+                    <div style="background: rgba(255,255,255,0.5); border-radius: 12px; padding: 16px; margin-bottom: 12px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <div style="font-weight: bold; color: #2c3e50;">${feedback.user}</div>
+                            <div style="font-size: 0.9em; color: #7f8c8d;">${feedback.role}</div>
+                        </div>
+                        <div style="color: #555; margin-bottom: 8px;">${feedback.content}</div>
+                        <div style="color: #f39c12;">${stars}</div>
+                    </div>
+                `;
+            });
+            communityFeedback.innerHTML = feedbackHTML;
+        }
+
+        // Enhanced showSection function to handle new sections
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Remove active class from all nav items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+
+            // Add active class to corresponding nav item
+            document.querySelector(`[onclick="showSection('${sectionId}')"]`).classList.add('active');
+
+            // Load section-specific data
+            if (sectionId === 'revenue') {
+                updateRevenue();
+            } else if (sectionId === 'community') {
+                updateCommunity();
+            } else if (sectionId === 'mygames') {
+                loadGames();
+            } else if (sectionId === 'analytics') {
+                updateAnalytics();
+            }
         }
     </script>
 </body>
