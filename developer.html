@@ -690,6 +690,19 @@
             .section-subtitle {
                 font-size: 1rem;
             }
+
+            /* Mobile styles for back buttons */
+            .back-btn {
+                padding: 6px 12px !important;
+                font-size: 0.8rem !important;
+                white-space: nowrap;
+            }
+
+            .section-header > div {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                gap: 12px !important;
+            }
             
             .cards-grid {
                 grid-template-columns: 1fr;
@@ -864,6 +877,12 @@
             
             .section-subtitle {
                 font-size: 0.95rem;
+            }
+
+            /* Mobile styles for back buttons in smaller screens */
+            .back-btn {
+                padding: 4px 8px !important;
+                font-size: 0.75rem !important;
             }
             
             .stats-grid {
@@ -1051,8 +1070,15 @@
             <!-- Subscription Plans Section -->
             <section id="plans" class="content-section">
                 <div class="section-header">
-                    <h1 class="section-title">Choose Your Plan</h1>
-                    <p class="section-subtitle">Unlock powerful features to grow your game development business</p>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <div>
+                            <h1 class="section-title">Choose Your Plan</h1>
+                            <p class="section-subtitle">Unlock powerful features to grow your game development business</p>
+                        </div>
+                        <button class="back-btn" onclick="showSection('dashboard')" style="background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%); color: white; border: none; border-radius: 8px; padding: 8px 16px; cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; gap: 6px;">
+                            ← Back to Dashboard
+                        </button>
+                    </div>
                 </div>
 
                 <div class="cards-grid">
@@ -1122,8 +1148,15 @@
             <!-- Upload Content Section -->
             <section id="upload" class="content-section">
                 <div class="section-header">
-                    <h1 class="section-title">Upload New Content</h1>
-                    <p class="section-subtitle">Share your educational content with the global STEMSHARE community</p>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <div>
+                            <h1 class="section-title">Upload New Content</h1>
+                            <p class="section-subtitle">Share your educational content with the global STEMSHARE community</p>
+                        </div>
+                        <button class="back-btn" onclick="showSection('dashboard')" style="background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%); color: white; border: none; border-radius: 8px; padding: 8px 16px; cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; gap: 6px;">
+                            ← Back to Dashboard
+                        </button>
+                    </div>
                 </div>
 
                 <div id="uploadContent">
@@ -1134,8 +1167,15 @@
             <!-- My Content Section -->
             <section id="mygames" class="content-section">
                 <div class="section-header">
-                    <h1 class="section-title">My Content</h1>
-                    <p class="section-subtitle">Manage and track your uploaded content</p>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <div>
+                            <h1 class="section-title">My Content</h1>
+                            <p class="section-subtitle">Manage and track your uploaded content</p>
+                        </div>
+                        <button class="back-btn" onclick="showSection('dashboard')" style="background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%); color: white; border: none; border-radius: 8px; padding: 8px 16px; cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; gap: 6px;">
+                            ← Back to Dashboard
+                        </button>
+                    </div>
                 </div>
 
                 <div id="gamesContainer">
@@ -1146,8 +1186,15 @@
             <!-- Analytics Section -->
             <section id="analytics" class="content-section">
                 <div class="section-header">
-                    <h1 class="section-title">Analytics Dashboard</h1>
-                    <p class="section-subtitle">Track your games' performance and engagement</p>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <div>
+                            <h1 class="section-title">Analytics Dashboard</h1>
+                            <p class="section-subtitle">Track your games' performance and engagement</p>
+                        </div>
+                        <button class="back-btn" onclick="showSection('dashboard')" style="background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%); color: white; border: none; border-radius: 8px; padding: 8px 16px; cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; gap: 6px;">
+                            ← Back to Dashboard
+                        </button>
+                    </div>
                 </div>
 
                 <div class="stats-grid">
@@ -1185,8 +1232,15 @@
             <!-- Revenue Section -->
             <section id="revenue" class="content-section">
                 <div class="section-header">
-                    <h1 class="section-title">Revenue Dashboard</h1>
-                    <p class="section-subtitle">Track your earnings based on content popularity and usage</p>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <div>
+                            <h1 class="section-title">Revenue Dashboard</h1>
+                            <p class="section-subtitle">Track your earnings based on content popularity and usage</p>
+                        </div>
+                        <button class="back-btn" onclick="showSection('dashboard')" style="background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%); color: white; border: none; border-radius: 8px; padding: 8px 16px; cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; gap: 6px;">
+                            ← Back to Dashboard
+                        </button>
+                    </div>
                 </div>
 
                 <div class="stats-grid">
@@ -1246,8 +1300,15 @@
             <!-- Community Section -->
             <section id="community" class="content-section">
                 <div class="section-header">
-                    <h1 class="section-title">Global STEM Community</h1>
-                    <p class="section-subtitle">Connect with educators and students worldwide</p>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <div>
+                            <h1 class="section-title">Global STEM Community</h1>
+                            <p class="section-subtitle">Connect with educators and students worldwide</p>
+                        </div>
+                        <button class="back-btn" onclick="showSection('dashboard')" style="background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%); color: white; border: none; border-radius: 8px; padding: 8px 16px; cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; gap: 6px;">
+                            ← Back to Dashboard
+                        </button>
+                    </div>
                 </div>
 
                 <div class="stats-grid">
@@ -2070,6 +2131,13 @@
             // Add active class to corresponding nav item
             document.querySelector(`[onclick="showSection('${sectionId}')"]`).classList.add('active');
 
+            // Update browser history to prevent going back to introduction
+            if (sectionId !== 'dashboard') {
+                window.history.pushState({ section: sectionId }, '', `#${sectionId}`);
+            } else {
+                window.history.pushState({ section: 'dashboard' }, '', window.location.pathname);
+            }
+
             // Load section-specific data
             if (sectionId === 'revenue') {
                 updateRevenue();
@@ -2086,6 +2154,18 @@
                 closeMobileNav();
             }
         }
+
+        // Handle browser back/forward buttons
+        window.addEventListener('popstate', function(event) {
+            if (event.state && event.state.section) {
+                showSection(event.state.section);
+            } else {
+                showSection('dashboard');
+            }
+        });
+
+        // Initialize with dashboard state
+        window.history.replaceState({ section: 'dashboard' }, '', window.location.pathname);
 
         // Mobile navigation functions
         function toggleMobileNav() {
