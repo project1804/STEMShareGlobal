@@ -155,6 +155,23 @@
             width: 24px;
             text-align: center;
         }
+
+        /* Mobile Navigation Toggle */
+        .mobile-nav-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: #2c3e50;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-nav-toggle:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
         
         /* Main Content */
         .main-content {
@@ -582,31 +599,355 @@
         
         /* Responsive Design */
         @media (max-width: 768px) {
+            .dashboard-container {
+                flex-direction: column;
+            }
+            
+            .mobile-nav-toggle {
+                display: block;
+            }
+            
             .sidebar {
                 width: 100%;
                 position: relative;
                 height: auto;
                 border-radius: 0;
-                padding: 20px 0;
+                padding: 16px;
+                margin-bottom: 16px;
+                display: none;
+            }
+            
+            .sidebar.mobile-open {
+                display: block;
+            }
+            
+            .nav-item {
+                padding: 12px 16px;
+                font-size: 0.95rem;
+            }
+            
+            .nav-icon {
+                font-size: 1.1em;
+                width: 20px;
             }
             
             .main-content {
                 margin-left: 0;
-                padding: 20px;
+                padding: 16px;
             }
             
             .dashboard-header {
                 position: relative;
                 height: auto;
                 padding: 16px;
+                flex-direction: column;
+                gap: 16px;
+                text-align: center;
+            }
+            
+            .header-logo {
+                flex-direction: column;
+                gap: 8px;
+                font-size: 1.3rem;
+            }
+            
+            .header-logo img {
+                width: 40px;
+                height: 40px;
+            }
+            
+            .header-actions {
+                flex-direction: column;
+                gap: 12px;
+                width: 100%;
+            }
+            
+            .subscription-badge {
+                padding: 8px 16px;
+                font-size: 0.8em;
+                width: 100%;
+                max-width: 200px;
+                margin: 0 auto;
+            }
+            
+            .logout-btn {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+                width: 100%;
+                max-width: 200px;
+                margin: 0 auto;
+            }
+            
+            .section-header {
+                padding: 24px;
+                margin-bottom: 16px;
+            }
+            
+            .section-title {
+                font-size: 1.6rem;
+            }
+            
+            .section-subtitle {
+                font-size: 1rem;
             }
             
             .cards-grid {
                 grid-template-columns: 1fr;
+                gap: 16px;
             }
             
             .stats-grid {
                 grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+            
+            .stat-card {
+                padding: 20px;
+            }
+            
+            .stat-icon {
+                font-size: 2em;
+                margin-bottom: 8px;
+            }
+            
+            .stat-value {
+                font-size: 1.6em;
+            }
+            
+            .stat-label {
+                font-size: 0.8em;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .plan-card {
+                padding: 20px;
+            }
+            
+            .plan-icon {
+                font-size: 2.5em;
+            }
+            
+            .plan-name {
+                font-size: 1.3em;
+            }
+            
+            .plan-price {
+                font-size: 1.6em;
+            }
+            
+            .plan-features li {
+                padding: 6px 0;
+                font-size: 0.9rem;
+            }
+            
+            .subscribe-btn {
+                padding: 14px;
+                font-size: 1rem;
+            }
+            
+            .form-group {
+                margin-bottom: 20px;
+            }
+            
+            .form-label {
+                font-size: 0.95rem;
+                margin-bottom: 6px;
+            }
+            
+            .form-input, .form-select, .form-textarea {
+                padding: 12px 16px;
+                font-size: 0.95rem;
+            }
+            
+            .upload-area {
+                padding: 30px 16px;
+            }
+            
+            .upload-icon {
+                font-size: 2.5em;
+                margin-bottom: 12px;
+            }
+            
+            .submit-btn {
+                padding: 14px 24px;
+                font-size: 1rem;
+                width: 100%;
+            }
+            
+            .game-card {
+                flex-direction: column;
+                gap: 16px;
+                padding: 16px;
+            }
+            
+            .game-thumbnail {
+                width: 60px;
+                height: 60px;
+                font-size: 1.5em;
+            }
+            
+            .game-title {
+                font-size: 1.1em;
+            }
+            
+            .game-stats {
+                flex-wrap: wrap;
+                gap: 12px;
+                font-size: 0.85em;
+            }
+            
+            .game-badges {
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+            
+            .badge {
+                padding: 3px 8px;
+                font-size: 0.7em;
+            }
+            
+            .chart-container {
+                padding: 16px;
+                height: 300px;
+            }
+            
+            .upgrade-btn {
+                padding: 12px 20px;
+                font-size: 0.95rem;
+                width: 100%;
+                margin-bottom: 8px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .sidebar {
+                padding: 12px;
+            }
+            
+            .nav-item {
+                padding: 10px 14px;
+                font-size: 0.9rem;
+            }
+            
+            .nav-icon {
+                font-size: 1em;
+                width: 18px;
+            }
+            
+            .main-content {
+                padding: 12px;
+            }
+            
+            .dashboard-header {
+                padding: 12px;
+            }
+            
+            .header-logo {
+                font-size: 1.1rem;
+            }
+            
+            .header-logo img {
+                width: 35px;
+                height: 35px;
+            }
+            
+            .section-header {
+                padding: 20px;
+            }
+            
+            .section-title {
+                font-size: 1.4rem;
+            }
+            
+            .section-subtitle {
+                font-size: 0.95rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .stat-card {
+                padding: 16px;
+            }
+            
+            .stat-icon {
+                font-size: 1.8em;
+            }
+            
+            .stat-value {
+                font-size: 1.4em;
+            }
+            
+            .card {
+                padding: 16px;
+            }
+            
+            .plan-card {
+                padding: 16px;
+            }
+            
+            .plan-icon {
+                font-size: 2em;
+            }
+            
+            .plan-name {
+                font-size: 1.2em;
+            }
+            
+            .plan-price {
+                font-size: 1.4em;
+            }
+            
+            .plan-features li {
+                padding: 5px 0;
+                font-size: 0.85rem;
+            }
+            
+            .form-input, .form-select, .form-textarea {
+                padding: 10px 14px;
+                font-size: 0.9rem;
+            }
+            
+            .upload-area {
+                padding: 24px 12px;
+            }
+            
+            .upload-icon {
+                font-size: 2em;
+            }
+            
+            .game-card {
+                padding: 12px;
+            }
+            
+            .game-thumbnail {
+                width: 50px;
+                height: 50px;
+                font-size: 1.3em;
+            }
+            
+            .game-title {
+                font-size: 1em;
+            }
+            
+            .game-stats {
+                font-size: 0.8em;
+                gap: 8px;
+            }
+            
+            .chart-container {
+                padding: 12px;
+                height: 250px;
+            }
+            
+            .upgrade-btn {
+                padding: 10px 16px;
+                font-size: 0.9rem;
             }
         }
     </style>
@@ -619,6 +960,7 @@
             <span>STEMSHARE DEVELOPER</span>
         </div>
         <div class="header-actions">
+            <button class="mobile-nav-toggle" onclick="toggleMobileNav()">☰</button>
             <div class="subscription-badge badge-free" id="subscriptionBadge">FREE PLAN</div>
             <button class="logout-btn" onclick="window.location.href='index.html'">Logout</button>
         </div>
@@ -1738,7 +2080,35 @@
             } else if (sectionId === 'analytics') {
                 updateAnalytics();
             }
+
+            // Close mobile navigation if open
+            if (window.innerWidth <= 768) {
+                closeMobileNav();
+            }
         }
+
+        // Mobile navigation functions
+        function toggleMobileNav() {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.classList.toggle('mobile-open');
+        }
+
+        function closeMobileNav() {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.classList.remove('mobile-open');
+        }
+
+        // Close mobile nav when clicking outside
+        document.addEventListener('click', function(event) {
+            const sidebar = document.querySelector('.sidebar');
+            const mobileToggle = document.querySelector('.mobile-nav-toggle');
+            
+            if (window.innerWidth <= 768 && 
+                !sidebar.contains(event.target) && 
+                !mobileToggle.contains(event.target)) {
+                closeMobileNav();
+            }
+        });
     </script>
 </body>
 </html>
