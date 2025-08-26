@@ -3,6 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <title>STEMShare Teacher</title>
+  <script>
+      // Check if user has seen the teacher introduction
+      (function() {
+          const hasSeenTeacherIntroduction = localStorage.getItem('hasSeenTeacherIntroduction');
+          if (hasSeenTeacherIntroduction !== 'true') {
+              window.location.href = 'teacher-introduction.html';
+          }
+      })();
+      
+      // Function to reset teacher introduction for testing - available immediately
+      window.resetTeacherIntroduction = function() {
+          localStorage.removeItem('hasSeenTeacherIntroduction');
+          alert('Teacher introduction has been reset. You will see it again on next login.');
+      };
+  </script>
   <link rel="stylesheet" href="style.css">
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
