@@ -903,11 +903,44 @@
     }
 
     @media (max-width: 768px) {
+      /* Disable animations and gradients for better mobile performance */
+      * {
+        animation: none !important;
+        transition: none !important;
+      }
+      
+      body::before {
+        display: none !important;
+      }
+      
+      .teacher-header {
+        background: #667eea !important;
+        background-size: auto !important;
+        animation: none !important;
+        padding: 16px 20px;
+        flex-direction: column;
+        gap: 16px;
+        text-align: center;
+      }
+      
+      .teacher-header::before {
+        display: none !important;
+      }
+      
+      .teacher-content-card::before {
+        display: none !important;
+      }
+      
+      .welcome-section::before {
+        display: none !important;
+      }
+      
       .teacher-main {
         flex-direction: column;
         gap: 16px;
         padding: 16px;
         max-width: none;
+        background: #f5f7fa !important;
       }
 
       .teacher-sidebar {
@@ -915,17 +948,11 @@
         position: static;
         padding: 16px;
         display: none;
+        background: white !important;
       }
 
       .teacher-sidebar.mobile-open {
         display: block;
-      }
-
-      .teacher-header {
-        padding: 16px 20px;
-        flex-direction: column;
-        gap: 16px;
-        text-align: center;
       }
 
       .mobile-nav-toggle {
@@ -952,6 +979,8 @@
       .welcome-section {
         margin: 16px;
         padding: 20px;
+        background: white !important;
+        border: 1px solid #e2e8f0;
       }
 
       .welcome-title {
@@ -964,11 +993,13 @@
 
       .upload-section {
         padding: 20px;
+        background: white !important;
       }
 
       .form-container {
         max-width: none;
         padding: 20px;
+        background: white !important;
       }
 
       .form-group {
@@ -983,6 +1014,8 @@
       .form-input, .form-textarea, .form-select {
         padding: 12px 16px;
         font-size: 0.95rem;
+        background: white !important;
+        border: 1px solid #e2e8f0;
       }
 
       .category-group {
@@ -996,62 +1029,87 @@
         min-width: auto;
         flex: 1;
         min-width: calc(50% - 4px);
+        background: white !important;
+        border: 1px solid #e2e8f0;
       }
 
       .teacher-tabs {
         flex-direction: column;
         gap: 8px;
+        background: white !important;
       }
 
       .teacher-tab {
         padding: 12px 16px;
         font-size: 0.95rem;
         text-align: center;
+        background: white !important;
+        border: 1px solid #e2e8f0;
+      }
+      
+      .teacher-tab.active {
+        background: #667eea !important;
+        color: white !important;
+        border-color: #667eea;
       }
 
+      /* Fixed Global Discussion Mobile Layout */
       .forum-container {
         flex-direction: column;
         height: auto;
         min-height: auto;
         gap: 20px;
+        background: white !important;
       }
 
       .forum-sidebar {
         width: 100%;
-        height: 350px;
+        height: auto;
+        max-height: 400px;
         padding: 20px;
+        background: white !important;
+        border: 1px solid #e2e8f0;
+        overflow-y: auto;
       }
 
       .forum-main {
         min-height: 500px;
         padding: 20px !important;
+        background: white !important;
+        border: 1px solid #e2e8f0;
+        width: 100% !important;
       }
 
-      /* Forum topic items mobile styling */
+      /* Forum topic items mobile styling - Static colors */
       .topic-item {
         padding: 16px;
         margin-bottom: 12px;
-        background: rgba(255, 255, 255, 0.8);
+        background: white !important;
         border-radius: 12px;
-        border: 1px solid rgba(102, 126, 234, 0.1);
+        border: 1px solid #e2e8f0;
         cursor: pointer;
-        transition: all 0.3s ease;
       }
 
       .topic-item:hover {
-        background: rgba(255, 255, 255, 0.95);
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+        background: #f8fafc !important;
+        transform: none;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       }
 
       .topic-item.active {
-        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
-        border-color: rgba(102, 126, 234, 0.3);
+        background: #667eea !important;
+        color: white !important;
+        border-color: #667eea;
+      }
+      
+      .topic-item.active .topic-title,
+      .topic-item.active .topic-meta {
+        color: white !important;
       }
 
       .topic-title {
         font-weight: 600;
-        color: var(--text-primary);
+        color: #2d3748;
         margin-bottom: 8px;
         font-size: 1rem;
         line-height: 1.4;
@@ -1062,17 +1120,17 @@
         justify-content: space-between;
         align-items: center;
         font-size: 0.85rem;
-        color: var(--text-secondary);
+        color: #718096;
         margin-bottom: 4px;
       }
 
-      /* Message cards mobile styling */
+      /* Message cards mobile styling - Static colors */
       .message-card {
-        background: rgba(255, 255, 255, 0.8);
+        background: white !important;
         border-radius: 12px;
         padding: 16px;
         margin-bottom: 16px;
-        border: 1px solid rgba(102, 126, 234, 0.1);
+        border: 1px solid #e2e8f0;
       }
 
       .message-header {
@@ -1085,7 +1143,7 @@
       .teacher-avatar {
         width: 40px;
         height: 40px;
-        background: var(--accent-gradient);
+        background: #667eea !important;
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -1101,13 +1159,13 @@
 
       .teacher-name {
         font-weight: 600;
-        color: var(--text-primary);
+        color: #2d3748;
         margin-bottom: 2px;
       }
 
       .teacher-location {
         font-size: 0.85rem;
-        color: var(--text-secondary);
+        color: #718096;
         display: flex;
         align-items: center;
         gap: 4px;
@@ -1118,7 +1176,7 @@
       }
 
       .message-content {
-        color: var(--text-primary);
+        color: #2d3748;
         line-height: 1.6;
         margin-bottom: 12px;
         font-size: 0.95rem;
@@ -1131,27 +1189,26 @@
       }
 
       .action-btn {
-        background: none;
-        border: 1px solid var(--border);
+        background: white !important;
+        border: 1px solid #e2e8f0;
         border-radius: 6px;
         padding: 6px 10px;
         cursor: pointer;
         font-size: 0.85rem;
-        color: var(--text-secondary);
-        transition: all 0.3s ease;
+        color: #718096;
         display: flex;
         align-items: center;
         gap: 4px;
       }
 
       .action-btn:hover {
-        background: rgba(102, 126, 234, 0.1);
-        border-color: rgba(102, 126, 234, 0.3);
+        background: #f8fafc !important;
+        border-color: #667eea;
       }
 
       .action-btn.liked {
-        background: rgba(231, 76, 60, 0.1);
-        border-color: rgba(231, 76, 60, 0.3);
+        background: #fed7d7 !important;
+        border-color: #e74c3c;
         color: #e74c3c;
       }
 
@@ -1180,21 +1237,28 @@
         width: 100%;
         padding: 10px;
         font-size: 0.9rem;
+        background: #667eea !important;
+        color: white !important;
+        border: none;
       }
 
       .card {
         padding: 20px;
         margin-bottom: 16px;
+        background: white !important;
+        border: 1px solid #e2e8f0;
       }
 
       .card h3 {
         font-size: 1.2rem;
         margin-bottom: 12px;
+        color: #2d3748;
       }
 
       .card p {
         font-size: 0.95rem;
         line-height: 1.5;
+        color: #718096;
       }
 
       .btn {
@@ -2724,4 +2788,3 @@
   </script>
 </body>
 </html>
-
