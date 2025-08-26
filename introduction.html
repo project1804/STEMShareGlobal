@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to STEMShare - Introduction</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .introduction-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            max-width: 95%;
+            width: 95%;
+            text-align: center;
+            position: relative;
+            backdrop-filter: blur(10px);
+            height: 95vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            box-sizing: border-box;
+        }
+
+        .introduction-image {
+            width: 100%;
+            max-width: 90%;
+            height: auto;
+            max-height: 50vh;
+            object-fit: contain;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .introduction-image:hover {
+            transform: scale(1.02);
+        }
+
+        .introduction-title {
+            font-size: 2em;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .introduction-subtitle {
+            font-size: 1.1em;
+            color: #7f8c8d;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .navigation-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .nav-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+            min-width: 120px;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .nav-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .lets-go-btn {
+            background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+            font-size: 1.2em;
+            padding: 18px 40px;
+            min-width: 150px;
+        }
+
+        .lets-go-btn:hover {
+            box-shadow: 0 8px 25px rgba(0, 184, 148, 0.4);
+        }
+
+        .progress-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .content-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .progress-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            transition: all 0.3s ease;
+        }
+
+        .progress-dot.active {
+            background: #667eea;
+            transform: scale(1.2);
+        }
+
+        .skip-intro {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: #7f8c8d;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .skip-intro:hover {
+            background: rgba(255, 255, 255, 0.3);
+            color: #2c3e50;
+        }
+
+        @media (max-width: 768px) {
+            .introduction-container {
+                padding: 20px 15px;
+                margin: 10px;
+                height: 95vh;
+                width: 98%;
+                max-width: 98%;
+            }
+
+            .content-wrapper {
+                gap: 15px;
+            }
+
+            .introduction-image {
+                max-width: 95%;
+                max-height: 50vh;
+            }
+
+            .introduction-title {
+                font-size: 1.8em;
+                margin-bottom: 0;
+            }
+
+            .introduction-subtitle {
+                font-size: 1em;
+                margin-bottom: 0;
+            }
+
+            .navigation-buttons {
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+            }
+
+            .nav-btn {
+                width: 180px;
+                padding: 12px 24px;
+                font-size: 1em;
+            }
+
+            .progress-indicator {
+                margin-bottom: 20px;
+            }
+        }
+
+        /* Large screens - maximize image size */
+        @media (min-width: 1200px) {
+            .introduction-container {
+                max-width: 90%;
+                padding: 25px;
+                height: 92vh;
+            }
+
+            .introduction-image {
+                max-width: 85%;
+                max-height: 45vh;
+            }
+        }
+
+        /* Medium screens - balanced layout */
+        @media (min-width: 769px) and (max-width: 1199px) {
+            .introduction-container {
+                max-width: 92%;
+                padding: 25px;
+                height: 93vh;
+            }
+
+            .introduction-image {
+                max-width: 88%;
+                max-height: 48vh;
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="introduction-container fade-in">
+        <button class="skip-intro" onclick="skipIntroduction()">Skip Intro</button>
+        
+        <div class="progress-indicator">
+            <div class="progress-dot active" id="dot1"></div>
+            <div class="progress-dot" id="dot2"></div>
+            <div class="progress-dot" id="dot3"></div>
+            <div class="progress-dot" id="dot4"></div>
+            <div class="progress-dot" id="dot5"></div>
+        </div>
+
+        <div class="content-wrapper">
+            <img src="student1.png" alt="Introduction Image 1" class="introduction-image" id="introImage">
+            
+            <h1 class="introduction-title" id="introTitle">Welcome to STEMShare!</h1>
+            <p class="introduction-subtitle" id="introSubtitle">Your gateway to interactive STEM learning and collaboration</p>
+            
+            <div class="navigation-buttons">
+                <button class="nav-btn" id="prevBtn" onclick="previousImage()" disabled>Previous</button>
+                <button class="nav-btn" id="nextBtn" onclick="nextImage()">Next</button>
+                <button class="nav-btn lets-go-btn" id="letsGoBtn" onclick="goToMainPage()" style="display: none;">Let's Go!</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentImageIndex = 0;
+        const totalImages = 5;
+        
+        const introductionData = [
+            {
+                image: 'student1.png',
+                title: 'Welcome to STEMShare!',
+                subtitle: 'Your gateway to interactive STEM learning and collaboration'
+            },
+            {
+                image: 'student2.png',
+                title: 'Discover Amazing Resources',
+                subtitle: 'Access educational materials, notes, and study resources shared by teachers and students'
+            },
+            {
+                image: 'student3.png',
+                title: 'Play Educational Games',
+                subtitle: 'Learn while having fun with interactive games and earn points to unlock more features'
+            },
+            {
+                image: 'student4.png',
+                title: 'Get AI-Powered Help',
+                subtitle: 'Our intelligent AI assistant is here to help you with your studies and answer questions'
+            },
+            {
+                image: 'student5.png',
+                title: 'Experience AR/VR Learning',
+                subtitle: 'Immerse yourself in cutting-edge augmented and virtual reality educational experiences'
+            }
+        ];
+
+        function updateIntroduction() {
+            const data = introductionData[currentImageIndex];
+            
+            // Update image
+            document.getElementById('introImage').src = data.image;
+            document.getElementById('introTitle').textContent = data.title;
+            document.getElementById('introSubtitle').textContent = data.subtitle;
+            
+            // Update progress dots
+            document.querySelectorAll('.progress-dot').forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentImageIndex);
+            });
+            
+            // Update navigation buttons
+            document.getElementById('prevBtn').disabled = currentImageIndex === 0;
+            document.getElementById('nextBtn').style.display = currentImageIndex === totalImages - 1 ? 'none' : 'inline-block';
+            document.getElementById('letsGoBtn').style.display = currentImageIndex === totalImages - 1 ? 'inline-block' : 'none';
+            
+            // Add fade-in animation
+            const container = document.querySelector('.introduction-container');
+            container.classList.remove('fade-in');
+            void container.offsetWidth; // Trigger reflow
+            container.classList.add('fade-in');
+        }
+
+        function nextImage() {
+            if (currentImageIndex < totalImages - 1) {
+                currentImageIndex++;
+                updateIntroduction();
+            }
+        }
+
+        function previousImage() {
+            if (currentImageIndex > 0) {
+                currentImageIndex--;
+                updateIntroduction();
+            }
+        }
+
+        function goToMainPage() {
+            // Store that the user has seen the introduction
+            localStorage.setItem('hasSeenIntroduction', 'true');
+            // Redirect to the main student page
+            window.location.href = 'student.html';
+        }
+
+        function skipIntroduction() {
+            // Store that the user has seen the introduction
+            localStorage.setItem('hasSeenIntroduction', 'true');
+            // Redirect to the main student page
+            window.location.href = 'student.html';
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowRight' || event.key === ' ') {
+                event.preventDefault();
+                if (currentImageIndex < totalImages - 1) {
+                    nextImage();
+                } else {
+                    goToMainPage();
+                }
+            } else if (event.key === 'ArrowLeft') {
+                event.preventDefault();
+                previousImage();
+            } else if (event.key === 'Escape') {
+                event.preventDefault();
+                skipIntroduction();
+            }
+        });
+
+        // Initialize the introduction
+        updateIntroduction();
+    </script>
+</body>
+</html>
