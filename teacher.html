@@ -909,6 +909,22 @@
         transition: none !important;
       }
       
+      /* Override all gradient backgrounds with static colors */
+      [style*="gradient"] {
+        background: white !important;
+        background-image: none !important;
+      }
+      
+      [style*="linear-gradient"] {
+        background: white !important;
+        background-image: none !important;
+      }
+      
+      [style*="radial-gradient"] {
+        background: white !important;
+        background-image: none !important;
+      }
+      
       body::before {
         display: none !important;
       }
@@ -916,6 +932,7 @@
       .teacher-header {
         background: #667eea !important;
         background-size: auto !important;
+        background-image: none !important;
         animation: none !important;
         padding: 16px 20px;
         flex-direction: column;
@@ -1055,29 +1072,41 @@
 
       /* Fixed Global Discussion Mobile Layout */
       .forum-container {
-        flex-direction: column;
-        height: auto;
-        min-height: auto;
-        gap: 20px;
+        flex-direction: column !important;
+        height: auto !important;
+        min-height: auto !important;
+        gap: 20px !important;
         background: white !important;
+        display: flex !important;
       }
 
       .forum-sidebar {
-        width: 100%;
-        height: auto;
-        max-height: 400px;
-        padding: 20px;
+        width: 100% !important;
+        height: auto !important;
+        max-height: 400px !important;
+        padding: 20px !important;
         background: white !important;
-        border: 1px solid #e2e8f0;
-        overflow-y: auto;
+        border: 1px solid #e2e8f0 !important;
+        overflow-y: auto !important;
+        border-radius: 12px !important;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+        backdrop-filter: none !important;
+        flex-shrink: 0 !important;
       }
 
       .forum-main {
-        min-height: 500px;
+        min-height: 500px !important;
         padding: 20px !important;
         background: white !important;
-        border: 1px solid #e2e8f0;
+        border: 1px solid #e2e8f0 !important;
         width: 100% !important;
+        border-radius: 12px !important;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+        backdrop-filter: none !important;
+        flex: 1 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        min-width: 0 !important;
       }
 
       /* Forum topic items mobile styling - Static colors */
@@ -1240,6 +1269,39 @@
         background: #667eea !important;
         color: white !important;
         border: none;
+        background-image: none !important;
+      }
+      
+      /* Override any remaining gradient buttons */
+      button[style*="gradient"] {
+        background: #667eea !important;
+        background-image: none !important;
+        color: white !important;
+      }
+      
+      .new-topic-btn {
+        background: #667eea !important;
+        background-image: none !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 8px !important;
+        padding: 8px 12px !important;
+        font-size: 0.8em !important;
+        font-weight: 600 !important;
+        cursor: pointer !important;
+        transition: none !important;
+      }
+      
+      #postReplyBtn {
+        background: #27ae60 !important;
+        background-image: none !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 10px !important;
+        padding: 10px 20px !important;
+        font-weight: 600 !important;
+        cursor: pointer !important;
+        transition: none !important;
       }
 
       .card {
@@ -1277,6 +1339,100 @@
         font-size: 0.9rem;
         width: 100%;
         max-width: 200px;
+        background: rgba(255, 255, 255, 0.2) !important;
+        background-image: none !important;
+        border: 2px solid rgba(255, 255, 255, 0.3) !important;
+        transition: none !important;
+      }
+      
+      /* Additional overrides for any remaining gradient elements */
+      .teacher-sidebar {
+        background: white !important;
+        background-image: none !important;
+        backdrop-filter: none !important;
+      }
+      
+      .welcome-section {
+        background: white !important;
+        background-image: none !important;
+        backdrop-filter: none !important;
+      }
+      
+      .upload-section {
+        background: white !important;
+        background-image: none !important;
+        backdrop-filter: none !important;
+      }
+      
+      .form-container {
+        background: white !important;
+        background-image: none !important;
+        backdrop-filter: none !important;
+      }
+      
+      /* Override any remaining animations */
+      .teacher-title {
+        animation: none !important;
+        text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3) !important;
+      }
+      
+      .teacher-logo {
+        animation: none !important;
+      }
+      
+      .teacher-logo img {
+        animation: none !important;
+        filter: none !important;
+      }
+      
+      /* Ensure forum content is properly visible on mobile */
+      #forumContent {
+        background: white !important;
+        background-image: none !important;
+        backdrop-filter: none !important;
+        padding: 16px !important;
+        margin: 0 !important;
+      }
+      
+      /* Override any inline styles for forum elements */
+      #forumContent .forum-container {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 20px !important;
+        height: auto !important;
+        min-height: auto !important;
+        background: transparent !important;
+      }
+      
+      #forumContent .forum-sidebar {
+        width: 100% !important;
+        height: auto !important;
+        max-height: 400px !important;
+        padding: 20px !important;
+        background: white !important;
+        background-image: none !important;
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 12px !important;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+        backdrop-filter: none !important;
+        overflow-y: auto !important;
+        flex-shrink: 0 !important;
+      }
+      
+      #forumContent .forum-main {
+        width: 100% !important;
+        min-height: 500px !important;
+        padding: 20px !important;
+        background: white !important;
+        background-image: none !important;
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 12px !important;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+        backdrop-filter: none !important;
+        flex: 1 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        min-width: 0 !important;
       }
     }
 
