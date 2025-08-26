@@ -980,6 +980,187 @@
                 
                 return true; // Allow the link to continue
             };
+
+            // Function to add points for exploring resources
+            window.addResourcePoints = function() {
+                currentPoints += 5;
+                localStorage.setItem('studentPoints', currentPoints.toString());
+                
+                if (pointsValue) pointsValue.textContent = currentPoints;
+                
+                const progressPercentage = (currentPoints / 100) * 100;
+                if (progressBar) progressBar.style.width = progressPercentage + '%';
+                
+                updateAvatarBasedOnPoints();
+                
+                const resourcesExplored = parseInt(localStorage.getItem('resourcesExplored')) || 0;
+                localStorage.setItem('resourcesExplored', (resourcesExplored + 1).toString());
+            };
+
+            // Function to add points for sharing content
+            window.addSharePoints = function() {
+                currentPoints += 15;
+                localStorage.setItem('studentPoints', currentPoints.toString());
+                
+                if (pointsValue) pointsValue.textContent = currentPoints;
+                
+                const progressPercentage = (currentPoints / 100) * 100;
+                if (progressBar) progressBar.style.width = progressPercentage + '%';
+                
+                updateAvatarBasedOnPoints();
+                
+                const contentShared = parseInt(localStorage.getItem('contentShared')) || 0;
+                localStorage.setItem('contentShared', (contentShared + 1).toString());
+            };
+
+            // Function to add points for giving feedback
+            window.addFeedbackPoints = function() {
+                currentPoints += 3;
+                localStorage.setItem('studentPoints', currentPoints.toString());
+                
+                if (pointsValue) pointsValue.textContent = currentPoints;
+                
+                const progressPercentage = (currentPoints / 100) * 100;
+                if (progressBar) progressBar.style.width = progressPercentage + '%';
+                
+                updateAvatarBasedOnPoints();
+                
+                const feedbackGiven = parseInt(localStorage.getItem('feedbackGiven')) || 0;
+                localStorage.setItem('feedbackGiven', (feedbackGiven + 1).toString());
+            };
+
+            // Function to add points for rating resources
+            window.addRatingPoints = function() {
+                currentPoints += 2;
+                localStorage.setItem('studentPoints', currentPoints.toString());
+                
+                if (pointsValue) pointsValue.textContent = currentPoints;
+                
+                const progressPercentage = (currentPoints / 100) * 100;
+                if (progressBar) progressBar.style.width = progressPercentage + '%';
+                
+                updateAvatarBasedOnPoints();
+                
+                const ratingsGiven = parseInt(localStorage.getItem('ratingsGiven')) || 0;
+                localStorage.setItem('ratingsGiven', (ratingsGiven + 1).toString());
+            };
+
+            // Function to add points for sharing resources
+            window.addShareResourcePoints = function() {
+                currentPoints += 5;
+                localStorage.setItem('studentPoints', currentPoints.toString());
+                
+                if (pointsValue) pointsValue.textContent = currentPoints;
+                
+                const progressPercentage = (currentPoints / 100) * 100;
+                if (progressBar) progressBar.style.width = progressPercentage + '%';
+                
+                updateAvatarBasedOnPoints();
+                
+                const sharesGiven = parseInt(localStorage.getItem('sharesGiven')) || 0;
+                localStorage.setItem('sharesGiven', (sharesGiven + 1).toString());
+            };
+
+            // Function to update progress data
+            function updateProgressData() {
+                const currentPoints = parseInt(localStorage.getItem('studentPoints')) || 0;
+                const gamesPlayed = parseInt(localStorage.getItem('gamesPlayed')) || 0;
+                const resourcesExplored = parseInt(localStorage.getItem('resourcesExplored')) || 0;
+                const contentShared = parseInt(localStorage.getItem('contentShared')) || 0;
+                const feedbackGiven = parseInt(localStorage.getItem('feedbackGiven')) || 0;
+                const ratingsGiven = parseInt(localStorage.getItem('ratingsGiven')) || 0;
+                const sharesGiven = parseInt(localStorage.getItem('sharesGiven')) || 0;
+
+                // Update displays
+                const currentLevelDisplay = document.getElementById('currentLevelDisplay');
+                const totalPointsDisplay = document.getElementById('totalPointsDisplay');
+                const nextMilestoneDisplay = document.getElementById('nextMilestoneDisplay');
+                const progressBarFill = document.getElementById('progressBarFill');
+                const gamesPlayedCount = document.getElementById('gamesPlayedCount');
+                const resourcesExploredCount = document.getElementById('resourcesExploredCount');
+                const contentSharedCount = document.getElementById('contentSharedCount');
+                const feedbackGivenCount = document.getElementById('feedbackGivenCount');
+
+                // Update level and milestone
+                let currentLevel = 'BASIC';
+                let nextMilestone = '50 Points';
+                let progressPercentage = (currentPoints / 50) * 100;
+
+                if (currentPoints >= 100) {
+                    currentLevel = 'MAJESTIC';
+                    nextMilestone = 'Maximum Level!';
+                    progressPercentage = 100;
+                } else if (currentPoints >= 50) {
+                    currentLevel = 'PREMIUM';
+                    nextMilestone = '100 Points';
+                    progressPercentage = ((currentPoints - 50) / 50) * 100;
+                }
+
+                if (currentLevelDisplay) currentLevelDisplay.textContent = currentLevel;
+                if (totalPointsDisplay) totalPointsDisplay.textContent = currentPoints;
+                if (nextMilestoneDisplay) nextMilestoneDisplay.textContent = nextMilestone;
+                if (progressBarFill) {
+                    progressBarFill.style.width = progressPercentage + '%';
+                    progressBarFill.innerHTML = `<div style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); color: white; font-weight: bold; font-size: 0.9em;">${currentPoints}/${currentPoints >= 50 ? '100' : '50'}</div>`;
+                }
+
+                // Update activity counts
+                if (gamesPlayedCount) gamesPlayedCount.textContent = gamesPlayed;
+                if (resourcesExploredCount) resourcesExploredCount.textContent = resourcesExplored;
+                if (contentSharedCount) contentSharedCount.textContent = contentShared;
+                if (feedbackGivenCount) feedbackGivenCount.textContent = feedbackGiven;
+                
+                const ratingsGivenCount = document.getElementById('ratingsGivenCount');
+                const sharesGivenCount = document.getElementById('sharesGivenCount');
+                if (ratingsGivenCount) ratingsGivenCount.textContent = ratingsGiven;
+                if (sharesGivenCount) sharesGivenCount.textContent = sharesGiven;
+
+                // Update achievement badges
+                updateAchievementBadges();
+            }
+
+            // Function to update achievement badges
+            function updateAchievementBadges() {
+                const currentPoints = parseInt(localStorage.getItem('studentPoints')) || 0;
+                const gamesPlayed = parseInt(localStorage.getItem('gamesPlayed')) || 0;
+                const resourcesExplored = parseInt(localStorage.getItem('resourcesExplored')) || 0;
+                const contentShared = parseInt(localStorage.getItem('contentShared')) || 0;
+                const feedbackGiven = parseInt(localStorage.getItem('feedbackGiven')) || 0;
+                const ratingsGiven = parseInt(localStorage.getItem('ratingsGiven')) || 0;
+                const sharesGiven = parseInt(localStorage.getItem('sharesGiven')) || 0;
+
+                const achievementBadges = document.getElementById('achievementBadges');
+                if (!achievementBadges) return;
+
+                const badges = [
+                    { id: 'first-login', icon: '🎉', title: 'First Login', description: 'Welcome to STEMShare!', earned: true },
+                    { id: 'basic-level', icon: '⭐', title: 'Basic Level', description: 'Reached Basic level', earned: currentPoints >= 10 },
+                    { id: 'premium-level', icon: '🌟', title: 'Premium Level', description: 'Reached Premium level', earned: currentPoints >= 50 },
+                    { id: 'majestic-level', icon: '👑', title: 'Majestic Level', description: 'Reached Majestic level', earned: currentPoints >= 100 },
+                    { id: 'first-game', icon: '🎮', title: 'First Game', description: 'Played your first game', earned: gamesPlayed >= 1 },
+                    { id: 'game-master', icon: '🏆', title: 'Game Master', description: 'Played 10 games', earned: gamesPlayed >= 10 },
+                    { id: 'explorer', icon: '📚', title: 'Explorer', description: 'Explored 5 resources', earned: resourcesExplored >= 5 },
+                    { id: 'contributor', icon: '📤', title: 'Contributor', description: 'Shared content', earned: contentShared >= 1 },
+                    { id: 'feedback-giver', icon: '💬', title: 'Feedback Giver', description: 'Gave 5 comments', earned: feedbackGiven >= 5 },
+                    { id: 'rater', icon: '⭐', title: 'Rater', description: 'Rated 3 resources', earned: ratingsGiven >= 3 },
+                    { id: 'sharer', icon: '🔗', title: 'Sharer', description: 'Shared 2 resources', earned: sharesGiven >= 2 }
+                ];
+
+                let badgesHTML = '';
+                badges.forEach(badge => {
+                    const opacity = badge.earned ? '1' : '0.3';
+                    const filter = badge.earned ? 'none' : 'grayscale(100%)';
+                    badgesHTML += `
+                        <div style="text-align: center; padding: 16px; background: ${badge.earned ? '#f8f9fa' : '#e9ecef'}; border-radius: 12px; opacity: ${opacity}; filter: ${filter};">
+                            <div style="font-size: 2.5em; margin-bottom: 8px;">${badge.icon}</div>
+                            <div style="font-weight: bold; color: #2c3e50; margin-bottom: 4px;">${badge.title}</div>
+                            <div style="font-size: 0.9em; color: #7f8c8d;">${badge.description}</div>
+                        </div>
+                    `;
+                });
+
+                achievementBadges.innerHTML = badgesHTML;
+            }
                                     
                                     // Function to update avatar based on points
                                     function updateAvatarBasedOnPoints() {
@@ -1257,6 +1438,129 @@
                         </div>
                     </div>
 
+                    <!-- Progress Content -->
+                    <div id="progressContent" class="tab-content" style="display:none;">
+                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 32px; border-radius: 20px; margin-bottom: 24px;">
+                            <h2 style="margin: 0 0 16px 0; font-size: 1.8em;">🚀 Your STEM Journey Progress</h2>
+                            <p style="margin: 0; opacity: 0.9; font-size: 1.1em;">Track your learning milestones and unlock new opportunities as you grow!</p>
+                        </div>
+
+                        <!-- Progress Overview -->
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px; margin-bottom: 32px;">
+                            <div style="background: white; border-radius: 16px; padding: 24px; box-shadow: 0 4px 16px rgba(0,0,0,0.1); text-align: center;">
+                                <div style="font-size: 3em; margin-bottom: 12px;">📊</div>
+                                <h3 style="color: #2c3e50; margin: 0 0 8px 0;">Current Level</h3>
+                                <div id="currentLevelDisplay" style="font-size: 1.5em; font-weight: bold; color: #667eea;">BASIC</div>
+                                <div style="color: #7f8c8d; font-size: 0.9em; margin-top: 8px;">Keep learning to advance!</div>
+                            </div>
+                            
+                            <div style="background: white; border-radius: 16px; padding: 24px; box-shadow: 0 4px 16px rgba(0,0,0,0.1); text-align: center;">
+                                <div style="font-size: 3em; margin-bottom: 12px;">⭐</div>
+                                <h3 style="color: #2c3e50; margin: 0 0 8px 0;">Total Points</h3>
+                                <div id="totalPointsDisplay" style="font-size: 1.5em; font-weight: bold; color: #27ae60;">0</div>
+                                <div style="color: #7f8c8d; font-size: 0.9em; margin-top: 8px;">Earn more through activities!</div>
+                            </div>
+                            
+                            <div style="background: white; border-radius: 16px; padding: 24px; box-shadow: 0 4px 16px rgba(0,0,0,0.1); text-align: center;">
+                                <div style="font-size: 3em; margin-bottom: 12px;">🎯</div>
+                                <h3 style="color: #2c3e50; margin: 0 0 8px 0;">Next Milestone</h3>
+                                <div id="nextMilestoneDisplay" style="font-size: 1.5em; font-weight: bold; color: #f39c12;">50 Points</div>
+                                <div style="color: #7f8c8d; font-size: 0.9em; margin-top: 8px;">Upgrade to Premium!</div>
+                            </div>
+                        </div>
+
+                        <!-- Progress Chart -->
+                        <div style="background: white; border-radius: 16px; padding: 24px; box-shadow: 0 4px 16px rgba(0,0,0,0.1); margin-bottom: 32px;">
+                            <h3 style="color: #2c3e50; margin: 0 0 20px 0;">📈 Progress to Next Level</h3>
+                            <div style="background: #f8f9fa; border-radius: 12px; padding: 4px; position: relative;">
+                                <div id="progressBarFill" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); height: 24px; border-radius: 8px; width: 15%; transition: width 0.5s ease; position: relative;">
+                                    <div style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); color: white; font-weight: bold; font-size: 0.9em;">15/100</div>
+                                </div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-top: 8px; font-size: 0.9em; color: #7f8c8d;">
+                                <span>Basic (0-49)</span>
+                                <span>Premium (50-99)</span>
+                                <span>Majestic (100+)</span>
+                            </div>
+                        </div>
+
+                        <!-- Activity Breakdown -->
+                        <div style="background: white; border-radius: 16px; padding: 24px; box-shadow: 0 4px 16px rgba(0,0,0,0.1); margin-bottom: 32px;">
+                            <h3 style="color: #2c3e50; margin: 0 0 20px 0;">🎮 Activity Breakdown</h3>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+                                <div style="text-align: center; padding: 16px; background: #f8f9fa; border-radius: 12px;">
+                                    <div style="font-size: 2em; margin-bottom: 8px;">🎮</div>
+                                    <div style="font-weight: bold; color: #2c3e50;">Games Played</div>
+                                    <div id="gamesPlayedCount" style="font-size: 1.5em; color: #667eea; font-weight: bold;">0</div>
+                                </div>
+                                <div style="text-align: center; padding: 16px; background: #f8f9fa; border-radius: 12px;">
+                                    <div style="font-size: 2em; margin-bottom: 8px;">📚</div>
+                                    <div style="font-weight: bold; color: #2c3e50;">Resources Explored</div>
+                                    <div id="resourcesExploredCount" style="font-size: 1.5em; color: #27ae60; font-weight: bold;">0</div>
+                                </div>
+                                <div style="text-align: center; padding: 16px; background: #f8f9fa; border-radius: 12px;">
+                                    <div style="font-size: 2em; margin-bottom: 8px;">📤</div>
+                                    <div style="font-weight: bold; color: #2c3e50;">Content Shared</div>
+                                    <div id="contentSharedCount" style="font-size: 1.5em; color: #f39c12; font-weight: bold;">0</div>
+                                </div>
+                                <div style="text-align: center; padding: 16px; background: #f8f9fa; border-radius: 12px;">
+                                    <div style="font-size: 2em; margin-bottom: 8px;">💬</div>
+                                    <div style="font-weight: bold; color: #2c3e50;">Feedback Given</div>
+                                    <div id="feedbackGivenCount" style="font-size: 1.5em; color: #e74c3c; font-weight: bold;">0</div>
+                                </div>
+                                <div style="text-align: center; padding: 16px; background: #f8f9fa; border-radius: 12px;">
+                                    <div style="font-size: 2em; margin-bottom: 8px;">⭐</div>
+                                    <div style="font-weight: bold; color: #2c3e50;">Ratings Given</div>
+                                    <div id="ratingsGivenCount" style="font-size: 1.5em; color: #f39c12; font-weight: bold;">0</div>
+                                </div>
+                                <div style="text-align: center; padding: 16px; background: #f8f9fa; border-radius: 12px;">
+                                    <div style="font-size: 2em; margin-bottom: 8px;">🔗</div>
+                                    <div style="font-weight: bold; color: #2c3e50;">Shares Given</div>
+                                    <div id="sharesGivenCount" style="font-size: 1.5em; color: #9b59b6; font-weight: bold;">0</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Achievement Badges -->
+                        <div style="background: white; border-radius: 16px; padding: 24px; box-shadow: 0 4px 16px rgba(0,0,0,0.1); margin-bottom: 32px;">
+                            <h3 style="color: #2c3e50; margin: 0 0 20px 0;">🏅 Achievement Badges</h3>
+                            <div id="achievementBadges" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px;">
+                                <!-- Badges will be populated here -->
+                            </div>
+                        </div>
+
+                        <!-- Points Earning Guide -->
+                        <div style="background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%); color: white; border-radius: 16px; padding: 24px; box-shadow: 0 4px 16px rgba(116, 185, 255, 0.3);">
+                            <h3 style="margin: 0 0 16px 0; font-size: 1.4em;">💡 How to Earn More Points</h3>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+                                <div style="background: rgba(255,255,255,0.2); border-radius: 12px; padding: 16px;">
+                                    <div style="font-weight: bold; margin-bottom: 8px;">🎮 Play Games</div>
+                                    <div style="font-size: 0.9em; opacity: 0.9;">+10 points per game</div>
+                                </div>
+                                <div style="background: rgba(255,255,255,0.2); border-radius: 12px; padding: 16px;">
+                                    <div style="font-weight: bold; margin-bottom: 8px;">📚 Explore Resources</div>
+                                    <div style="font-size: 0.9em; opacity: 0.9;">+5 points per resource</div>
+                                </div>
+                                <div style="background: rgba(255,255,255,0.2); border-radius: 12px; padding: 16px;">
+                                    <div style="font-weight: bold; margin-bottom: 8px;">📤 Share Content</div>
+                                    <div style="font-size: 0.9em; opacity: 0.9;">+15 points per upload</div>
+                                </div>
+                                <div style="background: rgba(255,255,255,0.2); border-radius: 12px; padding: 16px;">
+                                    <div style="font-weight: bold; margin-bottom: 8px;">💬 Give Feedback</div>
+                                    <div style="font-size: 0.9em; opacity: 0.9;">+3 points per comment</div>
+                                </div>
+                                <div style="background: rgba(255,255,255,0.2); border-radius: 12px; padding: 16px;">
+                                    <div style="font-weight: bold; margin-bottom: 8px;">⭐ Rate Resources</div>
+                                    <div style="font-size: 0.9em; opacity: 0.9;">+2 points per rating</div>
+                                </div>
+                                <div style="background: rgba(255,255,255,0.2); border-radius: 12px; padding: 16px;">
+                                    <div style="font-weight: bold; margin-bottom: 8px;">🔗 Share Resources</div>
+                                    <div style="font-size: 0.9em; opacity: 0.9;">+5 points per share</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- AR/VR Content -->
                     <div id="arvrContent" class="tab-content" style="display:none;">
                         <div class="cards-grid">
@@ -1295,6 +1599,10 @@
                     <a href="#" class="vertical-nav-btn" id="rewardsNavBtn" onclick="showRewardsModal(event)">
                         <span>🏆</span>
                         <span>Rewards</span>
+                    </a>
+                    <a href="#" class="vertical-nav-btn" id="progressNavBtn" onclick="showProgressContent(event)">
+                        <span>📈</span>
+                        <span>Progress</span>
                     </a>
                     <a href="index.html" class="vertical-nav-btn">
                         <span>🏠</span>
@@ -1423,6 +1731,30 @@
             const gamesPlayed = parseInt(localStorage.getItem('gamesPlayed')) || 0;
             if (profileGames) profileGames.textContent = gamesPlayed;
         }
+
+        // Global function for progress content - defined at the top
+        window.showProgressContent = function(event) {
+            event.preventDefault();
+            
+            // Hide all content sections
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.style.display = 'none';
+            });
+            
+            // Remove active class from all navigation buttons
+            document.querySelectorAll('.vertical-nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Add active class to progress button
+            event.target.closest('.vertical-nav-btn').classList.add('active');
+            
+            // Show progress content
+            document.getElementById('progressContent').style.display = 'block';
+            
+            // Update progress data
+            updateProgressData();
+        };
 
         // Global function for rewards modal - defined at the top
         window.showRewardsModal = function(event) {
@@ -1736,11 +2068,26 @@
                 const gameTypeText = isFileUpload ? `File: ${game.fileName || 'Unknown'}` : 'URL Game';
                 const fileSizeText = isFileUpload && game.fileSize ? ` (${game.fileSize})` : '';
                 
+                // Create rating stars for local games
+                const userRatings = JSON.parse(localStorage.getItem('userRatings')) || {};
+                const userRating = userRatings[`local_${localIdx}`] || 0;
+                
+                let ratingStars = '';
+                for (let i = 1; i <= 5; i++) {
+                    const starColor = i <= userRating ? '#f39c12' : '#ddd';
+                    ratingStars += `<span onclick="${isLocked ? '' : `rateLocalGame(${localIdx}, ${i})`}" style="color:${starColor}; font-size:1.2em; cursor:${isLocked ? 'not-allowed' : 'pointer'}; transition:color 0.2s;" onmouseover="${!isLocked ? `this.style.color='#f39c12'` : ''}" onmouseout="${!isLocked ? `this.style.color='${starColor}'` : ''}">★</span>`;
+                }
+                
                 card.innerHTML = `
                     <div class="feature-title" style="margin-bottom:8px;">${game.title || 'Unknown Game'}</div>
                     <div style="font-size:0.8em; color:#ddd; margin-bottom:4px;">${gameTypeIcon} ${gameTypeText}${fileSizeText} ${isLocked ? '🔒' : ''}</div>
                     <div style="font-size:0.97em; color:#ffeaa7; margin-bottom:4px;">
                         Uploaded by: <b>${game.uploader || "Unknown"}</b>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                        <span style="font-size:0.9em; color:#ffeaa7;">Rate:</span>
+                        ${ratingStars}
+                        <span style="font-size:0.8em; color:#ddd;">(${game.totalRaters || 0})</span>
                     </div>
                     ${isFileUpload ? 
                         `<button onclick="${isLocked ? '' : `viewFileGame('${game.fileName || 'game'}', '${game.title || 'Game'}')`}" style="display:inline-block; margin-bottom:12px; background:linear-gradient(135deg, #f39c12 0%, #e67e22 100%); color:#fff; border:none; border-radius:8px; padding:8px 16px; font-weight:bold; cursor:${isLocked ? 'not-allowed' : 'pointer'};">
@@ -1799,6 +2146,16 @@
                 const gameUrl = game.link || game.fileUrl || game.url || '#';
                 const uploader = game.teacherName || game.uploader || 'Unknown';
                 
+                // Create rating stars for Firebase games
+                const userRatings = JSON.parse(localStorage.getItem('userRatings')) || {};
+                const userRating = userRatings[`firebase_${firebaseIdx}`] || 0;
+                
+                let ratingStars = '';
+                for (let i = 1; i <= 5; i++) {
+                    const starColor = i <= userRating ? '#f39c12' : '#ddd';
+                    ratingStars += `<span onclick="${isLocked ? '' : `rateFirebaseGame(${firebaseIdx}, ${i})`}" style="color:${starColor}; font-size:1.2em; cursor:${isLocked ? 'not-allowed' : 'pointer'}; transition:color 0.2s;" onmouseover="${!isLocked ? `this.style.color='#f39c12'` : ''}" onmouseout="${!isLocked ? `this.style.color='${starColor}'` : ''}">★</span>`;
+                }
+                
                 card.innerHTML = `
                     <div class="feature-title" style="margin-bottom:8px;">${gameTitle}</div>
                     <div style="font-size:0.8em; color:#ddd; margin-bottom:4px;">🔥 Firebase ${isLocked ? '🔒' : ''}</div>
@@ -1807,6 +2164,11 @@
                     </div>
                     <div style="font-size:0.85em; color:#ddd; margin-bottom:8px;">
                         Type: ${game.type || 'Game'} • Category: ${game.category || 'General'}
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                        <span style="font-size:0.9em; color:#ffeaa7;">Rate:</span>
+                        ${ratingStars}
+                        <span style="font-size:0.8em; color:#ddd;">(${game.totalRaters || 0})</span>
                     </div>
                     <a href="${isLocked ? '#' : gameUrl}" target="${isLocked ? '_self' : '_blank'}" style="display:inline-block; margin-bottom:12px; color:#fff; text-decoration:underline; cursor:${isLocked ? 'not-allowed' : 'pointer'};" onclick="${isLocked ? 'return false;' : 'addGamePoints()'}">
                         ${isLocked ? '🔒 Locked' : 'Play Game'}
@@ -1851,7 +2213,44 @@
             saveGames();
             navigator.clipboard.writeText(games[idx].url);
             alert('Game link copied to clipboard!');
+            
+            // Award points for sharing
+            if (typeof addShareResourcePoints === 'function') {
+                addShareResourcePoints();
+            }
+            
             fetchFirebaseGames(); // Refresh to show updated combined list
+        };
+
+        // Function to rate a local game
+        window.rateLocalGame = function(idx, rating) {
+            const game = games[idx];
+            if (!game) return;
+            
+            // Save user rating
+            const userRatings = JSON.parse(localStorage.getItem('userRatings')) || {};
+            userRatings[`local_${idx}`] = rating;
+            localStorage.setItem('userRatings', JSON.stringify(userRatings));
+            
+            // Update game rating
+            if (!game.totalRaters) game.totalRaters = 0;
+            if (!game.rating) game.rating = 0;
+            
+            game.totalRaters += 1;
+            game.rating = ((game.rating * (game.totalRaters - 1)) + rating) / game.totalRaters;
+            
+            // Save updated game data
+            saveGames();
+            
+            // Award points for rating
+            if (typeof addRatingPoints === 'function') {
+                addRatingPoints();
+            }
+            
+            // Refresh the game list
+            fetchFirebaseGames();
+            
+            alert(`Thank you for rating! You earned 2 points.`);
         };
 
         // Firebase game functions - store reference to Firebase games
@@ -1899,16 +2298,58 @@
                 navigator.clipboard.writeText(gameUrl);
                 alert('Game link copied to clipboard!');
                 
+                // Award points for sharing
+                if (typeof addShareResourcePoints === 'function') {
+                    addShareResourcePoints();
+                }
+                
                 // Update share count in Firebase
                 db.ref(`games/${gameToUpdate.id}/shares`).set(currentShares + 1)
                     .then(() => {
                         console.log("Game shares updated in Firebase");
+                        alert('Game shared successfully! You earned 5 points.');
                         fetchFirebaseGames(); // Refresh the list
                     })
                     .catch(error => {
                         console.error("Error updating shares in Firebase:", error);
                     });
             }
+        };
+
+        // Function to rate a Firebase game
+        window.rateFirebaseGame = function(idx, rating) {
+            const gameToUpdate = currentFirebaseGames[idx];
+            if (!gameToUpdate || !gameToUpdate.id) return;
+            
+            // Save user rating
+            const userRatings = JSON.parse(localStorage.getItem('userRatings')) || {};
+            userRatings[`firebase_${idx}`] = rating;
+            localStorage.setItem('userRatings', JSON.stringify(userRatings));
+            
+            // Update game rating in Firebase
+            const currentRaters = gameToUpdate.totalRaters || 0;
+            const currentRating = gameToUpdate.rating || 0;
+            const newRaters = currentRaters + 1;
+            const newRating = ((currentRating * currentRaters) + rating) / newRaters;
+            
+            db.ref(`games/${gameToUpdate.id}`).update({
+                totalRaters: newRaters,
+                rating: newRating
+            })
+            .then(() => {
+                console.log("Game rating updated in Firebase");
+                
+                // Award points for rating
+                if (typeof addRatingPoints === 'function') {
+                    addRatingPoints();
+                }
+                
+                alert(`Thank you for rating! You earned 2 points.`);
+                fetchFirebaseGames(); // Refresh the list
+            })
+            .catch((error) => {
+                console.error("Error updating rating in Firebase:", error);
+            });
         };
 
         // Upload form handler
@@ -2228,7 +2669,25 @@
                         </div>
                     `;
                     
-                    // Create like and comment section
+                    // Create interactive rating section
+                    const userRatings = JSON.parse(localStorage.getItem('userRatings')) || {};
+                    const userRating = userRatings[resource.id] || 0;
+                    
+                    let ratingStars = '';
+                    for (let i = 1; i <= 5; i++) {
+                        const starColor = i <= userRating ? '#f39c12' : '#ddd';
+                        ratingStars += `<span onclick="rateVideoResource('${resource.id}', ${i})" style="color:${starColor}; font-size:1.2em; cursor:pointer; transition:color 0.2s;" onmouseover="this.style.color='#f39c12'" onmouseout="this.style.color='${starColor}'">★</span>`;
+                    }
+                    
+                    const ratingSection = `
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px; padding: 12px; background: #fff3cd; border-radius: 12px; border: 1px solid #ffeaa7;">
+                            <span style="font-weight: bold; color: #856404;">Rate this video:</span>
+                            ${ratingStars}
+                            <span style="color: #856404; font-size: 0.9em;">(${resource.totalRaters || 0} reviews)</span>
+                        </div>
+                    `;
+                    
+                    // Create like, comment, and share section
                     const likeCommentSection = `
                         <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 16px; padding: 12px; background: #f8f9fa; border-radius: 12px;">
                             <button id="likeBtn_${resource.id}" onclick="toggleLike('${resource.id}')" style="display: flex; align-items: center; gap: 8px; background: ${resource.isLiked ? '#e74c3c' : '#3498db'}; color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: all 0.3s ease;">
@@ -2240,6 +2699,9 @@
                                     💬 Comment
                                 </button>
                             </div>
+                            <button onclick="shareVideoResource('${resource.id}')" style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: all 0.3s ease;">
+                                🔗 Share
+                            </button>
                         </div>
                     `;
                     
@@ -2258,7 +2720,7 @@
                         </div>
                     `;
                     
-                    card.innerHTML = videoPlayer + resourceInfo + likeCommentSection + commentsSection;
+                    card.innerHTML = videoPlayer + resourceInfo + ratingSection + likeCommentSection + commentsSection;
                     videoResourcesList.appendChild(card);
                 });
             }
@@ -2324,9 +2786,72 @@
                 // Save to localStorage for persistence
                 localStorage.setItem('videoComments', JSON.stringify(videoResources));
                 
+                // Award points for giving feedback
+                if (typeof addFeedbackPoints === 'function') {
+                    addFeedbackPoints();
+                }
+                
                 // Show success message
-                alert('Comment added successfully!');
+                alert('Comment added successfully! You earned 3 points for giving feedback!');
             }
+
+            // Function to rate a video resource
+            window.rateVideoResource = function(videoId, rating) {
+                const video = videoResources.find(v => v.id === videoId);
+                if (!video) return;
+                
+                // Save user rating
+                const userRatings = JSON.parse(localStorage.getItem('userRatings')) || {};
+                userRatings[videoId] = rating;
+                localStorage.setItem('userRatings', JSON.stringify(userRatings));
+                
+                // Update video rating
+                if (!video.totalRaters) video.totalRaters = 0;
+                if (!video.rating) video.rating = 0;
+                
+                video.totalRaters += 1;
+                video.rating = ((video.rating * (video.totalRaters - 1)) + rating) / video.totalRaters;
+                
+                // Award points for rating
+                if (typeof addRatingPoints === 'function') {
+                    addRatingPoints();
+                }
+                
+                // Re-render video resources to update rating display
+                renderVideoResources();
+                
+                alert(`Thank you for rating! You earned 2 points.`);
+            };
+
+            // Function to share a video resource
+            window.shareVideoResource = function(videoId) {
+                const video = videoResources.find(v => v.id === videoId);
+                if (!video) return;
+                
+                // Create shareable link
+                const shareText = `Check out this amazing STEM video: ${video.fileName} on STEMShare!`;
+                
+                // Simulate sharing
+                if (navigator.share) {
+                    navigator.share({
+                        title: 'STEMShare Video',
+                        text: shareText,
+                        url: window.location.href
+                    });
+                } else {
+                    // Fallback: copy to clipboard
+                    navigator.clipboard.writeText(shareText).then(() => {
+                        alert('Video link copied to clipboard!');
+                    });
+                }
+                
+                // Award points for sharing
+                if (typeof addShareResourcePoints === 'function') {
+                    addShareResourcePoints();
+                }
+                
+                alert('Video shared successfully! You earned 5 points.');
+            };
 
             // Load saved video interactions from localStorage
             function loadVideoInteractions() {
@@ -2464,6 +2989,11 @@
                 renderRating();
                 renderComments();
                 resourceModal.style.display = 'flex';
+                
+                // Award points for exploring resources
+                if (typeof addResourcePoints === 'function') {
+                    addResourcePoints();
+                }
             }
 
             // Helper function to determine file type from URL
@@ -2570,10 +3100,38 @@
 
             function renderRating() {
                 if (!currentResource) return;
-                resourceRating.innerHTML = `
-                    <span style="color:#f39c12; font-size:1.2em;">${"★".repeat(Math.round(currentResource.rating || 0))}${"☆".repeat(5-Math.round(currentResource.rating || 0))}</span>
-                    <span style="color:#888; font-size:1em;">(${currentResource.totalRaters || 0} reviews)</span>
+                
+                // Check if user has already rated this resource
+                const userRatings = JSON.parse(localStorage.getItem('userRatings')) || {};
+                const userRating = userRatings[currentResource.id] || 0;
+                
+                let ratingHTML = '<div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">';
+                ratingHTML += '<span style="color:#888; font-size:1em;">Rate this resource:</span>';
+                
+                // Create interactive star rating
+                for (let i = 1; i <= 5; i++) {
+                    const starColor = i <= userRating ? '#f39c12' : '#ddd';
+                    ratingHTML += `<span onclick="rateResource(${i})" style="color:${starColor}; font-size:1.5em; cursor:pointer; transition:color 0.2s;" onmouseover="this.style.color='#f39c12'" onmouseout="this.style.color='${starColor}'">★</span>`;
+                }
+                
+                ratingHTML += '</div>';
+                
+                // Show current average rating
+                ratingHTML += `
+                    <div style="margin-bottom: 10px;">
+                        <span style="color:#f39c12; font-size:1.2em;">${"★".repeat(Math.round(currentResource.rating || 0))}${"☆".repeat(5-Math.round(currentResource.rating || 0))}</span>
+                        <span style="color:#888; font-size:1em;">(${currentResource.totalRaters || 0} reviews)</span>
+                    </div>
                 `;
+                
+                // Add share button
+                ratingHTML += `
+                    <button onclick="shareResource('${currentResource.id}')" style="background: linear-gradient(135deg, #27ae60 0%, #219653 100%); color: white; border: none; border-radius: 8px; padding: 8px 16px; font-weight: bold; cursor: pointer; margin-top: 10px;">
+                        🔗 Share Resource
+                    </button>
+                `;
+                
+                resourceRating.innerHTML = ratingHTML;
             }
 
             function renderComments() {
@@ -2605,6 +3163,67 @@
                 currentResource.comments.push({ user: "You", text: commentInput.value.trim() });
                 commentInput.value = '';
                 renderComments();
+                
+                // Award points for commenting
+                if (typeof addFeedbackPoints === 'function') {
+                    addFeedbackPoints();
+                }
+            };
+
+            // Function to rate a resource
+            window.rateResource = function(rating) {
+                if (!currentResource) return;
+                
+                // Save user rating
+                const userRatings = JSON.parse(localStorage.getItem('userRatings')) || {};
+                userRatings[currentResource.id] = rating;
+                localStorage.setItem('userRatings', JSON.stringify(userRatings));
+                
+                // Update resource rating (simplified - in real app this would update database)
+                if (!currentResource.totalRaters) currentResource.totalRaters = 0;
+                if (!currentResource.rating) currentResource.rating = 0;
+                
+                currentResource.totalRaters += 1;
+                currentResource.rating = ((currentResource.rating * (currentResource.totalRaters - 1)) + rating) / currentResource.totalRaters;
+                
+                // Award points for rating
+                if (typeof addRatingPoints === 'function') {
+                    addRatingPoints();
+                }
+                
+                // Re-render rating display
+                renderRating();
+                
+                alert(`Thank you for rating! You earned 2 points.`);
+            };
+
+            // Function to share a resource
+            window.shareResource = function(resourceId) {
+                if (!currentResource) return;
+                
+                // Create shareable link (in real app this would be a proper URL)
+                const shareText = `Check out this amazing STEM resource: ${currentResource.fileName} on STEMShare!`;
+                
+                // Simulate sharing (in real app this would use Web Share API or social media)
+                if (navigator.share) {
+                    navigator.share({
+                        title: 'STEMShare Resource',
+                        text: shareText,
+                        url: window.location.href
+                    });
+                } else {
+                    // Fallback: copy to clipboard
+                    navigator.clipboard.writeText(shareText).then(() => {
+                        alert('Resource link copied to clipboard!');
+                    });
+                }
+                
+                // Award points for sharing
+                if (typeof addShareResourcePoints === 'function') {
+                    addShareResourcePoints();
+                }
+                
+                alert('Resource shared successfully! You earned 5 points.');
             };
 
             // Switch upload method function
@@ -3299,10 +3918,14 @@
                         saveNote(note);
                         
                         // Add points for uploading a note
-                        addNotePoints();
+                        if (typeof addSharePoints === 'function') {
+                            addSharePoints();
+                        } else {
+                            addNotePoints();
+                        }
                         
                         // Show success message
-                        alert('Note uploaded successfully! You earned 5 points.');
+                        alert('Note uploaded successfully! You earned 15 points for sharing content!');
                         
                         // Display the note in community section
                         displayCommunityNotes();
@@ -3329,8 +3952,12 @@
                         // Save note to localStorage
                         saveNote(note);
                         
-                        addNotePoints();
-                        alert('Note uploaded successfully! You earned 5 points.');
+                        if (typeof addSharePoints === 'function') {
+                            addSharePoints();
+                        } else {
+                            addNotePoints();
+                        }
+                        alert('Note uploaded successfully! You earned 15 points for sharing content!');
                         
                         // Display the note in community section
                         displayCommunityNotes();
