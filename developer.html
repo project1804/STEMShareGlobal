@@ -4,6 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>STEMSHARE Developer Dashboard</title>
+    <script>
+        // Check if user has seen the developer introduction
+        (function() {
+            const hasSeenDeveloperIntroduction = localStorage.getItem('hasSeenDeveloperIntroduction');
+            if (hasSeenDeveloperIntroduction !== 'true') {
+                window.location.href = 'developer-introduction.html';
+            }
+        })();
+        
+        // Function to reset developer introduction for testing - available immediately
+        window.resetDeveloperIntroduction = function() {
+            localStorage.removeItem('hasSeenDeveloperIntroduction');
+            alert('Developer introduction has been reset. You will see it again on next login.');
+        };
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /* Import Google Fonts */
