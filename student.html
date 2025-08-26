@@ -17,6 +17,157 @@
             localStorage.removeItem('hasSeenIntroduction');
             alert('Introduction has been reset. You will see it again on next login.');
         };
+        
+        // VR Experience Function - available globally
+        window.launchVRExperience = function() {
+            // Create VR modal
+            const modal = document.createElement('div');
+            modal.id = 'vrModal';
+            modal.style.position = 'fixed';
+            modal.style.top = '0';
+            modal.style.left = '0';
+            modal.style.width = '100%';
+            modal.style.height = '100%';
+            modal.style.backgroundColor = 'rgba(0, 0, 0, 0.9)';
+            modal.style.display = 'flex';
+            modal.style.justifyContent = 'center';
+            modal.style.alignItems = 'center';
+            modal.style.zIndex = '10000';
+            modal.style.overflow = 'auto';
+            modal.style.padding = '20px';
+            
+            modal.innerHTML = `
+                <div style="background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); border-radius: 20px; width: 95%; max-width: 800px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); margin: auto; display: flex; flex-direction: column; color: white;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px 30px; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                        <div>
+                            <h2 style="margin: 0; font-size: 1.8em;">🥽 VR Science Experience</h2>
+                            <p style="margin: 5px 0 0; opacity: 0.8; font-size: 1em;">Immerse yourself in virtual reality learning</p>
+                        </div>
+                        <button id="closeVRModal" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 1.4em; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4); display: flex; align-items: center; justify-content: center; font-weight: bold;">&times;</button>
+                    </div>
+                    
+                    <div style="padding: 30px;">
+                        <div style="background: rgba(255,255,255,0.1); border-radius: 15px; padding: 20px; margin-bottom: 20px;">
+                            <h3 style="margin: 0 0 15px 0; color: #3498db;">📋 VR Setup Instructions</h3>
+                            <div style="line-height: 1.6; opacity: 0.9;">
+                                <p><strong>1. Hardware Requirements:</strong></p>
+                                <ul style="margin: 10px 0; padding-left: 20px;">
+                                    <li>VR Headset (Oculus Quest, HTC Vive, or compatible)</li>
+                                    <li>VR-ready computer or standalone device</li>
+                                    <li>Motion controllers (recommended)</li>
+                                </ul>
+                                
+                                <p><strong>2. Software Setup:</strong></p>
+                                <ul style="margin: 10px 0; padding-left: 20px;">
+                                    <li>Install VR browser (Firefox Reality, Oculus Browser)</li>
+                                    <li>Enable WebXR in your browser settings</li>
+                                    <li>Ensure stable internet connection</li>
+                                </ul>
+                                
+                                <p><strong>3. Safety Guidelines:</strong></p>
+                                <ul style="margin: 10px 0; padding-left: 20px;">
+                                    <li>Clear your play area of obstacles</li>
+                                    <li>Take regular breaks (every 30 minutes)</li>
+                                    <li>Stop if you experience discomfort</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div style="text-align: center;">
+                            <h3 style="margin: 0 0 20px 0; color: #2ecc71;">🎬 Available VR Content</h3>
+                            <div style="background: rgba(255,255,255,0.1); border-radius: 15px; padding: 25px; margin-bottom: 20px;">
+                                <h4 style="margin: 0 0 15px 0; color: #f39c12;">VR Science.mp4</h4>
+                                <p style="margin: 0 0 20px 0; opacity: 0.9;">Experience immersive science experiments and demonstrations in virtual reality. Explore molecular structures, conduct virtual lab experiments, and journey through the human body.</p>
+                                <button id="playVRVideo" style="background: linear-gradient(135deg, #3498db 0%, #2980b9 100%); color: white; border: none; border-radius: 25px; padding: 15px 30px; font-size: 1.1em; font-weight: bold; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);">🎬 Play VR Science Video</button>
+                            </div>
+                            
+                            <div style="background: rgba(255,255,255,0.05); border-radius: 15px; padding: 20px; border: 1px dashed rgba(255,255,255,0.3);">
+                                <p style="margin: 0; opacity: 0.7; font-style: italic;">More VR content coming soon! Stay tuned for additional immersive learning experiences.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // Add event listeners
+            document.getElementById('closeVRModal').addEventListener('click', function() {
+                document.body.removeChild(modal);
+            });
+            
+            document.getElementById('playVRVideo').addEventListener('click', function() {
+                // Create video player modal
+                const videoModal = document.createElement('div');
+                videoModal.id = 'vrVideoModal';
+                videoModal.style.position = 'fixed';
+                videoModal.style.top = '0';
+                videoModal.style.left = '0';
+                videoModal.style.width = '100%';
+                videoModal.style.height = '100%';
+                videoModal.style.backgroundColor = 'rgba(0, 0, 0, 0.95)';
+                videoModal.style.display = 'flex';
+                videoModal.style.justifyContent = 'center';
+                videoModal.style.alignItems = 'center';
+                videoModal.style.zIndex = '10001';
+                
+                videoModal.innerHTML = `
+                    <div style="position: relative; width: 90%; max-width: 800px;">
+                        <button id="closeVRVideo" style="position: absolute; top: -50px; right: 0; background: #e74c3c; color: white; border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 1.4em; cursor: pointer; z-index: 10002;">&times;</button>
+                        <video controls style="width: 100%; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);" id="vrVideoPlayer">
+                            <source src="./VR Science.mp4" type="video/mp4">
+                            <source src="VR Science.mp4" type="video/mp4">
+                            <source src="../VR Science.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        <div id="videoError" style="display: none; text-align: center; color: white; margin-top: 20px; padding: 20px; background: rgba(231, 76, 60, 0.8); border-radius: 10px;">
+                            <p>⚠️ Video file not found. Please ensure 'VR Science.mp4' is in the same directory as this page.</p>
+                            <p style="font-size: 0.9em; margin-top: 10px;">You can also try placing the video file in the project folder and refreshing the page.</p>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(videoModal);
+                
+                // Add video error handling
+                const videoPlayer = document.getElementById('vrVideoPlayer');
+                const videoError = document.getElementById('videoError');
+                
+                videoPlayer.addEventListener('error', function() {
+                    videoError.style.display = 'block';
+                    console.log('Video failed to load. Please check if VR Science.mp4 exists in the project directory.');
+                });
+                
+                videoPlayer.addEventListener('loadeddata', function() {
+                    videoError.style.display = 'none';
+                    console.log('VR Science video loaded successfully!');
+                });
+                
+                document.getElementById('closeVRVideo').addEventListener('click', function() {
+                    document.body.removeChild(videoModal);
+                });
+                
+                videoModal.addEventListener('click', function(e) {
+                    if (e.target === videoModal) {
+                        document.body.removeChild(videoModal);
+                    }
+                });
+            });
+            
+            // Close modal when clicking outside
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    document.body.removeChild(modal);
+                }
+            });
+            
+            // Add keyboard support (ESC key to close)
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && document.getElementById('vrModal')) {
+                    document.body.removeChild(modal);
+                }
+            });
+        };
     </script>
     <!-- Removed external CSS to prevent conflicts -->
     <style>
@@ -1563,22 +1714,105 @@
 
                     <!-- AR/VR Content -->
                     <div id="arvrContent" class="tab-content" style="display:none;">
-                        <div class="cards-grid">
-                            <div class="feature-card" onclick="window.location.href='ar-scanner.html'" style="background:linear-gradient(135deg,#fdcb6e 0%,#e17055 100%);">
-                                <div class="feature-icon">
-                                    <img src="https://img.icons8.com/fluency/96/augmented-reality.png" alt="AR">
+                        <!-- AR Section -->
+                        <div style="margin-bottom: 40px;">
+                            <h2 style="color: #2c3e50; font-size: 2rem; margin-bottom: 24px; text-align: center; text-shadow: 0 2px 8px rgba(255,255,255,0.3);">🔍 Augmented Reality Experiences</h2>
+                            <div class="cards-grid">
+                                <div class="feature-card" onclick="window.location.href='ar-scanner.html'" style="background:linear-gradient(135deg,#fdcb6e 0%,#e17055 100%);">
+                                    <div class="feature-icon">
+                                        <span style="font-size: 48px; color: white;">🔍</span>
+                                    </div>
+                                    <div class="feature-title">Augmented Reality</div>
+                                    <div class="feature-description">Explore interactive 3D models, scan objects, and enhance your learning with cutting-edge AR technology!</div>
+                                    <button style="background: rgba(255,255,255,0.2); color: white; border: 2px solid white; border-radius:25px; padding:12px 24px; font-weight:700; margin-top:16px; cursor: pointer;">🚀 Launch AR</button>
                                 </div>
-                                <div class="feature-title">Augmented Reality</div>
-                                <div class="feature-description">Explore interactive 3D models, scan objects, and enhance your learning with cutting-edge AR technology!</div>
-                                <button style="background: rgba(255,255,255,0.2); color: white; border: 2px solid white; border-radius:25px; padding:12px 24px; font-weight:700; margin-top:16px; cursor: pointer;">🚀 Launch AR</button>
+                                
+                                <div class="feature-card" style="background:linear-gradient(135deg,#00b894 0%,#00a085 100%);">
+                                    <div class="feature-icon">
+                                        <span style="font-size: 48px; color: white;">🔬</span>
+                                    </div>
+                                    <div class="feature-title">3D Model Viewer</div>
+                                    <div class="feature-description">Explore detailed 3D models of molecules, cells, and complex structures in augmented reality!</div>
+                                    <button style="background: rgba(255,255,255,0.2); color: white; border: 2px solid white; border-radius:25px; padding:12px 24px; font-weight:700; margin-top:16px; cursor: pointer;">🔬 View Models</button>
+                                </div>
+                                
+                                <div class="feature-card" style="background:linear-gradient(135deg,#e84393 0%,#fd79a8 100%);">
+                                    <div class="feature-icon">
+                                        <span style="font-size: 48px; color: white;">🧪</span>
+                                    </div>
+                                    <div class="feature-title">Chemistry Lab AR</div>
+                                    <div class="feature-description">Conduct virtual chemistry experiments with AR overlays showing molecular structures and reactions!</div>
+                                    <button style="background: rgba(255,255,255,0.2); color: white; border: 2px solid white; border-radius:25px; padding:12px 24px; font-weight:700; margin-top:16px; cursor: pointer;">🧪 Start Experiment</button>
+                                </div>
+                                
+                                <div class="feature-card" style="background:linear-gradient(135deg,#0984e3 0%,#74b9ff 100%);">
+                                    <div class="feature-icon">
+                                        <span style="font-size: 48px; color: white;">🌍</span>
+                                    </div>
+                                    <div class="feature-title">Geography Explorer</div>
+                                    <div class="feature-description">Explore world maps, landmarks, and geographical features through interactive AR overlays!</div>
+                                    <button style="background: rgba(255,255,255,0.2); color: white; border: 2px solid white; border-radius:25px; padding:12px 24px; font-weight:700; margin-top:16px; cursor: pointer;">🌍 Explore World</button>
+                                </div>
+                                
+                                <div class="feature-card" style="background:linear-gradient(135deg,#fdcb6e 0%,#e17055 100%);">
+                                    <div class="feature-icon">
+                                        <span style="font-size: 48px; color: white;">🫀</span>
+                                    </div>
+                                    <div class="feature-title">Anatomy AR</div>
+                                    <div class="feature-description">Study human anatomy with detailed AR overlays showing organs, bones, and body systems!</div>
+                                    <button style="background: rgba(255,255,255,0.2); color: white; border: 2px solid white; border-radius:25px; padding:12px 24px; font-weight:700; margin-top:16px; cursor: pointer;">🫀 Study Anatomy</button>
+                                </div>
+                                
+                                <div class="feature-card" style="background:linear-gradient(135deg,#6c5ce7 0%,#a29bfe 100%);">
+                                    <div class="feature-icon">
+                                        <span style="font-size: 48px; color: white;">🤖</span>
+                                    </div>
+                                    <div class="feature-title">Robotics AR</div>
+                                    <div class="feature-description">Learn robotics concepts with interactive AR simulations of circuits, sensors, and mechanical systems!</div>
+                                    <button style="background: rgba(255,255,255,0.2); color: white; border: 2px solid white; border-radius:25px; padding:12px 24px; font-weight:700; margin-top:16px; cursor: pointer;">🤖 Build Robot</button>
+                                </div>
                             </div>
-                            <div class="feature-card" style="background:linear-gradient(135deg,#a29bfe 0%,#6c5ce7 100%);">
-                                <div class="feature-icon">
-                                    <img src="https://img.icons8.com/fluency/96/virtual-reality.png" alt="VR">
+                        </div>
+                        
+                        <!-- VR Section -->
+                        <div>
+                            <h2 style="color: #2c3e50; font-size: 2rem; margin-bottom: 24px; text-align: center; text-shadow: 0 2px 8px rgba(255,255,255,0.3);">🥽 Virtual Reality Experiences</h2>
+                            <div class="cards-grid">
+                                <div class="feature-card" style="background:linear-gradient(135deg,#a29bfe 0%,#6c5ce7 100%);">
+                                    <div class="feature-icon">
+                                        <span style="font-size: 48px; color: white;">🥽</span>
+                                    </div>
+                                    <div class="feature-title">Virtual Reality</div>
+                                    <div class="feature-description">Dive into immersive virtual worlds, experience interactive simulations, and learn in completely new environments!</div>
+                                    <button onclick="launchVRExperience()" style="background: rgba(255,255,255,0.2); color: white; border: 2px solid white; border-radius:25px; padding:12px 24px; font-weight:700; margin-top:16px; cursor: pointer;">🥽 Launch VR</button>
                                 </div>
-                                <div class="feature-title">Virtual Reality</div>
-                                <div class="feature-description">Dive into immersive virtual worlds, experience interactive simulations, and learn in completely new environments!</div>
-                                <button style="background: rgba(255,255,255,0.2); color: white; border: 2px solid white; border-radius:25px; padding:12px 24px; font-weight:700; margin-top:16px; cursor: pointer;">🥽 Launch VR</button>
+                                
+                                <div class="feature-card" style="background:linear-gradient(135deg,#00b894 0%,#00a085 100%);">
+                                    <div class="feature-icon">
+                                        <span style="font-size: 48px; color: white;">🚀</span>
+                                    </div>
+                                    <div class="feature-title">Space Exploration VR</div>
+                                    <div class="feature-description">Journey through the solar system and explore distant planets in immersive virtual reality!</div>
+                                    <button style="background: rgba(255,255,255,0.2); color: white; border: 2px solid white; border-radius:25px; padding:12px 24px; font-weight:700; margin-top:16px; cursor: pointer;">🚀 Explore Space</button>
+                                </div>
+                                
+                                <div class="feature-card" style="background:linear-gradient(135deg,#e84393 0%,#fd79a8 100%);">
+                                    <div class="feature-icon">
+                                        <span style="font-size: 48px; color: white;">🧬</span>
+                                    </div>
+                                    <div class="feature-title">DNA Structure VR</div>
+                                    <div class="feature-description">Navigate through the double helix structure and understand genetic concepts in 3D virtual reality!</div>
+                                    <button style="background: rgba(255,255,255,0.2); color: white; border: 2px solid white; border-radius:25px; padding:12px 24px; font-weight:700; margin-top:16px; cursor: pointer;">🧬 Explore DNA</button>
+                                </div>
+                                
+                                <div class="feature-card" style="background:linear-gradient(135deg,#0984e3 0%,#74b9ff 100%);">
+                                    <div class="feature-icon">
+                                        <span style="font-size: 48px; color: white;">🔬</span>
+                                    </div>
+                                    <div class="feature-title">Microscopic World VR</div>
+                                    <div class="feature-description">Explore the microscopic world of cells, bacteria, and microorganisms in immersive VR!</div>
+                                    <button style="background: rgba(255,255,255,0.2); color: white; border: 2px solid white; border-radius:25px; padding:12px 24px; font-weight:700; margin-top:16px; cursor: pointer;">🔬 Explore Micro</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -3822,7 +4056,7 @@
                 
                 // AI-Powered Note Transformation to Infographic Function
                 function transformNotesToInfographic() {
-                    // Create modal with iframe to NoteGPT AI Visual Generator
+                    // Create modal with iframe to the new AI Visual Generator
                     const modal = document.createElement('div');
                     modal.id = 'infographicModal';
                     modal.style.position = 'fixed';
@@ -3843,15 +4077,15 @@
                             <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px 30px; border-bottom: 1px solid #e0e0e0;">
                                 <div>
                                     <h2 style="margin: 0; color: #2c3e50; font-size: 1.5em;">✨ AI Visual Generator</h2>
-                                    <p style="margin: 5px 0 0; color: #7f8c8d; font-size: 0.9em;">Powered by NoteGPT - Transform your notes into stunning visual infographics</p>
+                                    <p style="margin: 5px 0 0; color: #7f8c8d; font-size: 0.9em;">Transform your notes into stunning visual infographics and comics</p>
                                 </div>
                                 <button id="closeInfographicModal" style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%); color: white; border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 1.4em; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(238, 90, 36, 0.4); display: flex; align-items: center; justify-content: center; font-weight: bold;">&times;</button>
                             </div>
                             <div style="flex: 1; padding: 0; position: relative;">
                                 <iframe 
-                                    src="https://notegpt.io/ai-visual-generator" 
+                                    src="https://mgx-ar7xjqu324.mgx.world/" 
                                     style="width: 100%; height: 100%; border: none; border-radius: 0 0 20px 20px;"
-                                    title="NoteGPT AI Visual Generator"
+                                    title="AI Visual Generator"
                                     allowfullscreen>
                                 </iframe>
                             </div>
@@ -3879,6 +4113,8 @@
                         }
                     });
                 }
+
+
 
                                 // File upload functionality for notes is handled by the sidebar button
                 
